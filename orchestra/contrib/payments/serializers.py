@@ -43,3 +43,4 @@ class PaymentSourceSerializer(AccountSerializerMixin, serializers.HyperlinkedMod
 class TransactionSerializer(AccountSerializerMixin, serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Transaction
+        fields = '__all__'
