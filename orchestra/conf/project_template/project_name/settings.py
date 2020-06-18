@@ -67,6 +67,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'passlib.ext.django',
     'django_countries',
+    'rest_framework_swagger',
 #    'debug_toolbar',
 
     # Django.contrib
@@ -228,7 +229,8 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
     ),
     'DEFAULT_FILTER_BACKENDS': (
-        ('rest_framework.filters.DjangoFilterBackend',)
+        # TODO(@slamora): commented to be able to run rest swagger
+        #('rest_framework.filters.DjangoFilterBackend',)
     ),
 }
 
