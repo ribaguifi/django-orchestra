@@ -44,7 +44,8 @@ jobs:
         sudo apt-get update -qy
         sudo apt-get -y install python3-dev
         python -m pip install --upgrade pip
-        pip install http://git.io/django-orchestra-dev
+        pip install wheel
+        pip install -e .
         pip install -r requirements.txt
         pip install -r requirements-testing.txt
     - name: Lint with flake8
