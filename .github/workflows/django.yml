@@ -57,7 +57,6 @@ jobs:
     - name: Run Tests
       run: |
         orchestra-admin startproject panel
-        python panel/manage.py migrate
         python panel/manage.py test orchestra --noinput
 
       env:
