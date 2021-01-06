@@ -56,7 +56,8 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=120 --statistics
     - name: Run Tests
       run: |
-        orchestra-admin startproject panel
+        # orchestra-admin startproject panel
+        django-admin.py startproject panel --template=orchestra/conf/project_template -v3
         python panel/manage.py test orchestra --noinput -v3
 
       env:
