@@ -49,7 +49,7 @@ class Command(BaseCommand):
         parser.add_argument(
             '--db_host', 
             dest='db_host',
-            default=slef.defaults.get('HOST', 'localhost'),
+            default=self.defaults.get('HOST', 'localhost'),
             help='Specifies the database to create.',
             type=str
         )
@@ -65,10 +65,9 @@ class Command(BaseCommand):
             action='store_false',
             dest='interactive',
             default=True,
-            help='Tells Django to NOT prompt the user for input of any kind. '
-                 'You must use --username with --noinput, and must contain the '
-                 'cleeryd process owner, which is the user how will perform tincd updates',
-            type=str
+            help='''Tells Django to NOT prompt the user for input of any kind. 
+                 You must use --username with --noinput, and must contain the 
+                 cleeryd process owner, which is the user how will perform tincd updates'''
         )
     
     def run_postgres(self, cmd, *args, **kwargs):
@@ -79,11 +78,11 @@ class Command(BaseCommand):
         interactive = options.get('interactive')
         db_password = options.get('db_password')
         context = {
-            'db_name': options.get('db_name', 'orchestra'),
-            'db_user': options.get('db_user', 'orchestra'),
+            'db_name': options.get('db_name'),
+            'db_user': options.get('db_user'),
             'db_password': db_password,
-            'db_host': options.get('db_host', '127.0.0.1'),
-            'db_port': options.get('db_port', '5432'),
+            'db_host': options.get('db_host'),
+            'db_port': options.get('db_port'),
             'default_db_password': db_password or random_ascii(10),
         }
         
