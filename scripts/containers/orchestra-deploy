@@ -50,7 +50,7 @@ function install_orchestra () {
         if [[ -d $python_path/orchestra ]]; then
             run sudo rm -fr $python_path/orchestra
         fi
-        orch_version=$(python3 -c "from orchestra import get_version; print(get_version());" 2> /dev/null)
+	orch_version=$(python3 -c "from orchestra import get_version; print(get_version());" 2> /dev/null || echo '')
         if [[ ! $orch_version ]]; then
             # First Orchestra installation
 	    run sudo mkdir -p /usr/share/man/man1
