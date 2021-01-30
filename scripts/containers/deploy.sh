@@ -46,13 +46,16 @@ function install_orchestra () {
     
     if [[ $dev ]]; then
         # Install from source
-        python_path=$(python3 -c "import sys; print([path for path in sys.path if path.startswith('/usr/local/lib/python')][0]);")
+        python_path=$(python3 -c "import sys; print([path for path in sys.path if path.startswith('/usr/local/lib/python')][1]);")
         if [[ -d $python_path/orchestra ]]; then
             run sudo rm -fr $python_path/orchestra
         fi
-        orch_version=$(python3 -c "from orchestra import get_version; print(get_version());" 2> /dev/null)
+	orch_version=$(python3 -c "from orchestra import get_version; print(get_version());" 2> /dev/null || echo '')
         if [[ ! $orch_version ]]; then
             # First Orchestra installation
+	    run sudo mkdir -p /usr/share/man/man1
+	    run sudo mkdir -p /usr/share/man/man7
+	    run sudo apt-get update
             run sudo apt-get -y install git python3-pip
             surun "git clone $repo $home/django-orchestra" || {
                 # Finishing partial installation
@@ -65,13 +68,12 @@ function install_orchestra () {
         if [[ -L /usr/local/bin/orchestra-admin || -f /usr/local/bin/orchestra-admin ]]; then
             run sudo rm -f /usr/local/bin/{orchestra-admin,orchestra-beat}
         fi
-        run sudo ln -s $home/django-orchestra/orchestra/bin/orchestra-admin /usr/local/bin/
-        run sudo ln -s $home/django-orchestra/orchestra/bin/orchestra-beat /usr/local/bin/
+	run sudo pip3 install -e $home/django-orchestra
         run sudo orchestra-admin install_requirements --testing
     else
         # Install from pip
-        run sudo pip3 install http://git.io/django-orchestra-dev
         run sudo orchestra-admin install_requirements
+        run sudo pip3 install -e git+https://github.com/ribaguifi/django-orchestra.git#egg=django-orchestra
     fi
 }
 
@@ -79,12 +81,13 @@ function install_orchestra () {
 function setup_database () {
     dev=$1
     noinput=$2
-    run sudo apt-get install -y postgresql python3-psycopg2
+    run sudo apt-get install -y postgresql
+    run sudo pip install psycopg2
     # Setup Database
     if [[ $dev ]]; then
         # Speeding up tests, don't do this in production!
         . /usr/share/postgresql-common/init.d-functions
-        pg_version=$(psql --version | head -n1 | sed -r "s/^.*\s([0-9]+\.[0-9]+).*/\1/")
+	pg_version=$(psql --version | head -n1 | awk '{print $3}' | sed -e "s,\..*,,")
         sudo sed -i \
             -e "s/^#fsync =\s*.*/fsync = off/" \
             -e "s/^#full_page_writes =\s*.*/full_page_writes = off/" \
@@ -170,7 +173,7 @@ function main () {
     dev=
     noinput=
     user=$(whoami)
-    repo='https://github.com/glic3rinu/django-orchestra.git'
+    repo='https://github.com/ribaguifi/django-orchestra.git'
     brepo=
     project_name="panel"
     bproject_name=

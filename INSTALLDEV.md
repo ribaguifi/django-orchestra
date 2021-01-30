@@ -21,7 +21,7 @@ If you are planing to do some development you may want to consider doing it unde
 
 3. Deploy django-orchestra development environment, inside the container
     ```bash
-    bash <( curl -L https://raw.githubusercontent.com/ribaguifi/django-orchestra/master/scripts/containers/orchestra-deploy ) --dev
+    bash <( curl -L https://raw.githubusercontent.com/ribaguifi/django-orchestra/master/scripts/containers/deploy.sh ) --dev
     ```
 
 3. Nginx should be serving on port 80, but Django's development server can be used as well:
@@ -35,5 +35,5 @@ If you are planing to do some development you may want to consider doing it unde
 5. To upgrade to current master just re-run the deploy script
     ```bash
     git pull origin master
-    bash <( curl -L https://raw.githubusercontent.com/ribaguifi/django-orchestra/master/scripts/containers/orchestra-deploy ) --dev
+    bash <( curl -L https://raw.githubusercontent.com/ribaguifi/django-orchestra/master/scripts/containers/deploy.sh ) --dev
     ```
