@@ -50,8 +50,7 @@ function install_orchestra () {
         if [[ -d $python_path/orchestra ]]; then
             run sudo rm -fr $python_path/orchestra
         fi
-        #orch_version=$(python3 -c "from orchestra import get_version; print(get_version());" 2> /dev/null)
-	orch_version=''
+        orch_version=$(python3 -c "from orchestra import get_version; print(get_version());" 2> /dev/null)
         if [[ ! $orch_version ]]; then
             # First Orchestra installation
 	    run sudo mkdir -p /usr/share/man/man1
@@ -70,13 +69,10 @@ function install_orchestra () {
             run sudo rm -f /usr/local/bin/{orchestra-admin,orchestra-beat}
         fi
 	run sudo pip3 install -e $home/django-orchestra
-        #run sudo ln -s $home/django-orchestra/orchestra/bin/orchestra-admin /usr/local/bin/
-        #run sudo ln -s $home/django-orchestra/orchestra/bin/orchestra-beat /usr/local/bin/
         run sudo orchestra-admin install_requirements --testing
     else
         # Install from pip
         run sudo orchestra-admin install_requirements
-        #run sudo pip3 install http://git.io/django-orchestra-dev
         run sudo pip3 install -e git+https://github.com/ribaguifi/django-orchestra.git#egg=django-orchestra
     fi
 }
