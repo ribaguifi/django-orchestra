@@ -3,7 +3,6 @@ import os
 import random
 import string
 from distutils.sysconfig import get_python_lib
-from optparse import make_option
 
 from django.core.management import call_command
 from django.core.management.base import BaseCommand, CommandError
@@ -26,20 +25,28 @@ def get_existing_pip_installation():
 
 
 class Command(BaseCommand):
-    def __init__(self, *args, **kwargs):
-        super(Command, self).__init__(*args, **kwargs)
-        self.option_list = BaseCommand.option_list + (
-            make_option('--pip_only', action='store_true', dest='pip_only', default=False,
-                help='Only run "pip install django-orchestra --upgrade"'),
-            make_option('--orchestra_version', dest='version', default=False,
-                help='Specifies what version of the Orchestra you want to install'),
-            )
-    
-    option_list = BaseCommand.option_list
     help = "Upgrading Orchestra's installation. Desired version is accepted as argument"
     can_import_settings = False
     leave_locale_alone = True
-    
+
+    def __init__(self, *args, **kwargs):
+        super(Command, self).__init__(*args, **kwargs)
+
+    def add_arguments(self, parser):
+        parser.add_argument(
+            '--pip_only',
+            action='store_true',
+            dest='pip_only',
+            default=False,
+            help='Only run "pip install django-orchestra --upgrade"'
+        )
+        parser.add_argument(
+            '--orchestra_version',
+            dest='version',
+            default=False,
+            help='Specifies what version of the Orchestra you want to install'
+        )
+
     @check_root
     def handle(self, *args, **options):
         current_version = get_version()

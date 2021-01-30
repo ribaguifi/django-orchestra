@@ -1,6 +1,5 @@
 import os
 import textwrap
-from optparse import make_option
 from os.path import expanduser
 
 from django.conf import settings
