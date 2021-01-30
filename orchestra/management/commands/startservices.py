@@ -59,5 +59,4 @@ class ManageServiceCommand(BaseCommand):
 class Command(ManageServiceCommand):
     services = settings.ORCHESTRA_START_SERVICES
     action = 'start'
-    option_list = BaseCommand.option_list
     help = 'Start all related services. Usefull for reload configuration and files.'
