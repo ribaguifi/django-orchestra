@@ -1,5 +1,4 @@
 import textwrap
-from optparse import make_option
 from os import path
 
 from django.core.management.base import BaseCommand
@@ -10,22 +9,34 @@ from orchestra.utils.sys import run, check_root
 
 
 class Command(BaseCommand):
-    def __init__(self, *args, **kwargs):
-        super(Command, self).__init__(*args, **kwargs)
-        self.option_list = BaseCommand.option_list + (
-            make_option('--username', dest='username', default='orchestra',
-                help='Specifies the system user that would run celeryd.'),
-            make_option('--processes', dest='processes', default=2,
-                help='Number of celeryd processes.'),
-            make_option('--noinput', action='store_false', dest='interactive', default=True,
-                help='Tells Django to NOT prompt the user for input of any kind. '
-                     'You must use --username with --noinput, and must contain the '
-                     'cleleryd process owner, which is the user how will perform tincd updates'),
-            )
-    
-    option_list = BaseCommand.option_list
     help = 'Configure Celeryd to run with your orchestra instance.'
     
+    def __init__(self, *args, **kwargs):
+        super(Command, self).__init__(*args, **kwargs)
+
+    def add_arguments(self, parser):
+        parser.add_argument(
+            '--username',
+            dest='username',
+            default='orchestra',
+            help='Specifies the system user that would run celeryd.'
+        )
+        parser.add_argument(
+            '--processes',
+            dest='processes',
+            default=2,
+            help='Number of celeryd processes.'
+        )
+        parser.add_argument(
+            '--noinput',
+            action='store_false',
+            dest='interactive',
+            default=True,
+            help='''Tells Django to NOT prompt the user for input of any kind.
+                    You must use --username with --noinput, and must contain the
+                    cleleryd process owner, which is the user how will perform tincd updates'''
+        )
+
     @check_root
     def handle(self, *args, **options):
         context = {

@@ -1,52 +1,97 @@
 import os
 
-from optparse import make_option
-
 from django.core.management.base import BaseCommand
 
 from orchestra.utils.sys import run, check_root
 
 class Command(BaseCommand):
+    help = 'Setup Postfix.'
+
     def __init__(self, *args, **kwargs):
         super(Command, self).__init__(*args, **kwargs)
-        self.option_list = BaseCommand.option_list + (
-            make_option('--db_name', dest='db_name', default='orchestra',
-                help='Specifies the database to create.'),
-            make_option('--db_user', dest='db_user', default='orchestra',
-                help='Specifies the database to create.'),
-            make_option('--db_password', dest='db_password', default='orchestra',
-                help='Specifies the database to create.'),
-            make_option('--db_host', dest='db_host', default='localhost',
-                help='Specifies the database to create.'),
 
-            make_option('--vmail_username', dest='vmail_username', default='vmail',
-                help='Specifies username in the operating system (default=vmail).'),
-            make_option('--vmail_uid', dest='vmail_uid', default='5000',
-                help='UID of user <vmail_username> (default=5000).'),
-            make_option('--vmail_groupname', dest='vmail_groupname', default='vmail',
-                help='Specifies the groupname in the operating system (default=vmail).'),
-            make_option('--vmail_gid', dest='vmail_gid', default='5000',
-                help='GID of user <vmail_username> (default=5000).'),
-            make_option('--vmail_home', dest='vmail_home', default='/var/vmail',
-                help='$HOME of user <vmail_username> (default=/var/vmail).'),
-
-            make_option('--dovecot_dir', dest='dovecot_dir', default='/etc/dovecot',
-                help='Dovecot root directory (default=/etc/dovecot).'),
-
-            make_option('--postfix_dir', dest='postfix_dir', default='/etc/postfix',
-                help='Postfix root directory (default=/etc/postfix).'),
-
-            make_option('--amavis_dir', dest='amavis_dir', default='/etc/amavis',
-                help='Amavis root directory (default=/etc/amavis).'),
-
-            make_option('--noinput', action='store_false', dest='interactive', default=True,
-                help='Tells Django to NOT prompt the user for input of any kind. '
-                     'You must use --username with --noinput, and must contain the '
-                     'cleeryd process owner, which is the user how will perform tincd updates'),
-            )
-
-    option_list = BaseCommand.option_list
-    help = 'Setup Postfix.'
+    def add_arguments(self, parser):
+        parser.add_argument(
+            '--db_name',
+            dest='db_name',
+            default='orchestra',
+            help='Specifies the database to create.'
+        )
+        parser.add_argument(
+            '--db_user',
+            dest='db_user',
+            default='orchestra',
+            help='Specifies the database to create.'
+        )
+        parser.add_argument(
+            '--db_password',
+            dest='db_password',
+            default='orchestra',
+            help='Specifies the database to create.'
+        )
+        parser.add_argument(
+            '--db_host',
+            dest='db_host',
+            default='localhost',
+            help='Specifies the database to create.'
+        )
+        parser.add_argument(
+            '--vmail_username',
+            dest='vmail_username',
+            default='vmail',
+            help='Specifies username in the operating system (default=vmail).'
+        )
+        parser.add_argument(
+            '--vmail_uid',
+            dest='vmail_uid',
+            default='5000',
+            help='UID of user <vmail_username> (default=5000).'
+        )
+        parser.add_argument(
+            '--vmail_groupname',
+            dest='vmail_groupname',
+            default='vmail',
+            help='Specifies the groupname in the operating system (default=vmail).'
+        )
+        parser.add_argument(
+            '--vmail_gid',
+            dest='vmail_gid',
+            default='5000',
+            help='GID of user <vmail_username> (default=5000).'
+        )
+        parser.add_argument(
+            '--vmail_home',
+            dest='vmail_home',
+            default='/var/vmail',
+            help='$HOME of user <vmail_username> (default=/var/vmail).'
+        )
+        parser.add_argument(
+            '--dovecot_dir',
+            dest='dovecot_dir',
+            default='/etc/dovecot',
+            help='Dovecot root directory (default=/etc/dovecot).'
+        )
+        parser.add_argument(
+            '--postfix_dir',
+            dest='postfix_dir',
+            default='/etc/postfix',
+            help='Postfix root directory (default=/etc/postfix).'
+        )
+        parser.add_argument(
+            '--amavis_dir',
+            dest='amavis_dir',
+            default='/etc/amavis',
+            help='Amavis root directory (default=/etc/amavis).'
+        )
+        parser.add_argument(
+            '--noinput',
+            action='store_false',
+            dest='interactive',
+            default=True,
+            help='''Tells Django to NOT prompt the user for input of any kind.
+                    You must use --username with --noinput, and must contain the 
+                    cleeryd process owner, which is the user how will perform tincd updates'''
+        )
 
     @check_root
     def handle(self, *args, **options):

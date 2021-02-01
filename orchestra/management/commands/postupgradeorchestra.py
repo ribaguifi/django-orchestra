@@ -1,6 +1,5 @@
 import re
 import os
-from optparse import make_option
 
 from django.core.management.base import BaseCommand
 
@@ -19,26 +18,44 @@ def deprecate_periodic_tasks(names):
 
 
 class Command(BaseCommand):
-    def __init__(self, *args, **kwargs):
-        super(Command, self).__init__(*args, **kwargs)
-        self.option_list = BaseCommand.option_list + (
-            make_option('--no-restart', action='store_false', dest='restart', default=True,
-                help='Only install local requirements'),
-            make_option('--specifics', action='store_true', dest='specifics_only',
-                default=False, help='Only run version specific operations'),
-            make_option('--no-upgrade-notes', action='store_false', default=True,
-                dest='print_upgrade_notes', help='Do not print specific upgrade notes'),
-            make_option('--from', dest='version', default=False,
-                help="Orchestra's version from where you are upgrading, i.e 0.0.1"),
-            )
-    
-    option_list = BaseCommand.option_list
     help = 'Upgrades django-orchestra installation'
     # This command must be able to run in an environment with unsatisfied dependencies
     leave_locale_alone = True
     can_import_settings = False
     requires_model_validation = False
-    
+
+    def __init__(self, *args, **kwargs):
+        super(Command, self).__init__(*args, **kwargs)
+
+    def add_arguments(self, parser):
+        parser.add_argument(
+            '--no-restart',
+            action='store_false',
+            dest='restart',
+            default=True,
+            help='Only install local requirements'
+        )
+        parser.add_argument(
+            '--specifics',
+            action='store_true',
+            dest='specifics_only',
+            default=False,
+            help='Only run version specific operations'
+        )
+        parser.add_argument(
+            '--no-upgrade-notes',
+            action='store_false',
+            default=True,
+            dest='print_upgrade_notes',
+            help='Do not print specific upgrade notes'
+        )
+        parser.add_argument(
+            '--from',
+            dest='version',
+            default=False,
+            help="Orchestra's version from where you are upgrading, i.e 0.0.1"
+        )
+
     @check_root
     def handle(self, *args, **options):
         version = options.get('version')

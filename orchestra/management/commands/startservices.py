@@ -1,5 +1,3 @@
-from optparse import make_option
-
 from django.core.management.base import BaseCommand
 
 from orchestra import settings
@@ -30,9 +28,16 @@ def flatten(nested, depth=0):
 class ManageServiceCommand(BaseCommand):
     def __init__(self, *args, **kwargs):
         super(ManageServiceCommand, self).__init__(*args, **kwargs)
-        self.option_list = BaseCommand.option_list + tuple(
-            make_option('--no-%s' % service, action='store_false', dest=service, default=True,
-                 help='Do not %s %s' % (self.action, service)) for service in flatten(self.services)
+            
+
+    def add_arguments(self, parser):
+        for service in flatten(self.services):
+            parser.add_argument(
+                '--no-%s' % service,
+                action='store_false',
+                dest=service,
+                default=True,
+                help='Do not %s %s' % (self.action, service) 
             )
     
     @check_root
@@ -54,5 +59,4 @@ class ManageServiceCommand(BaseCommand):
 class Command(ManageServiceCommand):
     services = settings.ORCHESTRA_START_SERVICES
     action = 'start'
-    option_list = BaseCommand.option_list
     help = 'Start all related services. Usefull for reload configuration and files.'

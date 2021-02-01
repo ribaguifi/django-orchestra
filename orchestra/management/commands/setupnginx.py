@@ -1,6 +1,5 @@
 import os
 import textwrap
-from optparse import make_option
 from os.path import expanduser
 
 from django.conf import settings
@@ -11,54 +10,117 @@ from orchestra.utils.sys import run, check_root, confirm
 
 
 class Command(BaseCommand):
+    help = 'Configures nginx + uwsgi to run with your Orchestra instance.'
+
     def __init__(self, *args, **kwargs):
         super(Command, self).__init__(*args, **kwargs)
-        self.option_list = BaseCommand.option_list + (
-            make_option('--cert', dest='cert', default='',
-                help='Nginx SSL certificate, one will be created by default.'),
-            make_option('--cert-key', dest='cert_key', default='',
-                help='Nginx SSL certificate key.'),
-            
-            make_option('--cert-path', dest='cert_path',
-                default=os.path.join(paths.get_site_dir(), 'ssl', 'orchestra.crt'),
-                help='Nginx SSL certificate, one will be created by default.'),
-            make_option('--cert-key-path', dest='cert_key_path',
-                default=os.path.join(paths.get_site_dir(), 'ssl', 'orchestra.key'),
-                help='Nginx SSL certificate key.'),
-            # Cert options
-            make_option('--cert-override', dest='cert_override', action='store_true',
-                default=False, help='Force override cert and keys if exists.'),
-            make_option('--cert-country', dest='cert_country', default='ES',
-                help='Certificate Distinguished Name Country.'),
-            make_option('--cert-state', dest='cert_state', default='Spain',
-                help='Certificate Distinguished Name STATE.'),
-            make_option('--cert-locality', dest='cert_locality', default='Barcelona',
-                help='Certificate Distinguished Name Country.'),
-            make_option('--cert-org_name', dest='cert_org_name', default='Orchestra',
-                help='Certificate Distinguished Name Organization Name.'),
-            make_option('--cert-org_unit', dest='cert_org_unit', default='DevOps',
-                help='Certificate Distinguished Name Organization Unity.'),
-            make_option('--cert-email', dest='cert_email', default='orchestra@orchestra.lan',
-                help='Certificate Distinguished Name Email Address.'),
-            make_option('--cert-common_name', dest='cert_common_name', default=None,
-                help='Certificate Distinguished Name Common Name.'),
-            
-            make_option('--server-name', dest='server_name', default='',
-                help='Nginx SSL certificate key.'),
-            make_option('--user', dest='user', default='',
-                help='uWSGI daemon user.'),
-            make_option('--group', dest='group', default='',
-                help='uWSGI daemon group.'),
-            make_option('--processes', dest='processes', default=4,
-                help='uWSGI number of processes.'),
-            make_option('--noinput', action='store_false', dest='interactive', default=True,
-                help='Tells Django to NOT prompt the user for input of any kind. '
-                     'You must use --username with --noinput, and must contain the '
-                     'cleeryd process owner, which is the user how will perform tincd updates'),
-            )
-    
-    option_list = BaseCommand.option_list
-    help = 'Configures nginx + uwsgi to run with your Orchestra instance.'
+
+    def add_arguments(self, parser):
+        parser.add_argument(
+            '--cert', 
+            dest='cert',
+            default='',
+            help='Nginx SSL certificate, one will be created by default.',
+        )
+        parser.add_argument(
+            '--cert-key', 
+            dest='cert_key', 
+            default='',
+            help='Nginx SSL certificate key.'
+        )
+        parser.add_argument(
+            '--cert-path', 
+            dest='cert_path',
+            default=os.path.join(paths.get_site_dir(), 'ssl', 'orchestra.crt'),
+            help='Nginx SSL certificate, one will be created by default.'
+        )
+        parser.add_argument(
+            '--cert-key-path', 
+            dest='cert_key_path',
+            default=os.path.join(paths.get_site_dir(), 'ssl', 'orchestra.key'),
+            help='Nginx SSL certificate key.'
+        )
+        parser.add_argument(
+            '--cert-override', 
+            dest='cert_override',
+            action='store_true',
+            default=False, help='Force override cert and keys if exists.'
+        )
+        parser.add_argument(
+            '--cert-country', 
+            dest='cert_country',
+            default='ES',
+            help='Certificate Distinguished Name Country.'
+        )
+        parser.add_argument(
+            '--cert-state', 
+            dest='cert_state', 
+            default='Spain',
+            help='Certificate Distinguished Name STATE.'
+        )
+        parser.add_argument(
+            '--cert-locality', 
+            dest='cert_locality', 
+            default='Barcelona',
+            help='Certificate Distinguished Name Country.'
+        )
+        parser.add_argument(
+            '--cert-org_name', 
+            dest='cert_org_name', 
+            default='Orchestra',
+            help='Certificate Distinguished Name Organization Name.'
+        )
+        parser.add_argument(
+            '--cert-org_unit', 
+            dest='cert_org_unit', 
+            default='DevOps',
+            help='Certificate Distinguished Name Organization Unity.'
+        )
+        parser.add_argument(
+            '--cert-email', 
+            dest='cert_email', 
+            default='orchestra@orchestra.lan',
+            help='Certificate Distinguished Name Email Address.'
+        )
+        parser.add_argument(
+            '--cert-common_name', 
+            dest='cert_common_name', 
+            default=None,
+            help='Certificate Distinguished Name Common Name.'
+        )
+        parser.add_argument(
+            '--server-name', 
+            dest='server_name', 
+            default='',
+            help='Nginx SSL certificate key.'
+        )
+        parser.add_argument(
+            '--user', 
+            dest='user', 
+            default='',
+            help='uWSGI daemon user.'
+        )
+        parser.add_argument(
+            '--group', 
+            dest='group', 
+            default='',
+            help='uWSGI daemon group.'
+        )
+        parser.add_argument(
+            '--processes', 
+            dest='processes', 
+            default=4,
+            help='uWSGI number of processes.'
+        )
+        parser.add_argument(
+            '--noinput', 
+            action='store_false', 
+            dest='interactive', 
+            default=True,
+            help='''Tells Django to NOT prompt the user for input of any kind. 
+                    You must use --username with --noinput, and must contain the 
+                    cleeryd process owner, which is the user how will perform tincd updates'''
+        )
     
     def generate_certificate(self, **options):
         override = options.get('cert_override')

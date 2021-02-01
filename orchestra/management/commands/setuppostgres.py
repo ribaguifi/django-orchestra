@@ -1,6 +1,5 @@
 import os
 import textwrap
-from optparse import make_option
 
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
@@ -11,41 +10,64 @@ from orchestra.utils.sys import run, check_root
 
 
 class Command(BaseCommand):
+    help = 'Setup PostgreSQL database.'
+
     def __init__(self, *args, **kwargs):
         super(Command, self).__init__(*args, **kwargs)
         # Get defaults from settings, if exists
         try:
-            defaults = settings.DATABASES['default']
+            self.defaults = settings.DATABASES['default']
         except (AttributeError, KeyError):
             defaults = {}
         else:
-            if defaults['ENGINE'] != 'django.db.backends.postgresql_psycopg2':
-                defaults = {}
+            if self.defaults['ENGINE'] != 'django.db.backends.postgresql_psycopg2':
+                self.defaults = {}
         
-        self.option_list = BaseCommand.option_list + (
-            make_option('--db_name', dest='db_name',
-                default=defaults.get('DB_NAME', 'orchestra'),
-                help='Specifies the database to create.'),
-            make_option('--db_user', dest='db_user',
-                default=defaults.get('DB_USER', 'orchestra'),
-                help='Specifies the database to create.'),
-            make_option('--db_password', dest='db_password',
-                default=defaults.get('PASSWORD', ''),
-                help='Specifies the database password, random if not specified.'),
-            make_option('--db_host', dest='db_host',
-                default=defaults.get('HOST', 'localhost'),
-                help='Specifies the database to create.'),
-            make_option('--db_port', dest='db_port',
-                default=defaults.get('PORT', '5432'),
-                help='Specifies the database to create.'),
-            make_option('--noinput', action='store_false', dest='interactive', default=True,
-                help='Tells Django to NOT prompt the user for input of any kind. '
-                     'You must use --username with --noinput, and must contain the '
-                     'cleeryd process owner, which is the user how will perform tincd updates'),
-            )
-    
-    option_list = BaseCommand.option_list
-    help = 'Setup PostgreSQL database.'
+    def add_arguments(self, parser):
+        parser.add_argument(
+            '--db_name', 
+            dest='db_name',
+            default=self.defaults.get('DB_NAME', 'orchestra'),
+            help='Specifies the database to create.',
+            type=str
+        )
+        parser.add_argument(
+            '--db_user', 
+            dest='db_user',
+            default=self.defaults.get('DB_USER', 'orchestra'),
+            help='Specifies the database to create.',
+            type=str
+        )
+        parser.add_argument(
+            '--db_password', 
+            dest='db_password',
+            default=self.defaults.get('PASSWORD', ''),
+            help='Specifies the database password, random if not specified.',
+            type=str
+        )
+        parser.add_argument(
+            '--db_host', 
+            dest='db_host',
+            default=self.defaults.get('HOST', 'localhost'),
+            help='Specifies the database to create.',
+            type=str
+        )
+        parser.add_argument(
+            '--db_port', 
+            dest='db_port',
+            default=self.defaults.get('PORT', '5432'),
+            help='Specifies the database to create.',
+            type=str
+        )
+        parser.add_argument(
+            '--noinput', 
+            action='store_false',
+            dest='interactive',
+            default=True,
+            help='''Tells Django to NOT prompt the user for input of any kind. 
+                 You must use --username with --noinput, and must contain the 
+                 cleeryd process owner, which is the user how will perform tincd updates'''
+        )
     
     def run_postgres(self, cmd, *args, **kwargs):
         return run('su postgres -c "psql -c \\"%s\\""' % cmd, *args, **kwargs)
@@ -82,7 +104,7 @@ class Command(BaseCommand):
                 self.stdout.write(msg % context)
             else:
                 raise CommandError("Postgres user '%(db_user)s' already exists and "
-                                   "--db_pass has not been provided." % context)
+                                   "--db_password has not been provided." % context)
         else:
             context['db_password'] = context['default_db_password']
             msg = "Created new Postgres user '%(db_user)s' with password '%(db_password)s'"
