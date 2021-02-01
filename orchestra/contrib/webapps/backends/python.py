@@ -72,7 +72,7 @@ class uWSGIPythonController(WebAppServiceMixin, ServiceController):
         return context
     
     def get_context(self, webapp):
-        context = super(PHPController, self).get_context(webapp)
+        context = super(uWSGIPythonController, self).get_context(webapp)
         options = webapp.get_options()
         context.update({
             'python_version': webapp.type_instance.get_python_version(),
