@@ -17,8 +17,8 @@ django-iban==0.3.0
 requests
 phonenumbers
 django-countries
-django-localflavor
-amqp
+django-localflavor==2.2
+amqp==1.4.9
 anyjson
 pytz
 cracklib 
@@ -37,3 +37,6 @@ dj_database_url==0.5.0
 psycopg2-binary
 python-decouple
 https://github.com/glic3rinu/passlib/archive/master.zip
+paramiko
+python_dateutil
+mysqlclient
