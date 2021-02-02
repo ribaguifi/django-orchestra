@@ -51,6 +51,10 @@ class Account(auth.AbstractBaseUser):
     
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['email']
+
+    def __init__(self, *args, **kwargs):
+        kwargs.pop('is_staff', None)
+        super().__init__(*args, **kwargs)
     
     def __str__(self):
         return self.name
