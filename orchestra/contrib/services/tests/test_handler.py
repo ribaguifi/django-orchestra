@@ -225,7 +225,7 @@ class HandlerTests(BaseTestCase):
         account = self.create_account()
         superplan = Plan.objects.create(
             name='SUPER', allow_multiple=False, is_combinable=True)
-        service.rates.create(plan=superplan, quantity=1, price=0)
+        service.rates.create(plan=superplan, quantity=0, price=0)
         service.rates.create(plan=superplan, quantity=3, price=10)
         service.rates.create(plan=superplan, quantity=4, price=9)
         service.rates.create(plan=superplan, quantity=10, price=1)
@@ -269,7 +269,7 @@ class HandlerTests(BaseTestCase):
         
         hyperplan = Plan.objects.create(
             name='HYPER', allow_multiple=False, is_combinable=False)
-        service.rates.create(plan=hyperplan, quantity=1, price=0)
+        service.rates.create(plan=hyperplan, quantity=0, price=0)
         service.rates.create(plan=hyperplan, quantity=20, price=5)
         account.plans.create(plan=hyperplan)
         results = service.get_rates(account, cache=False)
@@ -362,7 +362,7 @@ class HandlerTests(BaseTestCase):
         dupeplan = Plan.objects.create(
             name='DUPE', allow_multiple=True, is_combinable=True)
         account.plans.create(plan=dupeplan)
-        service.rates.create(plan=dupeplan, quantity=1, price=0)
+        service.rates.create(plan=dupeplan, quantity=0, price=0)
         service.rates.create(plan=dupeplan, quantity=3, price=9)
         results = service.get_rates(account, cache=False)
         results = service.rate_method(results, 30)
