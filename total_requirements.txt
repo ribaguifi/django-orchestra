@@ -24,7 +24,7 @@ Markdown==2.4
 ecdsa==0.11
 Pygments==1.6
 jsonfield==0.9.22
-python-dateutil==2.2
+python_dateutil
 requests
 phonenumbers
 amqp==1.4.9
@@ -45,7 +45,6 @@ psycopg2
 python-decouple
 https://github.com/glic3rinu/passlib/archive/master.zip
 paramiko
-python_dateutil
 mysqlclient
 orchestra-orm==0.2
 pycrypto==2.6.1
