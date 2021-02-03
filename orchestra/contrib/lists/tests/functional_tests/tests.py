@@ -150,7 +150,8 @@ class ListMixin(object):
         address_name = '%s_name' % random_ascii(10)
         domain_name = '%sdomain.lan' % random_ascii(10)
         address_domain = Domain.objects.create(name=domain_name, account=self.account)
-        self.add(name, password, admin_email, address_name=address_name, address_domain=address_domain)
+        self.add(name, password, admin_email, address_name=address_name,
+                 address_domain=address_domain)
         # Mailman doesn't support changing the address, only the domain
         self.validate_add(name, address="%s@%s" % (address_name, address_domain))
         self.delete(name)
@@ -198,45 +199,45 @@ class AdminListMixin(ListMixin):
     def setUp(self):
         super(AdminListMixin, self).setUp()
         self.admin_login()
-    
+
     @snapshot_on_error
     def add(self, name, password, admin_email, address_name=None, address_domain=None):
         url = self.live_server_url + reverse('admin:lists_list_add')
         self.selenium.get(url)
-        
+
         name_field = self.selenium.find_element_by_id('id_name')
         name_field.send_keys(name)
-        
+
         password_field = self.selenium.find_element_by_id('id_password1')
         password_field.send_keys(password)
         password_field = self.selenium.find_element_by_id('id_password2')
         password_field.send_keys(password)
-        
+
         admin_email_field = self.selenium.find_element_by_id('id_admin_email')
         admin_email_field.send_keys(admin_email)
-        
+
         if address_name:
             address_name_field = self.selenium.find_element_by_id('id_address_name')
             address_name_field.send_keys(address_name)
-            
+
             domain = Domain.objects.get(name=address_domain)
             domain_input = self.selenium.find_element_by_id('id_address_domain')
             domain_select = Select(domain_input)
             domain_select.select_by_value(str(domain.pk))
-        
+
         name_field.submit()
         self.assertNotEqual(url, self.selenium.current_url)
-    
+
     @snapshot_on_error
     def delete(self, name):
         mail_list = List.objects.get(name=name)
         self.admin_delete(mail_list)
-    
+
     @snapshot_on_error
     def change_password(self, name, password):
         mail_list = List.objects.get(name=name)
         self.admin_change_password(mail_list, password)
-    
+
     @snapshot_on_error
     def update_domain(self, name, domain_name):
         mail_list = List.objects.get(name=name)
