@@ -95,7 +95,7 @@ class BaseLiveServerTestCase(AppDependencyMixin, LiveServerTestCase):
     
     def admin_login(self):
         session = SessionStore()
-        session[SESSION_KEY] = self.account_id
+        session[SESSION_KEY] = self.account.id
         session[BACKEND_SESSION_KEY] = settings.AUTHENTICATION_BACKENDS[0]
         session.save()
         ## to set a cookie we need to first visit the domain.
