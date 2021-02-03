@@ -20,9 +20,9 @@ run = partial(run, display=False)
 
 class DomainTestMixin(object):
     MASTER_SERVER = os.environ.get('ORCHESTRA_MASTER_SERVER', 'localhost')
-    SLAVE_SERVER = os.environ.get('ORCHESTRA_SLAVE_SERVER', 'localhost')
+    SLAVE_SERVER = os.environ.get('ORCHESTRA_SLAVE_SERVER', 'localhost2')
     MASTER_SERVER_ADDR = socket.gethostbyname(MASTER_SERVER)
-    SLAVE_SERVER_ADDR = socket.gethostbyname(SLAVE_SERVER)
+    SLAVE_SERVER_ADDR = '127.0.0.2'
     
     def setUp(self):
         djsettings.DEBUG = True
