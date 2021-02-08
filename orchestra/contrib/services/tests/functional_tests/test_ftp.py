@@ -48,21 +48,21 @@ class FTPBillingTest(BaseTestCase):
         self.assertEqual(1, service.orders.count())
         bp = timezone.now().date() + relativedelta(years=1)
         bills = service.orders.bill(billing_point=bp, fixed_point=True)
-        self.assertEqual(10, bills[0].get_total())
+        self.assertEqual(10, bills[0].total)
     
     def test_ftp_account_2_year_fiexed(self):
         service = self.create_ftp_service()
         self.create_ftp()
         bp = timezone.now().date() + relativedelta(years=2)
         bills = service.orders.bill(billing_point=bp, fixed_point=True)
-        self.assertEqual(20, bills[0].get_total())
+        self.assertEqual(20, bills[0].total)
     
     def test_ftp_account_6_month_fixed(self):
         service = self.create_ftp_service()
         self.create_ftp()
         bp = timezone.now().date() + relativedelta(months=6)
         bills = service.orders.bill(billing_point=bp, fixed_point=True)
-        self.assertEqual(5, bills[0].get_total())
+        self.assertEqual(5, bills[0].total)
     
     def test_ftp_account_next_billing_point(self):
         service = self.create_ftp_service()
@@ -76,8 +76,8 @@ class FTPBillingTest(BaseTestCase):
         bills = service.orders.bill(billing_point=now, fixed_point=False)
         size = decimal.Decimal((bp - now).days)/365
         error = decimal.Decimal(0.05)
-        self.assertGreater(10*size+error*(10*size), bills[0].get_total())
-        self.assertLess(10*size-error*(10*size), bills[0].get_total())
+        self.assertGreater(10*size+error*(10*size), bills[0].total)
+        self.assertLess(10*size-error*(10*size), bills[0].total)
     
     def test_ftp_account_with_compensation(self):
         account = self.create_account()
@@ -99,4 +99,4 @@ class FTPBillingTest(BaseTestCase):
         self.assertEqual(order.cancelled_on, order.billed_until)
         order = account.orders.order_by('-id').first()
         self.assertEqual(first_bp, order.billed_until)
-        self.assertEqual(decimal.Decimal(0), bills[0].get_total())
+        self.assertEqual(decimal.Decimal(0), bills[0].total)
