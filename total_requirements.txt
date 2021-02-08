@@ -46,8 +46,8 @@ python-decouple
 https://github.com/glic3rinu/passlib/archive/master.zip
 paramiko
 mysqlclient
-orchestra-orm==0.2
 pycrypto==2.6.1
 pygobject
 six
 nose
+-e git+https://github.com/ribaguifi/orchestra-orm.git#egg=orchestra-orm
