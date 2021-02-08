@@ -85,10 +85,10 @@ class MailboxBillingTest(BaseTestCase):
         mailbox = self.create_mailbox(account=account)
         self.allocate_disk(mailbox, 10)
         bill = service.orders.bill()[0]
-        self.assertEqual(0, bill.get_total())
+        self.assertEqual(0, bill.total)
         bp = timezone.now().date() + relativedelta(years=1)
         bill = disk_service.orders.bill(billing_point=bp, fixed_point=True)[0]
-        self.assertEqual(90, bill.get_total())
+        self.assertEqual(90, bill.total)
         mailbox = self.create_mailbox(account=account)
         mailbox = self.create_mailbox(account=account)
         mailbox = self.create_mailbox(account=account)
@@ -96,7 +96,7 @@ class MailboxBillingTest(BaseTestCase):
         mailbox = self.create_mailbox(account=account)
         mailbox = self.create_mailbox(account=account)
         bill = service.orders.bill(billing_point=bp, fixed_point=True)[0]
-        self.assertEqual(120, bill.get_total())
+        self.assertEqual(120, bill.total)
     
     def test_mailbox_size_with_changes(self):
         service = self.create_mailbox_disk_service()
@@ -109,25 +109,25 @@ class MailboxBillingTest(BaseTestCase):
         
         self.allocate_disk(mailbox, 10)
         bill = service.orders.bill(**options).pop()
-        self.assertEqual(9*10, bill.get_total())
+        self.assertEqual(9*10, bill.total)
         
         with freeze_time(now+relativedelta(months=6)):
             self.allocate_disk(mailbox, 20)
             bill = service.orders.bill(**options).pop()
             total = 9*10*0.5 + 19*10*0.5
-            self.assertEqual(total, bill.get_total())
+            self.assertEqual(total, bill.total)
         
         with freeze_time(now+relativedelta(months=9)):
             self.allocate_disk(mailbox, 30)
             bill = service.orders.bill(**options).pop()
             total = 9*10*0.5 + 19*10*0.25 + 29*10*0.25
-            self.assertEqual(total, bill.get_total())
+            self.assertEqual(total, bill.total)
         
         with freeze_time(now+relativedelta(years=1)):
             self.allocate_disk(mailbox, 10)
             bill = service.orders.bill(**options).pop()
             total = 9*10*0.5 + 19*10*0.25 + 29*10*0.25
-            self.assertEqual(total, bill.get_total())
+            self.assertEqual(total, bill.total)
     
     def test_mailbox_with_recharge(self):
         service = self.create_mailbox_disk_service()
@@ -140,8 +140,12 @@ class MailboxBillingTest(BaseTestCase):
         
         self.allocate_disk(mailbox, 100)
         bill = service.orders.bill(**options).pop()
-        self.assertEqual(99*10, bill.get_total())
+        self.assertEqual(99*10, bill.total)
         
+        with freeze_time(now+relativedelta(months=6)):
+            bills = service.orders.bill(new_open=True, **options)
+            self.assertEqual([], bills)
+
         with freeze_time(now+relativedelta(months=6)):
             self.allocate_disk(mailbox, 50)
             bills = service.orders.bill(**options)
@@ -150,11 +154,8 @@ class MailboxBillingTest(BaseTestCase):
         with freeze_time(now+relativedelta(months=6)):
             self.allocate_disk(mailbox, 200)
             bill = service.orders.bill(new_open=True, **options).pop()
-            self.assertEqual((199-99)*10*0.5, bill.get_total())
+            self.assertEqual((199-99)*10*0.5, bill.total)
         
-        with freeze_time(now+relativedelta(months=6)):
-            bills = service.orders.bill(new_open=True, **options)
-            self.assertEqual([], bills)
     
     def test_mailbox_second_billing(self):
         service = self.create_mailbox_disk_service()
