@@ -77,11 +77,11 @@ class TrafficBillingTest(BaseTrafficBillingTest):
         with freeze_time(now+relativedelta(months=1)):
             bill = account.orders.bill(proforma=True)[0]
             self.report_traffic(account, 10**10*9)
-        self.assertEqual(0, bill.get_total())
+        self.assertEqual(0, bill.total)
         
         with freeze_time(now+relativedelta(months=3)):
             bill = account.orders.bill(proforma=True)[0]
-        self.assertEqual((90-10)*10, bill.get_total())
+        self.assertEqual((90-10)*10, bill.total)
     
     def test_multiple_traffics(self):
         self.create_traffic_service()
@@ -93,7 +93,7 @@ class TrafficBillingTest(BaseTrafficBillingTest):
         with freeze_time(timezone.now()+relativedelta(months=1)):
             bill1 = account1.orders.bill().pop()
             bill2 = account2.orders.bill().pop()
-        self.assertNotEqual(bill1.get_total(), bill2.get_total())
+        self.assertNotEqual(bill1.total, bill2.total)
 
 
 class TrafficPrepayBillingTest(BaseTrafficBillingTest):
@@ -139,31 +139,31 @@ class TrafficPrepayBillingTest(BaseTrafficBillingTest):
         
         self.create_prepay(10, account=account)
         bill = account.orders.bill(proforma=True)[0]
-        self.assertEqual(10*50, bill.get_total())
+        self.assertEqual(10*50, bill.total)
         
         self.report_traffic(account, 10**10)
         with freeze_time(now+relativedelta(months=1)):
             bill = account.orders.bill(proforma=True, new_open=True)[0]
-            self.assertEqual(2*10*50 + 0*10, bill.get_total())
+            self.assertEqual(2*10*50 + 0*10, bill.total)
         
         # TODO RuntimeWarning: DateTimeField MetricStorage.updated_on received a naive
         self.report_traffic(account, 10**10)
         with freeze_time(now+relativedelta(months=1)):
             bill = account.orders.bill(proforma=True, new_open=True)[0]
-        self.assertEqual(2*10*50 + 0*10, bill.get_total())
+        self.assertEqual(2*10*50 + 0*10, bill.total)
         
         self.report_traffic(account, 10**10)
         with freeze_time(now+relativedelta(months=1)):
             bill = account.orders.bill(proforma=True, new_open=True)[0]
-        self.assertEqual(2*10*50 + (30-10-10)*10, bill.get_total())
+        self.assertEqual(2*10*50 + (30-10-10)*10, bill.total)
         
         with freeze_time(now+relativedelta(months=2)):
             self.report_traffic(account, 10**11)
         with freeze_time(now+relativedelta(months=1)):
             bill = account.orders.bill(proforma=True, new_open=True)[0]
-            self.assertEqual(2*10*50 + (30-10-10)*10, bill.get_total())
+            self.assertEqual(2*10*50 + (30-10-10)*10, bill.total)
         
         with freeze_time(now+relativedelta(months=3)):
             bill = account.orders.bill(proforma=True, new_open=True)[0]
-        self.assertEqual(4*10*50 +  (30-10-10)*10 + (100-10-10)*10, bill.get_total())
+        self.assertEqual(4*10*50 +  (30-10-10)*10 + (100-10-10)*10, bill.total)
 
