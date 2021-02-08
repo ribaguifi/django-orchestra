@@ -52,7 +52,7 @@ class BaseTrafficBillingTest(BaseTestCase):
             scale='10**9',
             on_demand=True,
             # TODO
-            monitors=FTPTrafficMonitor.get_name(),
+            monitors=[FTPTrafficMonitor.get_name()],
         )
         return self.resource
     
