@@ -42,8 +42,8 @@ class JobBillingTest(BaseTestCase):
         
         self.create_job(5, account=account)
         bill = account.orders.bill()[0]
-        self.assertEqual(5*20, bill.get_total())
+        self.assertEqual(5*20, bill.total)
         
         self.create_job(100, account=account)
         bill = account.orders.bill(new_open=True)[0]
-        self.assertEqual(100*15, bill.get_total())
+        self.assertEqual(100*15, bill.total)
