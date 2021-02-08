@@ -17,7 +17,7 @@ class RouterTests(BaseTestCase):
     
     def test_get_instances(self):
         
-        class TestBackend(backends.ServiceController):
+        class ServiceBackend(backends.ServiceController):
             verbose_name = 'Route'
             models = ['routes.Route']
             
@@ -26,14 +26,14 @@ class RouterTests(BaseTestCase):
         
         choices = backends.ServiceBackend.get_choices()
         Route._meta.get_field('backend').choices = choices
-        backend = TestBackend.get_name()
+        backend = ServiceBackend.get_name()
         
         route = Route.objects.create(backend=backend, host=self.host, match='True')
-        operation = Operation(backend=TestBackend, instance=route, action='save')
+        operation = Operation(backend=ServiceBackend, instance=route, action='save')
         self.assertEqual(1, len(Route.objects.get_for_operation(operation)))
 
         route = Route.objects.create(backend=backend, host=self.host1,
-                match='route.backend == "%s"' % TestBackend.get_name())
+                match='route.backend == "%s"' % ServiceBackend.get_name())
         self.assertEqual(2, len(Route.objects.get_for_operation(operation)))
         
         route = Route.objects.create(backend=backend, host=self.host2,
