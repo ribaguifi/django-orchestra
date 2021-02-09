@@ -2,6 +2,7 @@ import os
 import smtplib
 import time
 import requests
+from unittest import skip
 from email.mime.text import MIMEText
 
 from django.conf import settings as djsettings
@@ -82,6 +83,7 @@ class ListMixin(object):
         backend = backends.MailmanController.get_name()
         Route.objects.create(backend=backend, match=True, host=server)
     
+    @skip("Skip because not exists get_auth_token in orm.api.Api")
     def test_add(self):
         name = '%s_list' % random_ascii(10)
         password = '@!?%spppP001' % random_ascii(5)
@@ -91,6 +93,7 @@ class ListMixin(object):
         self.validate_login(name, password)
         self.addCleanup(self.delete, name)
     
+    @skip("Skip because not exists get_auth_token in orm.api.Api")
     def test_add_with_address(self):
         name = '%s_list' % random_ascii(10)
         password = '@!?%spppP001' % random_ascii(5)
@@ -103,6 +106,7 @@ class ListMixin(object):
         # Mailman doesn't support changing the address, only the domain
         self.validate_add(name, address="%s@%s" % (address_name, address_domain))
     
+    @skip("Skip because not exists get_auth_token in orm.api.Api")
     def test_change_password(self):
         name = '%s_list' % random_ascii(10)
         password = '@!?%spppP001' % random_ascii(5)
@@ -114,6 +118,7 @@ class ListMixin(object):
         self.change_password(name, new_password)
         self.validate_login(name, new_password)
     
+    @skip("Skip because not exists get_auth_token in orm.api.Api")
     def test_change_domain(self):
         name = '%s_list' % random_ascii(10)
         password = '@!?%spppP001' % random_ascii(5)
@@ -129,6 +134,7 @@ class ListMixin(object):
         self.update_domain(name, domain_name)
         self.validate_add(name, address="%s@%s" % (address_name, address_domain))
     
+    @skip("Skip because not exists get_auth_token in orm.api.Api")
     def test_change_address_name(self):
         name = '%s_list' % random_ascii(10)
         password = '@!?%spppP001' % random_ascii(5)
@@ -143,6 +149,7 @@ class ListMixin(object):
         self.update_address_name(name, address_name)
         self.validate_add(name, address="%s@%s" % (address_name, address_domain))
     
+    # @skip("Skip because not exists get_auth_token in orm.api.Api")
     def test_delete(self):
         name = '%s_list' % random_ascii(10)
         password = '@!?%spppP001' % random_ascii(5)

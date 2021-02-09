@@ -1,7 +1,8 @@
 import os
 import socket
-
 import requests
+
+from unittest import skip
 
 from orchestra.contrib.domains.models import Domain, Record
 from orchestra.contrib.domains.backends import Bind9MasterDomainController
@@ -35,6 +36,7 @@ class WebsiteMixin(WebAppMixin):
         url = 'http://%s/%s' % (domain.name, self.page[0])
         self.assertEqual(self.page[2], requests.get(url).content)
     
+    @skip("Skip because not exists get_auth_token in orm.api.Api")
     def test_add(self):
         # TODO domains with "_" bad name!
         domain_name = '%sdomain.lan' % random_ascii(10)
@@ -88,6 +90,7 @@ class RESTWebsiteMixin(RESTWebAppMixin):
 
 
 class StaticRESTWebsiteTest(RESTWebsiteMixin, StaticWebAppMixin, WebsiteMixin, BaseLiveServerTestCase):
+    @skip("Skip because not exists get_auth_token in orm.api.Api")
     def test_mix_webapps(self):
         domain_name = '%sdomain.lan' % random_ascii(10)
         domain = Domain.objects.create(name=domain_name, account=self.account)
