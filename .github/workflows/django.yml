@@ -57,7 +57,10 @@ jobs:
       run: |
         # orchestra-admin startproject panel
         django-admin.py startproject panel --template=orchestra/conf/ribaguifi_template -v3
-        python panel/manage.py test orchestra --noinput -v3
+        #python panel/manage.py test orchestra --noinput -v3
+        coverage run --source='orchestra' panel/manage.py test orchestra --noinput -v3
+        coverage report
+        coverage xml
 
       env:
         SECRET_KEY: zrhnooq6)sb+0+xb)(o0rvbf5)a(vc8ncv&1&kng@3i_pmx3oy
@@ -67,4 +70,7 @@ jobs:
         POSTGRES_HOST: postgres
         POSTGRES_PORT: 5432
 
-
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v1
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
