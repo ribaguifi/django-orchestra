@@ -149,7 +149,7 @@ class ListMixin(object):
         self.update_address_name(name, address_name)
         self.validate_add(name, address="%s@%s" % (address_name, address_domain))
     
-    @skip("Skip because not exists get_auth_token in orm.api.Api")
+    # @skip("Skip because not exists get_auth_token in orm.api.Api")
     def test_delete(self):
         name = '%s_list' % random_ascii(10)
         password = '@!?%spppP001' % random_ascii(5)

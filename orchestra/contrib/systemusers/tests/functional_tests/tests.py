@@ -40,7 +40,7 @@ class SystemUserMixin(object):
     
     def add_route(self):
         master = Server.objects.create(name=self.MASTER_SERVER)
-        backend = backends.SystemUserBackend.get_name()
+        backend = backends.UNIXUserController.get_name()
         Route.objects.create(backend=backend, match=True, host=master)
     
     def save(self):
@@ -105,7 +105,7 @@ class SystemUserMixin(object):
         self.assertEqual(0, channel.recv_exit_status())
         channel.close()
     
-    @skip("Skip because not exists SystemUserBackend")
+    @skip("Skip because not exists get_auth_token in orm.api.Api")
     def test_add(self):
         username = '%s_systemuser' % random_ascii(10)
         password = '@!?%spppP001' % random_ascii(5)
@@ -113,7 +113,7 @@ class SystemUserMixin(object):
         self.addCleanup(self.delete, username)
         self.validate_user(username)
     
-    @skip("Skip because not exists SystemUserBackend")
+    @skip("Skip because not exists get_auth_token in orm.api.Api")
     def test_ftp(self):
         username = '%s_systemuser' % random_ascii(10)
         password = '@!?%spppP001' % random_ascii(5)
@@ -124,7 +124,7 @@ class SystemUserMixin(object):
         self.assertRaises(paramiko.AuthenticationException,
                 self.validate_ssh, username, password)
     
-    @skip("Skip because not exists SystemUserBackend")
+    @skip("Skip because not exists get_auth_token in orm.api.Api")
     def test_sftp(self):
         username = '%s_systemuser' % random_ascii(10)
         password = '@!?%spppP001' % random_ascii(5)
@@ -133,7 +133,7 @@ class SystemUserMixin(object):
         self.validate_sftp(username, password)
         self.assertRaises(AssertionError, self.validate_ssh, username, password)
     
-    @skip("Skip because not exists SystemUserBackend")
+    @skip("Skip because not exists get_auth_token in orm.api.Api")
     def test_ssh(self):
         username = '%s_systemuser' % random_ascii(10)
         password = '@!?%spppP001' % random_ascii(5)
@@ -141,7 +141,7 @@ class SystemUserMixin(object):
         self.addCleanup(self.delete, username)
         self.validate_ssh(username, password)
     
-    @skip("Skip because not exists SystemUserBackend")
+    @skip("Skip because not exists get_auth_token in orm.api.Api")
     def test_delete(self):
         username = '%s_systemuser' % random_ascii(10)
         password = '@!?%sppppP001' % random_ascii(5)
@@ -151,7 +151,7 @@ class SystemUserMixin(object):
         self.validate_delete(username)
         self.assertRaises(Exception, self.delete, self.account.username)
     
-    @skip("Skip because not exists SystemUserBackend")
+    @skip("Skip because not exists get_auth_token in orm.api.Api")
     def test_add_group(self):
         username = '%s_systemuser' % random_ascii(10)
         password = '@!?%spppP001' % random_ascii(5)
@@ -169,7 +169,7 @@ class SystemUserMixin(object):
         self.assertIn(username2, groups)
         self.validate_user(username)
     
-    @skip("Skip because not exists SystemUserBackend")
+    @skip("Skip because not exists get_auth_token in orm.api.Api")
     def test_disable(self):
         username = '%s_systemuser' % random_ascii(10)
         password = '@!?%spppP001' % random_ascii(5)
@@ -180,7 +180,7 @@ class SystemUserMixin(object):
         self.validate_user(username)
         self.assertRaises(ftplib.error_perm, self.validate_ftp, username, password)
     
-    @skip("Skip because not exists SystemUserBackend")
+    @skip("Skip because not exists get_auth_token in orm.api.Api")
     def test_change_password(self):
         username = '%s_systemuser' % random_ascii(10)
         password = '@!?%spppP001' % random_ascii(5)
@@ -312,7 +312,7 @@ class RESTSystemUserTest(RESTSystemUserMixin, BaseLiveServerTestCase):
 
 
 class AdminSystemUserTest(AdminSystemUserMixin, BaseLiveServerTestCase):
-    @skip("Skip because not exists SystemUserBackend")
+    @skip("Skip because not exists get_auth_token in orm.api.Api")
     @snapshot_on_error
     def test_create_account(self):
         url = self.live_server_url + reverse('admin:accounts_account_add')
@@ -348,7 +348,7 @@ class AdminSystemUserTest(AdminSystemUserMixin, BaseLiveServerTestCase):
         self.addCleanup(self.delete_account, account_username)
         self.assertEqual(0, sshr(self.MASTER_SERVER, "id %s" % account_username).exit_code)
     
-    @skip("Skip because not exists SystemUserBackend")
+    @skip("Skip because not exists get_auth_token in orm.api.Api")
     @snapshot_on_error
     def test_delete_account(self):
         home = self.account.main_systemuser.get_home()
@@ -359,7 +359,7 @@ class AdminSystemUserTest(AdminSystemUserMixin, BaseLiveServerTestCase):
         self.selenium.delete_all_cookies()
         self.admin_login()
     
-    @skip("Skip because not exists SystemUserBackend")
+    @skip("Skip because not exists get_auth_token in orm.api.Api")
     @snapshot_on_error
     def test_disable_account(self):
         username = '%s_systemuser' % random_ascii(10)

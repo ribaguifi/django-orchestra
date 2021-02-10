@@ -40,7 +40,7 @@ class MailboxMixin(object):
     
     def add_route(self):
         server = Server.objects.create(name=self.MASTER_SERVER)
-        backend = backends.PasswdVirtualUserBackend.get_name()
+        backend = backends.RoundcubeIdentityController.get_name()
         Route.objects.create(backend=backend, match=True, host=server)
         backend = backends.PostfixAddressController.get_name()
         Route.objects.create(backend=backend, match=True, host=server)
@@ -49,7 +49,6 @@ class MailboxMixin(object):
         Resource.objects.create(
             name='disk',
             content_type=ContentType.objects.get_for_model(Mailbox),
-            period=Resource.LAST,
             verbose_name='Mail quota',
             unit='MB',
             scale=10**6,
@@ -109,7 +108,7 @@ class MailboxMixin(object):
         home = Mailbox.objects.get(name=username).get_home()
         sshrun(self.MASTER_SERVER, "grep '%s' %s/Maildir/new/*" % (token, home), display=False)
     
-    @skip("Skip because not exists PasswdVirtualUserBackend")
+    @skip("Skip because not exists get_auth_token in orm.api.Api")
     def test_add(self):
         username = '%s_mailbox' % random_ascii(10)
         password = '@!?%spppP001' % random_ascii(5)
@@ -118,7 +117,7 @@ class MailboxMixin(object):
         imap = self.login_imap(username, password)
         self.validate_mailbox(username)
     
-    @skip("Skip because not exists PasswdVirtualUserBackend")
+    @skip("Skip because not exists get_auth_token in orm.api.Api")
     def test_change_password(self):
         username = '%s_systemuser' % random_ascii(10)
         password = '@!?%spppP001' % random_ascii(5)
@@ -129,7 +128,7 @@ class MailboxMixin(object):
         self.change_password(username, new_password)
         imap = self.login_imap(username, new_password)
     
-    @skip("Skip because not exists PasswdVirtualUserBackend")
+    @skip("Skip because not exists get_auth_token in orm.api.Api")
     def test_quota(self):
         username = '%s_mailbox' % random_ascii(10)
         password = '@!?%spppP001' % random_ascii(5)
@@ -144,7 +143,7 @@ class MailboxMixin(object):
         imap_quota = int(imap.getquotaroot("INBOX")[1][1][0].split(' ')[-1].split(')')[0])
         self.assertEqual(quota*1024, imap_quota)
     
-    @skip("Skip because not exists PasswdVirtualUserBackend")
+    @skip("Skip because not exists get_auth_token in orm.api.Api")
     def test_send_email(self):
         username = '%s_mailbox' % random_ascii(10)
         password = '@!?%spppP001' % random_ascii(5)
@@ -161,7 +160,7 @@ class MailboxMixin(object):
         finally:
             server.quit()
     
-    @skip("Skip because not exists PasswdVirtualUserBackend")
+    @skip("Skip because not exists get_auth_token in orm.api.Api")
     def test_address(self):
         username = '%s_mailbox' % random_ascii(10)
         password = '@!?%spppP001' % random_ascii(5)
@@ -175,7 +174,7 @@ class MailboxMixin(object):
         self.send_email("%s@%s" % (name, domain), token)
         self.validate_email(username, token)
     
-    @skip("Skip because not exists PasswdVirtualUserBackend")
+    @skip("Skip because not exists get_auth_token in orm.api.Api")
     def test_disable(self):
         username = '%s_systemuser' % random_ascii(10)
         password = '@!?%spppP001' % random_ascii(5)
@@ -186,7 +185,7 @@ class MailboxMixin(object):
         self.disable(username)
         self.assertRaises(imap.error, self.login_imap, username, password)
     
-    @skip("Skip because not exists PasswdVirtualUserBackend")
+    @skip("Skip because not exists get_auth_token in orm.api.Api")
     def test_delete(self):
         username = '%s_systemuser' % random_ascii(10)
         password = '@!?%sppppP001' % random_ascii(5)
@@ -202,7 +201,7 @@ class MailboxMixin(object):
         self.assertRaises(CommandError,
                 sshrun, self.MASTER_SERVER, 'ls %s' % home, display=False)
     
-    @skip("Skip because not exists PasswdVirtualUserBackend")
+    @skip("Skip because not exists get_auth_token in orm.api.Api")
     def test_delete_address(self):
         username = '%s_mailbox' % random_ascii(10)
         password = '@!?%spppP001' % random_ascii(5)
@@ -219,7 +218,7 @@ class MailboxMixin(object):
         self.send_email("%s@%s" % (name, domain), token)
         self.validate_email(username, token)
     
-    @skip("Skip because not exists PasswdVirtualUserBackend")
+    @skip("Skip because not exists get_auth_token in orm.api.Api")
     def test_custom_filtering(self):
         username = '%s_mailbox' % random_ascii(10)
         password = '@!?%spppP001' % random_ascii(5)

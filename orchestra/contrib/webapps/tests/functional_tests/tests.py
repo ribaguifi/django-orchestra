@@ -6,7 +6,7 @@ from unittest import skip
 from django.conf import settings as djsettings
 
 from orchestra.contrib.orchestration.models import Server, Route
-# from orchestra.contrib.systemusers.backends import SystemUserBackend
+from orchestra.contrib.systemusers.backends import UNIXUserController
 from orchestra.utils.tests import BaseLiveServerTestCase, random_ascii, snapshot_on_error, save_response_on_error
 
 from ... import backends
@@ -27,9 +27,8 @@ class WebAppMixin(object):
     
     def add_route(self):
         server, __ = Server.objects.get_or_create(name=self.MASTER_SERVER)
-        # TODO we don't have SystemUserBackend
-        # backend = SystemUserBackend.get_name()
-        # Route.objects.get_or_create(backend=backend, match=True, host=server)
+        backend = UNIXUserController.get_name()
+        Route.objects.get_or_create(backend=backend, match=True, host=server)
         backend = self.backend.get_name()
         match = 'webapp.type == "%s"' % self.type_value
         Route.objects.create(backend=backend, match=match, host=server)
