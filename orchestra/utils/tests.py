@@ -94,6 +94,7 @@ class BaseLiveServerTestCase(AppDependencyMixin, LiveServerTestCase):
         self.account = self.create_account(superuser=True)
     
     def admin_login(self):
+        # Original option
         session = SessionStore()
         session[SESSION_KEY] = self.account.id
         session[BACKEND_SESSION_KEY] = settings.AUTHENTICATION_BACKENDS[0]
@@ -105,6 +106,12 @@ class BaseLiveServerTestCase(AppDependencyMixin, LiveServerTestCase):
             value=session.session_key, #
             path='/',
         ))
+
+        # Selenium option
+        # self.selenium.get(self.live_server_url + '/admin/')
+        # self.selenium.find_element_by_id("id_username").send_keys(self.account.username)
+        # self.selenium.find_element_by_id("id_password").send_keys(self.account_password)
+        # self.selenium.find_element_by_css_selector("input[type='submit']").click()
     
     def rest_login(self):
         self.rest.login(username=self.account.username, password=self.account_password)
