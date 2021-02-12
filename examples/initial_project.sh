@@ -16,4 +16,4 @@ sudo pip3 install -e .
 
 django-admin.py startproject panel --template="orchestra/conf/ribaguifi_template"
 cp .env.example panel/.env
-python3 manage.py migrate
+python3 panel/manage.py migrate
