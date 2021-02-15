@@ -122,6 +122,10 @@ def execute(scripts, serialize=False, async=None):
         kwargs = {
             'async': is_async,
         }
+        # import pdb; pdb.set_trace()
+        from orchestra.contrib.orchestration.models import Server
+        oop = Server.objects.all()
+        server_oop = route.host
         # we clone the connection just in case we are isolated inside a transaction
         with db.clone(model=BackendLog) as handle:
             log = backend.create_log(*args, using=handle.target)
