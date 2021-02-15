@@ -22,7 +22,6 @@ docker-compose run web bash
 
 4. Run on the web docker container the first time:
 ```
-pip3 install -e /code
 su - orchestra
 bash /code/examples/init_project.sh
 ```
