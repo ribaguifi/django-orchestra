@@ -95,23 +95,23 @@ class BaseLiveServerTestCase(AppDependencyMixin, LiveServerTestCase):
 
     def admin_login(self):
         # Original option
-        session = SessionStore()
-        session[SESSION_KEY] = self.account.id
-        session[BACKEND_SESSION_KEY] = settings.AUTHENTICATION_BACKENDS[0]
-        session.save()
-        ## to set a cookie we need to first visit the domain.
-        self.selenium.get(self.live_server_url + '/admin/')
-        self.selenium.add_cookie(dict(
-            name=settings.SESSION_COOKIE_NAME,
-            value=session.session_key, #
-            path='/',
-        ))
+        # session = SessionStore()
+        # session[SESSION_KEY] = self.account.id
+        # session[BACKEND_SESSION_KEY] = settings.AUTHENTICATION_BACKENDS[0]
+        # session.save()
+        # to set a cookie we need to first visit the domain.
+        # self.selenium.get(self.live_server_url + '/admin/')
+        # self.selenium.add_cookie(dict(
+            # name=settings.SESSION_COOKIE_NAME,
+            # value=session.session_key, 
+            # path='/',
+        # ))
 
         # Selenium option
-        # self.selenium.get(self.live_server_url + '/admin/')
-        # self.selenium.find_element_by_id("id_username").send_keys(self.account.username)
-        # self.selenium.find_element_by_id("id_password").send_keys(self.account_password)
-        # self.selenium.find_element_by_css_selector("input[type='submit']").click()
+        self.selenium.get(self.live_server_url + '/admin/')
+        self.selenium.find_element_by_id("id_username").send_keys(self.account.username)
+        self.selenium.find_element_by_id("id_password").send_keys(self.account_password)
+        self.selenium.find_element_by_css_selector("input[type='submit']").click()
 
     def rest_login(self):
         self.rest.login(username=self.account.username, password=self.account_password)
