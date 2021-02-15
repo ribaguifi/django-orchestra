@@ -83,7 +83,7 @@ class ListMixin(object):
         backend = backends.MailmanController.get_name()
         Route.objects.create(backend=backend, match=True, host=server)
     
-    @skip("Skip because not exists get_auth_token in orm.api.Api")
+    # @skip("Skip because not exists get_auth_token in orm.api.Api")
     def test_add(self):
         name = '%s_list' % random_ascii(10)
         password = '@!?%spppP001' % random_ascii(5)
@@ -233,6 +233,8 @@ class AdminListMixin(ListMixin):
             domain_select.select_by_value(str(domain.pk))
 
         name_field.submit()
+        # import pdb; pdb.set_trace()
+        # oop = Server.objects.all()
         self.assertNotEqual(url, self.selenium.current_url)
 
     @snapshot_on_error
