@@ -31,8 +31,11 @@ class ListMixin(object):
     
     def setUp(self):
         super(ListMixin, self).setUp()
-        self.add_route()
         djsettings.DEBUG = True
+        djsettings.CELERY_ALWAYS_EAGER = True
+        djsettings.CELERY_TASK_ALWAYS_EAGER = True
+        # import pdb; pdb.set_trace()
+        self.add_route()
     
     def validate_add(self, name, address=None):
         sshrun(self.MASTER_SERVER, 'list_members %s' % name, display=False)
