@@ -18,6 +18,11 @@ python3 manage.py collectstatic --noinput
 sudo apt-get install -y nginx-full uwsgi uwsgi-plugin-python3
 sudo python3 manage.py setupnginx --user orchestra
 
+sudo /etc/init.d/rabbitmq-server start
+sudo pip uninstall celery
+sudo pip install celery
+sudo pip uninstall django-celery
+sudo pip install django-celery
 sudo python3 manage.py startservices
 
 
