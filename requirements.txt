@@ -2,7 +2,7 @@ Django==1.10.5
 django-fluent-dashboard==0.6.1
 django-admin-tools==0.8.0
 django-extensions==1.7.4
-django-celery==3.1.17
+django-celery==3.3.1
 celery==3.1.23
 kombu==3.0.35
 billiard==3.3.0.23
