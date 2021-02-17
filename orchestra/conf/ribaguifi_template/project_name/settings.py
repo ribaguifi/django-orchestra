@@ -218,6 +218,8 @@ djcelery.setup_loader()
 CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
 CELERY_ALWAYS_EAGER = True
 CELERY_TASK_ALWAYS_EAGER = True
+task_always_eager = True
+TASK_ALWAYS_EAGER = True
 
 
 # rest_framework
