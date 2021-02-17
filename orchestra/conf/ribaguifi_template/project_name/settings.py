@@ -216,6 +216,8 @@ FLUENT_DASHBOARD_ICON_THEME = '../orchestra/icons'
 import djcelery
 djcelery.setup_loader()
 CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
+CELERY_ALWAYS_EAGER = True
+CELERY_TASK_ALWAYS_EAGER = True
 
 
 # rest_framework
