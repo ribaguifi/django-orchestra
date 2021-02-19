@@ -43,10 +43,10 @@ function install_orchestra () {
     dev=$1
     home=$2
     repo=$3
-    
+
     if [[ $dev ]]; then
         # Install from source
-        python_path=$(python3 -c "import sys; print([path for path in sys.path if path.startswith('/usr/local/lib/python')][1]);")
+        python_path=$(python3 -c "import sys; print([path for path in sys.path if path.startswith('/usr/local/lib/python')][0]);")
         if [[ -d $python_path/orchestra ]]; then
             run sudo rm -fr $python_path/orchestra
         fi
@@ -57,7 +57,8 @@ function install_orchestra () {
             run sudo mkdir -p /usr/share/man/man7
             run sudo apt-get update
             run sudo apt-get -y install git python3-pip
-            surun "git clone $repo $home/django-orchestra" || {
+            # TODO(@slamora) remove `-b dev/github-actions` before merging to master
+            surun "git clone -b dev/github-actions $repo $home/django-orchestra" || {
                 # Finishing partial installation
                 surun "export GIT_DIR=$home/django-orchestra/.git; git pull"
             }
@@ -82,7 +83,7 @@ function setup_database () {
     dev=$1
     noinput=$2
     run sudo apt-get install -y postgresql
-    run sudo pip install psycopg2
+    run sudo pip3 install psycopg2-binary
     # Setup Database
     if [[ $dev ]]; then
         # Speeding up tests, don't do this in production!
@@ -117,50 +118,50 @@ function create_orchestra_superuser () {
 			if not Account.objects.filter(username="$user").exists():
 			    print('Creating orchestra superuser')
 			    Account.objects.create_superuser("$user", "$email", "$password")
-			
+
 			EOF
 }
 
 
 print_help () {
     cat <<- EOF
-		
+
 		${bold}NAME${normal}
 		    ${bold}deploy.sh${normal} - Deploy a django-orchestra project
-		    
+
 		${bold}SYNOPSIS${normal}
 		    ${bold}deploy.sh${normal} [--noinput=USERNAME] [--dev] [--repo=GITREPO] [--projectname=NAME]
-		    
+
 		${bold}OPTIONS${normal}
 		    ${bold}-n, --noinput=USERNAME${normal}
 		            Execute the script without any user input, an existing system USERNAME is required.
 		            requires the script to be executed as root user
-		    
+
 		    ${bold}-d, --dev${normal}
 		            Perform a deployment suitable for development:
 		                1. debug mode
 		                2. dependencies for running tests
 		                3. access to source code
-		    
+
 		    ${bold}-r, --repo=GITREPO${normal}
 		            Chose which repo use for development deployment
 		            this option requires --dev option to be selected
 		            https://github.com/glic3rinu/django-orchestra.git is used by default
-		    
+
 		    ${bold}-p, --projectname=NAME${normal}
 		            Specify a project name, this will be asked on interactive mode
 		            and name 'panel' will be used otherwise.
-		    
+
 		    ${bold}-h, --help${normal}
 		            Display this message
-		    
+
 		${bold}EXAMPLES${normal}
 		    deploy.sh
-		    
+
 		    deploy.sh --dev
-		    
+
 		    deploy.sh --dev --noinput orchestra
-		    
+
 		EOF
 }
 
@@ -169,7 +170,7 @@ function main () {
     # Input validation
     opts=$(getopt -o n:dr:h -l noinput:,dev,repo:,help -- "$@") || exit 1
     set -- $opts
-    
+
     dev=
     noinput=
     user=$(whoami)
@@ -177,7 +178,7 @@ function main () {
     brepo=
     project_name="panel"
     bproject_name=
-    
+
     while [ $# -gt 0 ]; do
         case $1 in
             -n|--noinput) user="${2:1:${#2}-2}"; noinput='--noinput'; shift ;;
@@ -193,7 +194,7 @@ function main () {
     done
     unset OPTIND
     unset opt
-    
+
     if [[ ! $noinput ]]; then
         if [[ $(whoami) == 'root' ]]; then
             echo -e "\nErr. Interactive script should run as a regular user\n" >&2
@@ -236,7 +237,7 @@ function main () {
            fi
         done
     fi
-    
+
     task=cronbeat
     if [[ ! $noinput ]]; then
         while true; do
@@ -249,10 +250,10 @@ function main () {
             esac
         done
     fi
-    
+
     home=$(eval echo ~$user)
     cd $home
-    
+
     install_orchestra "$dev" $home $repo
     if [[ ! -e $project_name ]]; then
         surun "orchestra-admin startproject $project_name"
@@ -261,11 +262,11 @@ function main () {
     fi
     cd $project_name
     setup_database "$dev" "$noinput"
-    
+
     if [[ $noinput ]]; then
         create_orchestra_superuser $user $user@localhost orchestra
     fi
-    
+
     if [[ "$task" == "celery" ]]; then
         run sudo apt-get install rabbitmq-server
         run sudo python3 -W ignore manage.py setupcelery --username $user
@@ -282,13 +283,13 @@ function main () {
     run sudo python3 -W ignore manage.py restartservices
     run sudo python3 -W ignore manage.py startservices
     surun "python3 -W ignore manage.py check --deploy"
-    
-    
+
+
     ip_addr=$(ip addr show eth0 | grep 'inet ' | sed -r "s/.*inet ([^\s]*).*/\1/" | cut -d'/' -f1)
     if [[ ! $ip_addr ]]; then
         ip_addr=127.0.0.1
     fi
-    
+
     # Configure settings file into debug mode
     if [[ $dev ]]; then
         sed -i \
@@ -298,7 +299,7 @@ function main () {
             echo "INTERNAL_IPS = ('$ip_addr',)" >> $project_name/settings.py
         fi
     fi
-    
+
     test_orchestra $user $ip_addr
 }
 
