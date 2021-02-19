@@ -21,22 +21,22 @@ function help () {
 
 function print_help () {
     cat <<- EOF
-		
+
 		${bold}NAME${normal}
 		    ${bold}orchestra-admin${normal} - Orchetsra administration script
-		
+
 		${bold}OPTIONS${normal}
 		    ${bold}install_requirements${normal}
 		        Installs Orchestra requirements using apt-get and pip
-		
+
 		    ${bold}startproject${normal}
 		        Creates a new Django-orchestra instance
-		    
+
 		    ${bold}help${normal}
 		        Displays this help text or related help page as argument
 		        for example:
 		            ${bold}orchestra-admin help startproject${normal}
-		
+
 		EOF
 }
 
@@ -73,17 +73,17 @@ export -f get_orchestra_dir
 
 function print_install_requirements_help () {
     cat <<- EOF
-		
+
 		${bold}NAME${normal}
 		    ${bold}orchetsra-admin install_requirements${normal} - Installs all Orchestra requirements using apt-get and pip
-		
+
 		${bold}OPTIONS${normal}
 		    ${bold}-t, --testing${normal}
 		        Install Orchestra normal requirements plus those needed for running functional tests
-		    
+
 		    ${bold}-h, --help${normal}
 		        Displays this help text
-		
+
 		EOF
 }
 
@@ -92,7 +92,7 @@ function install_requirements () {
     opts=$(getopt -o h,t -l help,testing -- "$@") || exit 1
     set -- $opts
     testing=false
-    
+
     while [ $# -gt 0 ]; do
         case $1 in
             -h|--help) print_deploy_help; exit 0 ;;
@@ -105,17 +105,17 @@ function install_requirements () {
     done
     unset OPTIND
     unset opt
-    
+
     check_root || true
     ORCHESTRA_PATH=$(get_orchestra_dir) || true
-    
+
     # Make sure locales are in place before installing postgres
     if [[ $({ perl --help > /dev/null; } 2>&1|grep 'locale failed') ]]; then
         run sed -i "s/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/" /etc/locale.gen
         run locale-gen
         update-locale LANG=en_US.UTF-8
     fi
-    
+
     # lxml: libxml2-dev, libxslt1-dev, zlib1g-dev
     APT="bind9utils \
          ca-certificates \
@@ -136,10 +136,10 @@ function install_requirements () {
             iceweasel \
             dnsutils"
     fi
-    
+
     run apt-get update
     run apt-get install -y $APT
-    
+
     # Install ca certificates before executing pip install
     if [[ ! -e  /usr/local/share/ca-certificates/cacert.org ]]; then
         mkdir -p /usr/local/share/ca-certificates/cacert.org
@@ -148,9 +148,9 @@ function install_requirements () {
             http://www.cacert.org/certs/class3.crt
         update-ca-certificates
     fi
-    
+
     # cracklib and lxml are excluded on the requirements.txt because they need unconvinient system dependencies
-    PIP="$(wget http://git.io/orchestra-requirements.txt -O - | tr '\n' ' ') \
+    PIP="$(wget https://raw.githubusercontent.com/ribaguifi/django-orchestra/dev/github-actions/requirements.txt -O - | tr '\n' ' ') \
         cracklib \
         lxml==3.3.5"
     if $testing; then
@@ -166,9 +166,9 @@ function install_requirements () {
             pyinotify \
             PyMySQL"
     fi
-    
+
     run pip3 install $PIP
-    
+
     # Install a more recent version of wkhtmltopdf (0.12.2) (PDF page number support)
     wkhtmltox_version=$(dpkg --list | grep wkhtmltox | awk {'print $3'})
     minor=$(echo -e "$wkhtmltox_version\n0.12.2.1" | sort -V | head -n 1)
@@ -183,30 +183,30 @@ export -f install_requirements
 
 print_startproject_help () {
     cat <<- EOF
-		
+
 		${bold}NAME${normal}
 		    ${bold}orchestra-admin startproject${normal} - Create a new Django-Orchestra instance
-		
+
 		${bold}SYNOPSIS${normal}
 		    Options: [ -h ]
-		    
+
 		${bold}OPTIONS${normal}
 		    ${bold}-h, --help${normal}
 		            This help message
-		    
+
 		${bold}EXAMPLES${normal}
 		    orchestra-admin startproject controlpanel
-		
+
 		EOF
 }
 
 
 function startproject () {
     local PROJECT_NAME="$2"; shift
-    
+
     opts=$(getopt -o h -l help -- "$@") || exit 1
     set -- $opts
-    
+
     set -- $opts
     while [ $# -gt 0 ]; do
         case $1 in
@@ -217,10 +217,10 @@ function startproject () {
         esac
         shift
     done
-    
+
     unset OPTIND
     unset opt
-    
+
     [ $(whoami) == 'root' ] && { echo -e "\nYou don't want to run this as root\n" >&2; exit 1; }
     ORCHESTRA_PATH=$(get_orchestra_dir) || { echo "Error getting orchestra dir"; exit 1; }
     if [[ ! -e $PROJECT_NAME/manage.py ]]; then
