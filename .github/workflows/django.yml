@@ -42,7 +42,7 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt-get update -qy
-        sudo apt-get -y install python3-dev libxml2 libxml2-dev libxslt-dev
+        sudo apt-get -y install python3-dev libxml2 libxml2-dev libxslt-dev bind9utils ca-certificates gettext libcrack2-dev libxml2-dev libxslt1-dev ssh-client wget xvfb zlib1g-dev git iceweasel dnsutils postgresql-contrib libgirepository1.0-dev
         python -m pip install --upgrade pip
         pip install wheel
         pip install -e .
@@ -58,11 +58,16 @@ jobs:
       run: |
         # orchestra-admin startproject panel
         django-admin.py startproject panel --template=orchestra/conf/project_template -v3
-        python panel/manage.py test orchestra --noinput -v3
+        coverage run --source='orchestra' panel/manage.py test orchestra --noinput -v3
+        coverage report
+        coverage xml
 
       env:
         DATABASE_URL: postgres://testuser:s3cretPass@localhost:5432/test_myapp
         POSTGRES_HOST: postgres
         POSTGRES_PORT: 5432
 
-
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v1
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
