@@ -120,8 +120,8 @@ DATABASES = {
         'NAME': 'test_myapp',
         'USER': 'testuser',
         'PASSWORD': 's3cretPass',
-        'HOST': 'postgres',
-        'PORT': 5432,
+        'HOST': 'localhost',
+        'PORT': '5432',
         'CONN_MAX_AGE': 60*10      # Enable persistent connections
     }
 }
