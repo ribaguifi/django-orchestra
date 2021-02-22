@@ -17,7 +17,7 @@ passlib==1.7.0
 django-iban==0.3.0
 requests
 phonenumbers
-django-countries
+django-countries==5.5
 django-localflavor
 amqp
 anyjson
