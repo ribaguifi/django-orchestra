@@ -8,3 +8,4 @@ django-nose==1.4.4
 sqlparse
 pyinotify
 PyMySQL
+psycopg2-binary
