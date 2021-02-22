@@ -116,12 +116,12 @@ WSGI_APPLICATION = '{{ project_name }}.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-        'USER': '',         # Not used with sqlite3.
-        'PASSWORD': '',     # Not used with sqlite3.
-        'HOST': '',       # Set to empty string for localhost. Not used with sqlite3.
-        'PORT': '',                # Set to empty string for default. Not used with sqlite3.
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'test_myapp',
+        'USER': 'testuser',
+        'PASSWORD': 's3cretPass',
+        'HOST': 'postgres',
+        'PORT': 5432,
         'CONN_MAX_AGE': 60*10      # Enable persistent connections
     }
 }
