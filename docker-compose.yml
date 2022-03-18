@@ -1,7 +1,7 @@
 version: "3.9"
 services:
-  web:
-    tty: true
+  orchestra:
+    tty: false
     build: .
     ports:
       - "9999:9999"
