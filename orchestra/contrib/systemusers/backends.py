@@ -70,7 +70,7 @@ class UNIXUserController(ServiceController):
             self.append(textwrap.dedent("""\
                 # Set extra permissions: %(user)s home is inside %(mainuser)s home
                 if true; then
-#                if mount | grep "^$(df %(home)s|grep '^/'|cut -d' ' -f1)\s" | grep acl > /dev/null; then
+                # if mount | grep "^$(df %(home)s|grep '^/'|cut -d' ' -f1)\s" | grep acl > /dev/null; then
                     # Account group as the owner
                     chown %(mainuser)s:%(mainuser)s '%(home)s'
                     chmod g+s '%(home)s'
@@ -459,4 +459,247 @@ class VsFTPdTraffic(ServiceMonitor):
             'object_id': user.pk,
             'username': user.username,
         }
+        return replace(context, "'", '"')
+
+
+
+# -----------------------------------------------------------------------------------------------------------------------------------------
+
+
+class UNIXUserControllerNewServers(ServiceController):
+    """
+    Basic UNIX system user/group support based on <tt>useradd</tt>, <tt>usermod</tt>, <tt>userdel</tt> and <tt>groupdel</tt>.
+    Autodetects and uses ACL if available, for better permission management.
+    """
+    verbose_name = _("UNIX user new servers")
+    model = 'systemusers.SystemUser'
+    actions = ('save', 'delete', 'set_permission', 'validate_paths_exist', 'create_link')
+    doc_settings = (settings, (
+        'SYSTEMUSERS_DEFAULT_GROUP_MEMBERS',
+        'SYSTEMUSERS_MOVE_ON_DELETE_PATH',
+        'SYSTEMUSERS_FORBIDDEN_PATHS'
+    ))
+    
+    def save(self, user):
+        context = self.get_context(user)
+        if not context['user']:
+            return
+        if not user.active:
+            self.append(textwrap.dedent("""
+                #Just disable that user, if it exists
+                if id %(user)s ; then
+                    usermod %(user)s --password '%(password)s'
+                fi
+                """) % context)
+            return        
+        if user.is_main:
+            # TODO userd add will fail if %(user)s group already exists
+            self.append(textwrap.dedent("""
+                # Update/create user state for %(user)s
+                if id %(user)s ; then
+                    usermod %(user)s --home '%(home)s/%(user)s' \\
+                        --password '%(password)s' \\
+                        --shell '%(shell)s' \\
+                        --groups '%(groups)s'
+                else
+                    useradd_code=0
+                    useradd %(user)s --home '%(home)s/%(user)s' \\
+                        --password '%(password)s' \\
+                        --shell '%(shell)s' \\
+                        --groups '%(groups)s' || useradd_code=$?
+                    if [[ $useradd_code -eq 8 ]]; then
+                        # User is logged in, kill and retry
+                        pkill -u %(user)s; sleep 2
+                        pkill -9 -u %(user)s; sleep 1
+                        useradd %(user)s --home '%(home)s/%(user)s' \\
+                            --password '%(password)s' \\
+                            --shell '%(shell)s' \\
+                            --groups '%(groups)s'
+                    elif [[ $useradd_code -ne 0 ]]; then
+                        exit $useradd_code
+                    fi
+                fi
+                mkdir -p '%(base_home)s/%(user)s'
+                chown root:%(user)s %(base_home)s
+                chmod 710 '%(base_home)s'
+                setfacl -m 'u:%(user)s:rx' %(base_home)s
+                                        
+                chown  %(user)s:%(user)s '%(base_home)s/%(user)s'
+                chmod 700  '%(base_home)s/%(user)s'
+            """) % context
+            )
+            self.append(textwrap.dedent("""\
+                ls -A /etc/skel/ | while read line; do
+                    if [[ ! -e "%(home)s/${line}" ]]; then
+                        cp -a "/etc/skel/${line}" "%(base_home)s/%(user)s/${line}" && \\
+                        chown -R %(user)s:%(user)s "%(base_home)s/%(user)s/${line}"
+                    fi
+                done
+                """) % context
+            )
+
+        for member in settings.SYSTEMUSERS_DEFAULT_GROUP_MEMBERS:
+            context['member'] = member
+            self.append('usermod -a -G %(user)s %(member)s || exit_code=$?' % context)
+        if not user.is_main:
+            self.append('usermod -a -G %(user)s %(mainuser)s || exit_code=$?' % context)
+    
+    def delete(self, user):
+        context = self.get_context(user)
+        if not context['user']:
+            return
+        self.append(textwrap.dedent("""
+            # Delete %(user)s user
+            nohup bash -c 'sleep 2 && killall -u %(user)s -s KILL' &> /dev/null &
+            killall -u %(user)s || true
+            userdel %(user)s || exit_code=$?
+            groupdel %(group)s || exit_code=$?\
+            """) % context
+        )
+        if context['deleted_home']:
+            self.append(textwrap.dedent("""\
+                # Move home into SYSTEMUSERS_MOVE_ON_DELETE_PATH, nesting if exists.
+                deleted_home="%(deleted_home)s"
+                while [[ -e "$deleted_home" ]]; do
+                    deleted_home="${deleted_home}/$(basename ${deleted_home})"
+                done
+                mv '%(base_home)s' "$deleted_home" || exit_code=$?
+                """) % context
+            )
+        else:
+            self.append("rm -fr -- '%(base_home)s'" % context)
+    
+    def grant_permissions(self, user, context):
+        context['perms'] = user.set_perm_perms
+        # Capital X adds execution permissions for directories, not files
+        context['perms_X'] = context['perms'] + 'X'
+        self.append(textwrap.dedent("""\
+            # Grant execution permissions to every parent directory
+            for access_path in %(access_paths)s; do
+                # Preserve existing ACLs
+                acl=$(getfacl -a "$access_path" | grep '^user:%(user)s:') && {
+                    perms=$(echo "$acl" | cut -d':' -f3)
+                    perms=$(echo "$perms" | cut -c 1,2)x
+                    setfacl -m u:%(user)s:$perms "$access_path"
+                } || setfacl -m u:%(user)s:--x "$access_path"
+            done
+            # Grant perms to existing files, excluding execution
+            find '%(perm_to)s' -type f %(exclude_acl)s \\
+                -exec setfacl -m u:%(user)s:%(perms)s {} \\;
+            # Grant perms to extisting directories and set defaults for future content
+            find '%(perm_to)s' -type d %(exclude_acl)s \\
+                -exec setfacl -m u:%(user)s:%(perms_X)s -m d:u:%(user)s:%(perms_X)s {} \\;
+            # Account group as the owner of new files
+            chmod g+s '%(perm_to)s'""") % context
+        )
+        if not user.is_main:
+            self.append(textwrap.dedent("""\
+                # Grant access to main user
+                find '%(perm_to)s' -type d %(exclude_acl)s \\
+                    -exec setfacl -m d:u:%(mainuser)s:rwx {} \\;\
+                """) % context
+            )
+    
+    def revoke_permissions(self, user, context):
+        revoke_perms = {
+            'rw': '',
+            'r': 'w',
+            'w': 'r',
+        }
+        context.update({
+            'perms': revoke_perms[user.set_perm_perms],
+            'option': '-x' if user.set_perm_perms == 'rw' else '-m'
+        })
+        self.append(textwrap.dedent("""\
+            # Revoke permissions
+            find '%(perm_to)s' %(exclude_acl)s \\
+                -exec setfacl %(option)s u:%(user)s:%(perms)s {} \\;\
+            """) % context
+        )
+    
+    def set_permission(self, user):
+        context = self.get_context(user)
+        context.update({
+            'perm_action': user.set_perm_action,
+            'perm_to': os.path.join(user.set_perm_base_home, user.set_perm_home_extension),
+        })
+        exclude_acl = []
+        for exclude in settings.SYSTEMUSERS_FORBIDDEN_PATHS:
+            context['exclude_acl'] = os.path.join(user.set_perm_base_home, exclude)
+            exclude_acl.append('-not -path "%(exclude_acl)s"' % context)
+        context['exclude_acl'] = ' \\\n    -a '.join(exclude_acl) if exclude_acl else ''
+        # Access paths
+        head = user.set_perm_base_home
+        relative = ''
+        access_paths = ["'%s'" % head]
+        for tail in user.set_perm_home_extension.split(os.sep)[:-1]:
+            relative = os.path.join(relative, tail)
+            for exclude in settings.SYSTEMUSERS_FORBIDDEN_PATHS:
+                if fnmatch.fnmatch(relative, exclude):
+                    break
+            else:
+                # No match
+                head = os.path.join(head, tail)
+                access_paths.append("'%s'" % head)
+        context['access_paths'] = ' '.join(access_paths)
+        
+        if user.set_perm_action == 'grant':
+            self.grant_permissions(user, context)
+        elif user.set_perm_action == 'revoke':
+            self.revoke_permissions(user, context)
+        else:
+            raise NotImplementedError()
+    
+    def create_link(self, user):
+        context = self.get_context(user)
+        context.update({
+            'link_target': user.create_link_target,
+            'link_name': user.create_link_name,
+        })
+        self.append(textwrap.dedent("""\
+            # Create link
+            su - %(user)s --shell /bin/bash << 'EOF' || exit_code=1
+                if [[ ! -e '%(link_name)s' ]]; then
+                    ln -s '%(link_target)s' '%(link_name)s'
+                else
+                    echo "%(link_name)s already exists, doing nothing." >&2
+                    exit 1
+                fi
+            EOF""") % context
+        )
+    
+    def validate_paths_exist(self, user):
+        for path in user.paths_to_validate:
+            context = {
+                'path': path,
+            }
+            self.append(textwrap.dedent("""
+                if [[ ! -e '%(path)s' ]]; then
+                    echo "%(path)s path does not exists." >&2
+                fi""") % context
+            )
+    
+    def get_groups(self, user):
+        if user.is_main:
+            groups = list(user.account.systemusers.exclude(username=user.username).values_list('username', flat=True))
+            groups.append("main-systemusers")
+            return groups
+        groups = list(user.groups.values_list('username', flat=True))
+        groups.append("webapp-systemusers")
+        return groups 
+    
+    def get_context(self, user):
+        context = {
+            'object_id': user.pk,
+            'user': user.username,
+            'group': user.username,
+            'groups': ','.join(self.get_groups(user)),
+            'password': user.password if user.active else '*%s' % user.password,
+            'shell': user.shell,
+            'mainuser': user.username if user.is_main else user.account.username,
+            'home': user.get_home(),
+            'base_home': user.get_base_home(),
+            'mainuser_home': user.main.get_home(),
+        }
+        context['deleted_home'] = settings.SYSTEMUSERS_MOVE_ON_DELETE_PATH % context
         return replace(context, "'", '"')
