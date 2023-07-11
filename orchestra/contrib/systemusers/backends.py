@@ -17,7 +17,8 @@ class UNIXUserController(ServiceController):
     """
     verbose_name = _("UNIX user")
     model = 'systemusers.SystemUser'
-    actions = ('save', 'delete', 'set_permission', 'validate_paths_exist', 'create_link')
+    # actions = ('save', 'delete', 'set_permission', 'validate_paths_exist', 'create_link')
+    actions = ('save', 'delete', 'set_permission', 'create_link')
     doc_settings = (settings, (
         'SYSTEMUSERS_DEFAULT_GROUP_MEMBERS',
         'SYSTEMUSERS_MOVE_ON_DELETE_PATH',
@@ -28,6 +29,15 @@ class UNIXUserController(ServiceController):
         context = self.get_context(user)
         if not context['user']:
             return
+        
+        if context['home'] != context['base_home']:
+            self.append(textwrap.dedent("""
+                if [[ ! -e '%(home)s' ]]; then
+                    echo "%(home)s path does not exists." >&2
+                    exit 0
+                fi""") % context
+            )
+
         if not user.active:
             self.append(textwrap.dedent("""
                 #Just disable that user, if it exists
@@ -106,6 +116,11 @@ class UNIXUserController(ServiceController):
         if not context['user']:
             return
         self.append(textwrap.dedent("""
+            if ! id %(user)s &> /dev/null; then 
+                echo "user %(user)s not exitst" >&2;
+                exit 0
+            fi
+                                    
             # Delete %(user)s user
             nohup bash -c 'sleep 2 && killall -u %(user)s -s KILL' &> /dev/null &
             killall -u %(user)s || true
@@ -473,7 +488,8 @@ class UNIXUserControllerNewServers(ServiceController):
     """
     verbose_name = _("UNIX user new servers")
     model = 'systemusers.SystemUser'
-    actions = ('save', 'delete', 'set_permission', 'validate_paths_exist', 'create_link')
+    # actions = ('save', 'delete', 'set_permission', 'validate_paths_exist', 'create_link')
+    actions = ('save', 'delete', 'set_permission', 'create_link')
     doc_settings = (settings, (
         'SYSTEMUSERS_DEFAULT_GROUP_MEMBERS',
         'SYSTEMUSERS_MOVE_ON_DELETE_PATH',
@@ -484,6 +500,7 @@ class UNIXUserControllerNewServers(ServiceController):
         context = self.get_context(user)
         if not context['user']:
             return
+
         if not user.active:
             self.append(textwrap.dedent("""
                 #Just disable that user, if it exists
@@ -496,7 +513,7 @@ class UNIXUserControllerNewServers(ServiceController):
             # TODO userd add will fail if %(user)s group already exists
             self.append(textwrap.dedent("""
                 # Update/create user state for %(user)s
-                if id %(user)s ; then
+                if id %(user)s  &> /dev/null; then
                     usermod %(user)s --home '%(home)s/%(user)s' \\
                         --password '%(password)s' \\
                         --shell '%(shell)s' \\
@@ -537,6 +554,43 @@ class UNIXUserControllerNewServers(ServiceController):
                 done
                 """) % context
             )
+        else:
+            self.append(textwrap.dedent("""
+                check_code=0
+                # Ensure no processes running as user to modify/create
+                if ps -u %(user)s &> /dev/null; then
+                    pkill -u %(user)s; sleep 3;
+                    pkill -9 -u %(user)s; sleep 2;
+                fi
+                                        
+                # Update/create user state for %(user)s
+                if id %(user)s &> /dev/null; then
+                    usermod %(user)s  \\
+                        --password '%(password)s' \\
+                        --shell '%(shell)s' \\
+                        --groups '%(groups)s' || check_code=$?
+                else
+                    useradd %(user)s --home '/%(user)s' \\
+                        --password '%(password)s' \\
+                        --shell '%(shell)s' \\
+                        --groups '%(groups)s' || check_code=$?
+                fi
+                                        
+                if [[ $check_code -ne 0 ]]; then
+                        exit check_code
+                fi
+                
+                # Ensure homedir exists and has correct perms
+                mkdir -p %(home)s 
+                chown %(user)s:%(user)s  %(home)s 
+                chmod 750 %(home)s 
+
+                # Create /chroots/$uid symlink into /home/$user.parent/webapps/
+                uid=$(id -u "%(user)s")
+                ln -n -f -s %(mainuser_home)s/webapps /chroots/$uid 
+            """) % context
+            )
+
 
         for member in settings.SYSTEMUSERS_DEFAULT_GROUP_MEMBERS:
             context['member'] = member
@@ -549,25 +603,25 @@ class UNIXUserControllerNewServers(ServiceController):
         if not context['user']:
             return
         self.append(textwrap.dedent("""
-            # Delete %(user)s user
-            nohup bash -c 'sleep 2 && killall -u %(user)s -s KILL' &> /dev/null &
-            killall -u %(user)s || true
-            userdel %(user)s || exit_code=$?
-            groupdel %(group)s || exit_code=$?\
+            if ! id %(user)s &> /dev/null; then 
+                echo "user %(user)s not exitst" >&2;
+                
+            else                                 
+                # Delete %(user)s user
+                if ps -u %(user)s &> /dev/null; then
+                    pkill -u %(user)s || true ; sleep 4;
+                    pkill -9 -u %(user)s || true ; sleep 1;
+                fi
+                                    
+                uid=$(id -u %(user)s)
+                userdel %(user)s || exit_code=$?
+                groupdel %(group)s || exit_code=$?
+                                        
+                mv %(home)s %(home)s.delete 
+                rm /chroots/$uid
+            fi
             """) % context
         )
-        if context['deleted_home']:
-            self.append(textwrap.dedent("""\
-                # Move home into SYSTEMUSERS_MOVE_ON_DELETE_PATH, nesting if exists.
-                deleted_home="%(deleted_home)s"
-                while [[ -e "$deleted_home" ]]; do
-                    deleted_home="${deleted_home}/$(basename ${deleted_home})"
-                done
-                mv '%(base_home)s' "$deleted_home" || exit_code=$?
-                """) % context
-            )
-        else:
-            self.append("rm -fr -- '%(base_home)s'" % context)
     
     def grant_permissions(self, user, context):
         context['perms'] = user.set_perm_perms
@@ -701,5 +755,5 @@ class UNIXUserControllerNewServers(ServiceController):
             'base_home': user.get_base_home(),
             'mainuser_home': user.main.get_home(),
         }
-        context['deleted_home'] = settings.SYSTEMUSERS_MOVE_ON_DELETE_PATH % context
+        # context['deleted_home'] = settings.SYSTEMUSERS_MOVE_ON_DELETE_PATH % context
         return replace(context, "'", '"')
