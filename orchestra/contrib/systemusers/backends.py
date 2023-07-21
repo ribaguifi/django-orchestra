@@ -592,37 +592,38 @@ class UNIXUserControllerNewServers(ServiceController):
             )
 
 
-        for member in settings.SYSTEMUSERS_DEFAULT_GROUP_MEMBERS:
-            context['member'] = member
-            self.append('usermod -a -G %(user)s %(member)s || exit_code=$?' % context)
-        if not user.is_main:
-            self.append('usermod -a -G %(user)s %(mainuser)s || exit_code=$?' % context)
+            for member in settings.SYSTEMUSERS_DEFAULT_GROUP_MEMBERS:
+                context['member'] = member
+                self.append('usermod -a -G %(user)s %(member)s || exit_code=$?' % context)
+
     
     def delete(self, user):
         context = self.get_context(user)
         if not context['user']:
             return
-        self.append(textwrap.dedent("""
-            if ! id %(user)s &> /dev/null; then 
-                echo "user %(user)s not exitst" >&2;
-                
-            else                                 
+        if user.is_main:
+            self.append(textwrap.dedent("""\
                 # Delete %(user)s user
-                if ps -u %(user)s &> /dev/null; then
-                    pkill -u %(user)s || true ; sleep 4;
-                    pkill -9 -u %(user)s || true ; sleep 1;
-                fi
-                                    
-                uid=$(id -u %(user)s)
+                nohup bash -c 'sleep 2 && killall -u %(user)s -s KILL' &> /dev/null &
+                killall -u %(user)s || true
                 userdel %(user)s || exit_code=$?
                 groupdel %(group)s || exit_code=$?
-                                        
-                mv %(home)s %(home)s.delete 
-                rm /chroots/$uid
-            fi
-            """) % context
-        )
+                """) % context
+            )
+            if context['deleted_home']:
+                self.append(textwrap.dedent("""\
+                    # Move home into SYSTEMUSERS_MOVE_ON_DELETE_PATH, nesting if exists.
+                    deleted_home="%(deleted_home)s"
+                    while [[ -e "$deleted_home" ]]; do
+                        deleted_home="${deleted_home}/$(basename ${deleted_home})"
+                    done
+                    mv '%(base_home)s' "$deleted_home" || exit_code=$?
+                    """) % context
+                )
+            else:
+                self.append("rm -fr -- '%(base_home)s'" % context)
     
+    # TODO: comprovar funciones que no se suelen utilizar
     def grant_permissions(self, user, context):
         context['perms'] = user.set_perm_perms
         # Capital X adds execution permissions for directories, not files
@@ -734,12 +735,12 @@ class UNIXUserControllerNewServers(ServiceController):
             )
     
     def get_groups(self, user):
+        groups = []
         if user.is_main:
             groups = list(user.account.systemusers.exclude(username=user.username).values_list('username', flat=True))
             groups.append("main-systemusers")
-            return groups
-        groups = list(user.groups.values_list('username', flat=True))
-        groups.append("webapp-systemusers")
+        # groups = list(user.groups.values_list('username', flat=True))
+        # groups.append("webapp-systemusers")
         return groups 
     
     def get_context(self, user):
