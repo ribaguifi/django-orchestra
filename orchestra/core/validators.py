@@ -177,3 +177,10 @@ def validate_phone(value, country):
         raise ValidationError(msg)
     if not phonenumbers.is_valid_number(number):
         raise ValidationError(msg)
+
+def validate_string_dir(value):
+    """
+    A single non-empty line of free-form text with no whitespace.
+    """
+    validators.RegexValidator('^[\_\-0-9a-z]+$',
+        _("Enter a valid name dir (spaceless lowercase text, number and _- )"), 'invalid')(value)

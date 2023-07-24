@@ -7,6 +7,13 @@ _names = ('user', 'username')
 _backend_names = _names + ('group', 'shell', 'mainuser', 'home', 'base_home')
 
 
+WEBAPPUSERS_SHELLS = Setting('SYSTEMUSERS_SHELLS',
+    (
+        ('/dev/null', _("No shell, SFTP only")),
+        ('/bin/bash', "/bin/bash"),
+    ),
+)
+
 SYSTEMUSERS_SHELLS = Setting('SYSTEMUSERS_SHELLS',
     (
         ('/dev/null', _("No shell, FTP only")),

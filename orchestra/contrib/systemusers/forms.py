@@ -6,6 +6,7 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
 from orchestra.forms import UserCreationForm, UserChangeForm
+from orchestra.contrib.webapps.settings import WEBAPP_NEW_SERVERS
 
 from . import settings
 from .models import SystemUser
@@ -162,3 +163,27 @@ class PermissionForm(LinkForm):
             ('r', _("Read only")),
             ('w', _("Write only"))
         ))
+
+# ----------------------------
+
+
+class WebappUserFormMixin(object):
+    
+    def __init__(self, *args, **kwargs):
+        super(WebappUserFormMixin, self).__init__(*args, **kwargs)
+    
+    def clean(self):
+        if not self.instance.pk:
+            server = self.cleaned_data.get('target_server')
+            if server:
+                if server.name not in WEBAPP_NEW_SERVERS:
+                    self.add_error("target_server", _(f"{server} does not belong to the new servers"))
+        return self.cleaned_data
+
+class WebappUserCreationForm(WebappUserFormMixin, UserCreationForm):
+    pass
+
+
+class WebappUserChangeForm(WebappUserFormMixin, UserChangeForm):
+    pass
+

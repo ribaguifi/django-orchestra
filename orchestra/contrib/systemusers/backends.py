@@ -554,44 +554,7 @@ class UNIXUserControllerNewServers(ServiceController):
                 done
                 """) % context
             )
-        else:
-            self.append(textwrap.dedent("""
-                check_code=0
-                # Ensure no processes running as user to modify/create
-                if ps -u %(user)s &> /dev/null; then
-                    pkill -u %(user)s; sleep 3;
-                    pkill -9 -u %(user)s; sleep 2;
-                fi
-                                        
-                # Update/create user state for %(user)s
-                if id %(user)s &> /dev/null; then
-                    usermod %(user)s  \\
-                        --password '%(password)s' \\
-                        --shell '%(shell)s' \\
-                        --groups '%(groups)s' || check_code=$?
-                else
-                    useradd %(user)s --home '/%(user)s' \\
-                        --password '%(password)s' \\
-                        --shell '%(shell)s' \\
-                        --groups '%(groups)s' || check_code=$?
-                fi
-                                        
-                if [[ $check_code -ne 0 ]]; then
-                        exit check_code
-                fi
-                
-                # Ensure homedir exists and has correct perms
-                mkdir -p %(home)s 
-                chown %(user)s:%(user)s  %(home)s 
-                chmod 750 %(home)s 
-
-                # Create /chroots/$uid symlink into /home/$user.parent/webapps/
-                uid=$(id -u "%(user)s")
-                ln -n -f -s %(mainuser_home)s/webapps /chroots/$uid 
-            """) % context
-            )
-
-
+            
             for member in settings.SYSTEMUSERS_DEFAULT_GROUP_MEMBERS:
                 context['member'] = member
                 self.append('usermod -a -G %(user)s %(member)s || exit_code=$?' % context)
@@ -739,8 +702,6 @@ class UNIXUserControllerNewServers(ServiceController):
         if user.is_main:
             groups = list(user.account.systemusers.exclude(username=user.username).values_list('username', flat=True))
             groups.append("main-systemusers")
-        # groups = list(user.groups.values_list('username', flat=True))
-        # groups.append("webapp-systemusers")
         return groups 
     
     def get_context(self, user):
@@ -756,5 +717,116 @@ class UNIXUserControllerNewServers(ServiceController):
             'base_home': user.get_base_home(),
             'mainuser_home': user.main.get_home(),
         }
-        # context['deleted_home'] = settings.SYSTEMUSERS_MOVE_ON_DELETE_PATH % context
+        context['deleted_home'] = settings.SYSTEMUSERS_MOVE_ON_DELETE_PATH % context
+        return replace(context, "'", '"')
+
+
+
+
+class WebappUserController(ServiceController):
+    """
+    Basic UNIX system user/group support based on <tt>useradd</tt>, <tt>usermod</tt>, <tt>userdel</tt> and <tt>groupdel</tt>.
+    Autodetects and uses ACL if available, for better permission management.
+    """
+    verbose_name = _("SFTP Webapp user")
+    model = 'systemusers.WebappUsers'
+    actions = ('save', 'delete',)
+    doc_settings = (settings, (
+        'SYSTEMUSERS_DEFAULT_GROUP_MEMBERS',
+        'SYSTEMUSERS_MOVE_ON_DELETE_PATH',
+        'SYSTEMUSERS_FORBIDDEN_PATHS'
+    ))
+    
+    def save(self, user):
+        context = self.get_context(user)
+        if not context['user']:
+            return
+
+        self.append(textwrap.dedent("""
+            # Update/create user state for %(user)s
+            if id %(user)s  &> /dev/null; then
+                usermod %(user)s --home '/%(home)s' \\
+                    --password '%(password)s' \\
+                    --shell '%(shell)s' \\
+                    --groups '%(groups)s'
+            else
+                useradd_code=0
+                useradd %(user)s --home '/%(home)s' \\
+                    --password '%(password)s' \\
+                    --shell '%(shell)s' \\
+                    --groups '%(groups)s' || useradd_code=$?
+                if [[ $useradd_code -eq 8 ]]; then
+                    # User is logged in, kill and retry
+                    pkill -u %(user)s; sleep 2
+                    pkill -9 -u %(user)s; sleep 1
+                    useradd %(user)s --home '/%(home)s' \\
+                        --password '%(password)s' \\
+                        --shell '%(shell)s' \\
+                        --groups '%(groups)s'
+                elif [[ $useradd_code -ne 0 ]]; then
+                    exit $useradd_code
+                fi
+            fi
+            usermod -aG %(user)s %(parent)s
+                                    
+            # Ensure homedir exists and has correct perms
+            mkdir -p '%(webapp_path)s'  || exit_code=1
+            chown %(user)s:%(user)s %(webapp_path)s  || exit_code=1
+            chmod 750 '%(webapp_path)s'  || exit_code=1
+            
+            # Create /chroots/$uid symlink into /home/$user.parent/webapps/
+            uid=$(id -u "%(user)s")
+            ln -n -f -s %(base_home)s/webapps /chroots/$uid  || exit_code=1
+        """) % context
+        )
+
+    
+    def delete(self, user):
+        context = self.get_context(user)
+        if not context['user']:
+            return
+
+        self.append(textwrap.dedent("""\
+            # Delete %(user)s user
+            uid=$(id -u "%(user)s")
+                                    
+            nohup bash -c 'sleep 2 && killall -u %(user)s -s KILL' &> /dev/null &
+            killall -u %(user)s || true
+            userdel %(user)s || exit_code=$?
+            groupdel %(group)s || exit_code=$?
+                                    
+            # Delete /chroots/$uid symlink into /home/$user.parent/webapps/
+            rm /chroots/$uid  
+            """) % context
+        )
+        if context['deleted_home']:
+            self.append(textwrap.dedent("""\
+                # Move home into SYSTEMUSERS_MOVE_ON_DELETE_PATH, nesting if exists.
+                mv '%(webapp_path)s' '%(deleted_home)s' || exit_code=$?
+                """) % context
+            )
+        else:
+            self.append("rm -fr -- '%(webapp_path)s'" % context)
+    
+    
+    def get_groups(self, user):
+        groups = []
+        groups = list(user.account.systemusers.exclude(username=user.username).values_list('username', flat=True))
+        groups.append("webapp-systemusers")
+        return groups 
+    
+    def get_context(self, user):
+        context = {
+            'object_id': user.pk,
+            'user': user.username,
+            'group': user.username,
+            'groups': ','.join(self.get_groups(user)),
+            'password': user.password, #if user.active else '*%s' % user.password,
+            'shell': user.shell,
+            'home': user.home,
+            'base_home': user.get_base_home(),
+            'webapp_path': os.path.normpath(user.get_base_home() + "/webapps/" + user.home),
+            'parent': user.get_parent(), 
+        }
+        context['deleted_home'] = context['webapp_path'] + ".delete"
         return replace(context, "'", '"')

@@ -282,3 +282,11 @@ WEBAPPS_CMS_CACHE_DIR = Setting('WEBAPPS_CMS_CACHE_DIR',
     '/tmp/orchestra_cms_cache',
     help_text="Server-side cache directori for CMS tarballs.",
 )
+
+WEBAPP_NEW_SERVERS = Setting('WEBAPP_NEW_SERVERS',
+    (
+        'bookworm',
+        'web-11.pangea.lan',
+        'web-12.pangea.lan',
+    )
+)

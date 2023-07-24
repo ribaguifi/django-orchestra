@@ -136,3 +136,43 @@ class SystemUser(models.Model):
 
     def get_home(self):
         return os.path.normpath(os.path.join(self.home, self.directory))
+
+
+
+# ------------------
+
+class WebappUsers(models.Model):
+    """
+    System users for webapp
+    Username max_length determined by LINUX system user/group lentgh: 32
+    """
+    username = models.CharField(_("username"), max_length=32, unique=True,
+        help_text=_("Required. 32 characters or fewer. Letters, digits and ./-/_ only."),
+        validators=[validators.validate_username])
+    password = models.CharField(_("password"), max_length=128)
+    account = models.ForeignKey('accounts.Account', verbose_name=_("Account"),
+        related_name='accounts', on_delete=models.CASCADE)
+    home = models.CharField(_("WebappDir"), max_length=256, blank=True,
+        help_text=_("name dir webapp /home/&lt;main&gt;/webapps/&lt;DirName&gt;"),
+        validators=[validators.validate_string_dir])
+    shell = models.CharField(_("shell"), max_length=32, choices=settings.WEBAPPUSERS_SHELLS,
+        default='/dev/null')
+    target_server = models.ForeignKey('orchestration.Server', on_delete=models.CASCADE,
+        verbose_name=_("Server"))
+
+    class Meta:
+        unique_together = ('username', 'target_server')
+        verbose_name = 'WebAppUser'
+        verbose_name_plural = 'WebappUsers'
+
+    def __str__(self):
+        return self.username
+    
+    def set_password(self, raw_password):
+        self.password = make_password(raw_password)
+    
+    def get_base_home(self):
+        return os.path.normpath(self.account.main_systemuser.home)
+    
+    def get_parent(self):
+        return self.account.main_systemuser

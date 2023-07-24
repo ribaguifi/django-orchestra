@@ -9,8 +9,8 @@ from orchestra.contrib.accounts.filters import IsActiveListFilter
 
 from .actions import set_permission, create_link
 from .filters import IsMainListFilter
-from .forms import SystemUserCreationForm, SystemUserChangeForm
-from .models import SystemUser
+from .forms import SystemUserCreationForm, SystemUserChangeForm, WebappUserChangeForm, WebappUserCreationForm
+from .models import SystemUser, WebappUsers
 
 
 class SystemUserAdmin(ChangePasswordAdminMixin, SelectAccountAdminMixin, ExtendedModelAdmin):
@@ -78,4 +78,34 @@ class SystemUserAdmin(ChangePasswordAdminMixin, SelectAccountAdminMixin, Extende
         return super(SystemUserAdmin, self).has_delete_permission(request, obj)
 
 
+
+class WebappUserAdmin(ChangePasswordAdminMixin, SelectAccountAdminMixin, ExtendedModelAdmin):
+    list_display = (
+        'username', 'account_link', 'shell', 'home', 'target_server'
+    )
+    fieldsets = (
+        (None, {
+            'fields': ('account_link', 'username', 'password', )
+        }),
+        (_("System"), {
+            'fields': ('shell', 'home', 'target_server'),
+        }),
+    )
+    add_fieldsets = (
+        (None, {
+            'fields': ('account_link', 'username', 'password1', 'password2')
+        }),
+        (_("System"), {
+            'fields': ('shell', 'home', 'target_server'),
+        }),
+    )
+    search_fields = ('username', 'account__username')
+    readonly_fields = ('account_link',)
+    change_readonly_fields = ('username', 'home', 'target_server')
+    add_form = WebappUserCreationForm
+    form = WebappUserChangeForm
+    ordering = ('-id',)
+    
+
 admin.site.register(SystemUser, SystemUserAdmin)
+admin.site.register(WebappUsers, WebappUserAdmin)
