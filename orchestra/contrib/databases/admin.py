@@ -49,8 +49,6 @@ class DatabaseAdmin(SelectAccountAdminMixin, ExtendedModelAdmin):
     add_form = DatabaseCreationForm
     readonly_fields = ('account_link', 'display_users',)
     filter_horizontal = ['users']
-    # filter_by_account_fields = ('users',)
-    # list_prefetch_related = ('users',)
     actions = (list_accounts, save_selected)
 
     @mark_safe

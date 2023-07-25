@@ -26,6 +26,8 @@ class WebApp(models.Model):
     target_server = models.ForeignKey('orchestration.Server', on_delete=models.CASCADE,
         verbose_name=_("Target Server"), related_name='webapps')
     comments = models.TextField(default="", blank=True)
+    sftpuser = models.ForeignKey('systemusers.WebappUsers', blank=True, null=True,  on_delete=models.CASCADE ,
+        verbose_name=_("SFTP user"), help_text=_("This option is only required for the new webservers."))
 
     # CMS webapps usually need a database and dbuser, with these virtual fields we tell the ORM to delete them
     databases = VirtualDatabaseRelation('databases.Database')

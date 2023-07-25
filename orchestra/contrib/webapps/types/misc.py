@@ -2,12 +2,62 @@ import os
 
 from django import forms
 from django.utils.translation import gettext_lazy as _
+from django.core.exceptions import ValidationError
 from rest_framework import serializers
 
+from orchestra.core import validators
+from orchestra.plugins.forms import PluginDataForm
+from orchestra.utils.python import random_ascii
+
 from ..options import AppOption
+from ..settings import WEBAPP_NEW_SERVERS
 
 from . import AppType
 from .php import PHPApp, PHPAppForm, PHPAppSerializer
+
+
+class StaticForm(PluginDataForm):
+    username = forms.CharField(label=_("Username"), max_length=16,
+        required=False, validators=[validators.validate_name],
+        help_text=_("Required. 16 characters or fewer. Letters, digits and "
+                    "@/./+/-/_ only."),
+        error_messages={
+            'invalid': _("This value may contain 16 characters or fewer, only letters, numbers and "
+                         "@/./+/-/_ characters.")})
+    password1 = forms.CharField(label=_("Password"), required=False,
+        widget=forms.PasswordInput(attrs={'autocomplete': 'off'}),
+        validators=[validators.validate_password],
+        help_text=_("Suggestion: %s") % random_ascii(15))
+    password2 = forms.CharField(label=_("Password confirmation"), required=False,
+        widget=forms.PasswordInput,
+        help_text=_("Enter the same password as above, for verification."))
+
+
+    def __init__(self, *args, **kwargs):
+        super(StaticForm, self).__init__(*args, **kwargs)
+        if self.instance.id is None:
+            self.fields['sftpuser'].widget = forms.HiddenInput()
+        else:
+            self.fields['username'].widget = forms.HiddenInput()
+            self.fields['password1'].widget = forms.HiddenInput()
+            self.fields['password2'].widget = forms.HiddenInput()
+
+    def clean(self):
+        webapp_server = self.cleaned_data.get("target_server")
+        sftpuser = self.cleaned_data.get('sftpuser')
+        if webapp_server is None:
+            self.add_error("target_server", _("choice some target_server"))
+        else:
+            if webapp_server.name in WEBAPP_NEW_SERVERS and sftpuser == None:
+                self.add_error("sftpuser", _("SFTP user is required by new webservers"))
+
+    def clean_password2(self):
+        password1 = self.cleaned_data.get("password1")
+        password2 = self.cleaned_data.get("password2")
+        if password1 and password2 and password1 != password2:
+            msg = _("The two password fields didn't match.")
+            raise ValidationError(msg)
+        return password2
 
 
 class StaticApp(AppType):
@@ -17,7 +67,8 @@ class StaticApp(AppType):
                   "Apache2 will be used to serve static content and execute CGI files.")
     icon = 'orchestra/icons/apps/Static.png'
     option_groups = (AppOption.FILESYSTEM,)
-    
+    form = StaticForm
+
     def get_directive(self):
         return ('static', self.instance.get_path())
 
