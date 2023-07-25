@@ -4,11 +4,14 @@ from django.urls import reverse
 from django.utils.encoding import force_str
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext, gettext_lazy as _
+from django.shortcuts import resolve_url
+from django.contrib.admin.templatetags.admin_urls import admin_urlname    
 
 from orchestra.admin import ExtendedModelAdmin
 from orchestra.admin.utils import admin_link, get_modeladmin
 from orchestra.contrib.accounts.actions import list_accounts
 from orchestra.contrib.accounts.admin import AccountAdminMixin
+from orchestra.contrib.systemusers.models import WebappUsers
 from orchestra.forms.widgets import DynamicHelpTextSelect
 from orchestra.plugins.admin import SelectPluginAdminMixin, display_plugin_field
 from orchestra.utils.html import get_on_site_link
@@ -52,12 +55,12 @@ class WebAppOptionInline(admin.TabularInline):
 
 class WebAppAdmin(SelectPluginAdminMixin, AccountAdminMixin, ExtendedModelAdmin):
     list_display = (
-        'name', 'display_type', 'display_detail', 'display_websites', 'account_link'
+        'name', 'display_type', 'display_detail', 'display_websites', 'account_link', 'target_server', 
     )
     list_filter = ('type', HasWebsiteListFilter, DetailListFilter)
     inlines = [WebAppOptionInline]
     readonly_fields = ('account_link',)
-    change_readonly_fields = ('name', 'type', 'display_websites', 'sftpuser', 'target_server')
+    change_readonly_fields = ('name', 'type', 'display_websites', 'display_sftpuser', 'target_server',)
     search_fields = ('name', 'account__username', 'data', 'website__domains__name')
     list_prefetch_related = ('content_set__website', 'content_set__website__domains')
     plugin = AppType
@@ -67,6 +70,15 @@ class WebAppAdmin(SelectPluginAdminMixin, AccountAdminMixin, ExtendedModelAdmin)
 
     display_type = display_plugin_field('type')
 
+    def display_sftpuser(self, obj):
+        salida = ""
+        if obj.sftpuser is None:
+            salida = None
+        else:
+            url = resolve_url(admin_urlname(WebappUsers._meta, 'change'), obj.sftpuser.id)
+            salida += f'<a href="{url}">{obj.sftpuser}</a> <br />'
+        return mark_safe(salida)
+    display_sftpuser.short_description = _("user sftp")
 
     @mark_safe
     def display_websites(self, webapp):
@@ -94,5 +106,20 @@ class WebAppAdmin(SelectPluginAdminMixin, AccountAdminMixin, ExtendedModelAdmin)
             return mark_safe("<span style='color:red;'>Not available</span>")
     display_detail.short_description = _("detail")
 
+
+    def save_model(self, request, obj, form, change):
+        if not change:
+            user = form.cleaned_data['username']
+            if user:
+                user = WebappUsers(
+                    username=form.cleaned_data['username'],
+                    account_id=obj.account.pk,
+                    target_server=form.cleaned_data['target_server'],
+                    home=form.cleaned_data['name']
+                )
+                user.set_password(form.cleaned_data["password1"])
+                user.save()
+                obj.sftpuser = user
+        super(WebAppAdmin, self).save_model(request, obj, form, change)
 
 admin.site.register(WebApp, WebAppAdmin)

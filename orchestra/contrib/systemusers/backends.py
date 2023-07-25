@@ -766,6 +766,7 @@ class WebappUserController(ServiceController):
                 elif [[ $useradd_code -ne 0 ]]; then
                     exit $useradd_code
                 fi
+                usermod -aG %(user)s www-data
             fi
             usermod -aG %(user)s %(parent)s
                                     
@@ -828,5 +829,5 @@ class WebappUserController(ServiceController):
             'webapp_path': os.path.normpath(user.get_base_home() + "/webapps/" + user.home),
             'parent': user.get_parent(), 
         }
-        context['deleted_home'] = context['webapp_path'] + ".delete"
+        context['deleted_home'] = context['webapp_path'] + ".deleted"
         return replace(context, "'", '"')

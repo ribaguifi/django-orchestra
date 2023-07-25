@@ -18,18 +18,13 @@ class StaticController(WebAppServiceMixin, ServiceController):
         if context.get('target_server').name in WEBAPP_NEW_SERVERS:
             self.check_webapp_dir(context)
             self.set_under_construction(context)
-            # TODO: crea el usuario sftp
-            # webapp.name = webapp.sftpuser.directory.replace("webapps/", "")
-            # webapp.save()
-            
         else:
             self.create_webapp_dir(context)
             self.set_under_construction(context)
-    
+
     def delete(self, webapp):
         context = self.get_context(webapp)
-        if context.get('target_server').name not in WEBAPP_NEW_SERVERS:
-            self.delete_webapp_dir(context)
+        if context.get('target_server').name in WEBAPP_NEW_SERVERS:
+            webapp.sftpuser.delete()
         else:
-            # TODO: elimina el usuario sftp
-            pass
+            self.delete_webapp_dir(context)

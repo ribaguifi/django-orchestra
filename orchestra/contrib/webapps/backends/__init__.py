@@ -13,7 +13,18 @@ class WebAppServiceMixin(object):
     doc_settings = (settings,
         ('WEBAPPS_UNDER_CONSTRUCTION_PATH', 'WEBAPPS_MOVE_ON_DELETE_PATH',)
     )
-    
+    def check_webapp_dir(self, context):
+        self.append(textwrap.dedent("""
+            # Create webapp dir
+            CREATED=0
+            if [[ ! -e %(app_path)s ]]; then
+                mkdir -p %(app_path)s
+                CREATED=1
+            elif [[ -z $( ls -A %(app_path)s ) ]]; then
+                CREATED=1
+            fi""") % context
+        )
+
     def create_webapp_dir(self, context):
         self.append(textwrap.dedent("""
             # Create webapp dir
@@ -57,14 +68,15 @@ class WebAppServiceMixin(object):
     def get_context(self, webapp):
         context = webapp.type_instance.get_directive_context()
         context.update({
-            'user': webapp.get_username(),
-            'group': webapp.get_groupname(),
+            'user': webapp.sftpuser.username if webapp.target_server.name in settings.WEBAPP_NEW_SERVERS else webapp.get_username(),
+            'group': webapp.sftpuser.username if webapp.target_server.name in settings.WEBAPP_NEW_SERVERS else webapp.get_groupname(),
             'app_name': webapp.name,
             'app_type': webapp.type,
             'app_path': webapp.get_path(),
             'banner': self.get_banner(),
             'under_construction_path': settings.WEBAPPS_UNDER_CONSTRUCTION_PATH,
             'is_mounted': webapp.content_set.exists(),
+            'target_server': webapp.target_server,
         })
         context['deleted_app_path'] = settings.WEBAPPS_MOVE_ON_DELETE_PATH % context
         return context

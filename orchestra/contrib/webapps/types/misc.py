@@ -35,21 +35,21 @@ class StaticForm(PluginDataForm):
 
     def __init__(self, *args, **kwargs):
         super(StaticForm, self).__init__(*args, **kwargs)
-        if self.instance.id is None:
-            self.fields['sftpuser'].widget = forms.HiddenInput()
-        else:
+        self.fields['sftpuser'].widget = forms.HiddenInput()
+        if self.instance.id is not None:
             self.fields['username'].widget = forms.HiddenInput()
             self.fields['password1'].widget = forms.HiddenInput()
             self.fields['password2'].widget = forms.HiddenInput()
 
     def clean(self):
-        webapp_server = self.cleaned_data.get("target_server")
-        sftpuser = self.cleaned_data.get('sftpuser')
-        if webapp_server is None:
-            self.add_error("target_server", _("choice some target_server"))
-        else:
-            if webapp_server.name in WEBAPP_NEW_SERVERS and sftpuser == None:
-                self.add_error("sftpuser", _("SFTP user is required by new webservers"))
+        if not self.instance.id:
+            webapp_server = self.cleaned_data.get("target_server")
+            username = self.cleaned_data.get('username')
+            if webapp_server is None:
+                self.add_error("target_server", _("choice some target_server"))
+            else:
+                if webapp_server.name in WEBAPP_NEW_SERVERS and username == '':
+                    self.add_error("username", _("SFTP user is required by new webservers"))
 
     def clean_password2(self):
         password1 = self.cleaned_data.get("password1")

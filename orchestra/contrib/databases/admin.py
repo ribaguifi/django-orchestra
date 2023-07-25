@@ -20,7 +20,7 @@ def save_selected(modeladmin, request, queryset):
 save_selected.short_description = "Re-save selected objects"
 
 class DatabaseAdmin(SelectAccountAdminMixin, ExtendedModelAdmin):
-    list_display = ('name', 'type', 'display_users', 'account_link')
+    list_display = ('name', 'type', 'target_server', 'display_users', 'account_link')
     list_filter = ('type', HasUserListFilter)
     search_fields = ('name', 'account__username')
     change_readonly_fields = ('name', 'type', 'target_server')
