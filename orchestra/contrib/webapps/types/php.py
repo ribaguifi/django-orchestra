@@ -5,9 +5,10 @@ from django import forms
 from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 
-from orchestra.plugins.forms import PluginDataForm
+from orchestra.plugins.forms import PluginDataForm, ExtendedPluginDataForm
 from orchestra.utils.functional import cached
-from orchestra.utils.python import OrderedSet
+from orchestra.utils.python import OrderedSet, random_ascii
+from orchestra.settings import NEW_SERVERS
 
 from .. import settings, utils
 from ..options import AppOption
@@ -19,13 +20,23 @@ help_message = _("Version of PHP used to execute this webapp. <br>"
     "Changing the PHP version may result in application malfunction, "
     "make sure that everything continue to work as expected.")
 
-
-class PHPAppForm(PluginDataForm):
+class PHPAppForm(ExtendedPluginDataForm):
     php_version = forms.ChoiceField(label=_("PHP version"),
         choices=settings.WEBAPPS_PHP_VERSIONS,
         initial=settings.WEBAPPS_DEFAULT_PHP_VERSION,
         help_text=help_message)
-
+    
+    # def clean_php_version(self):
+    #     # TODO: restriccin PHP diferentes servers
+    #     if not self.instance.id:
+    #         webapp_server = self.cleaned_data.get("target_server")
+    #         php_version = self.cleaned_data.get('php_version')
+    #         if webapp_server is None:
+    #             pass
+    #         else:
+    #             if webapp_server.name in NEW_SERVERS and not username:
+    #                 self.add_error("php_version", _(f"Server {webapp_server} not allow {php_version}"))
+    
 
 class PHPAppSerializer(serializers.Serializer):
     php_version = serializers.ChoiceField(label=_("PHP version"),

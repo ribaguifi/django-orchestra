@@ -90,3 +90,11 @@ ORCHESTRA_SSH_CONTROL_PATH = Setting('ORCHESTRA_SSH_CONTROL_PATH',
     '~/.ssh/orchestra-%r-%h-%p',
     help_text='Location for the control socket used by the multiplexed sessions, used for SSH connection reuse.'
 )
+
+NEW_SERVERS = Setting('NEW_SERVERS',
+    (
+        'bookworm',
+        'web-11.pangea.lan',
+        'web-12.pangea.lan',
+    )
+)

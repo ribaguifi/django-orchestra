@@ -33,7 +33,7 @@ WEBAPPS_FPM_DEFAULT_MAX_CHILDREN = Setting('WEBAPPS_FPM_DEFAULT_MAX_CHILDREN',
 
 
 WEBAPPS_PHPFPM_POOL_PATH = Setting('WEBAPPS_PHPFPM_POOL_PATH',
-    '/etc/php%(php_version_number)s/fpm/pool.d/%(user)s-%(app_name)s.conf',
+    '/etc/php/%(php_version_number)s/fpm/pool.d/%(user)s-%(app_name)s.conf',
     help_text="Available fromat names: <tt>%s</tt>" % ', '.join(_php_names),
     validators=[Setting.string_format_validator(_php_names)],
 )
@@ -283,10 +283,3 @@ WEBAPPS_CMS_CACHE_DIR = Setting('WEBAPPS_CMS_CACHE_DIR',
     help_text="Server-side cache directori for CMS tarballs.",
 )
 
-WEBAPP_NEW_SERVERS = Setting('WEBAPP_NEW_SERVERS',
-    (
-        'bookworm',
-        'web-11.pangea.lan',
-        'web-12.pangea.lan',
-    )
-)

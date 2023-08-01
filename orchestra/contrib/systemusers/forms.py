@@ -6,7 +6,7 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
 from orchestra.forms import UserCreationForm, UserChangeForm
-from orchestra.contrib.webapps.settings import WEBAPP_NEW_SERVERS
+from orchestra.settings import NEW_SERVERS
 
 from . import settings
 from .models import SystemUser
@@ -176,7 +176,7 @@ class WebappUserFormMixin(object):
         if not self.instance.pk:
             server = self.cleaned_data.get('target_server')
             if server:
-                if server.name not in WEBAPP_NEW_SERVERS:
+                if server.name not in NEW_SERVERS:
                     self.add_error("target_server", _(f"{server} does not belong to the new servers"))
         return self.cleaned_data
 

@@ -4,6 +4,12 @@ from django.utils.encoding import force_str
 from orchestra.admin.utils import admin_link
 from orchestra.forms.widgets import SpanWidget
 
+from django.core.exceptions import ValidationError
+from orchestra.core import validators
+from orchestra.utils.python import random_ascii
+from orchestra.settings import NEW_SERVERS
+from django.utils.translation import gettext_lazy as _
+
 
 class PluginForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
@@ -71,3 +77,51 @@ class PluginModelAdapterForm(PluginForm):
             display = '%s <a href=".">change</a>' % link
             self.fields[self.plugin_field].widget = SpanWidget(original=value, display=display)
             help_text = self.fields[self.plugin_field].help_text
+
+
+# --------------------------------------------------
+
+class ExtendedPluginDataForm(PluginDataForm):
+    # añade campos de username para creacion de sftpuser en servidores nuevos
+    username = forms.CharField(label=_("Username"), max_length=16,
+        required=False, validators=[validators.validate_name],
+        help_text=_("Required. 16 characters or fewer. Letters, digits and "
+                    "@/./+/-/_ only."),
+        error_messages={
+            'invalid': _("This value may contain 16 characters or fewer, only letters, numbers and "
+                         "@/./+/-/_ characters.")})
+    password1 = forms.CharField(label=_("Password"), required=False,
+        widget=forms.PasswordInput(attrs={'autocomplete': 'off'}),
+        validators=[validators.validate_password],
+        help_text=_("Suggestion: %s") % random_ascii(15))
+    password2 = forms.CharField(label=_("Password confirmation"), required=False,
+        widget=forms.PasswordInput,
+        help_text=_("Enter the same password as above, for verification."))
+
+
+    def __init__(self, *args, **kwargs):
+        super(ExtendedPluginDataForm, self).__init__(*args, **kwargs)
+        self.fields['sftpuser'].widget = forms.HiddenInput()
+        if self.instance.id is not None:
+            self.fields['username'].widget = forms.HiddenInput()
+            self.fields['password1'].widget = forms.HiddenInput()
+            self.fields['password2'].widget = forms.HiddenInput()
+
+    def clean_username(self):
+        if not self.instance.id:
+            webapp_server = self.cleaned_data.get("target_server")
+            username = self.cleaned_data.get('username')
+            if webapp_server is None:
+                self.add_error("target_server", _("choice some server"))
+            else:
+                if webapp_server.name in NEW_SERVERS and not username:
+                    self.add_error("username", _("SFTP user is required by new webservers"))
+            return username
+
+    def clean_password2(self):
+        password1 = self.cleaned_data.get("password1")
+        password2 = self.cleaned_data.get("password2")
+        if password1 and password2 and password1 != password2:
+            msg = _("The two password fields didn't match.")
+            raise ValidationError(msg)
+        return password2

@@ -34,7 +34,7 @@ class WebApp(models.Model):
     databaseusers = VirtualDatabaseUserRelation('databases.DatabaseUser')
 
     class Meta:
-        unique_together = ('name', 'account')
+        unique_together = ('name', 'account', 'target_server')
         verbose_name = _("Web App")
         verbose_name_plural = _("Web Apps")
 

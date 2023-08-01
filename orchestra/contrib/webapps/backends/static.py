@@ -3,7 +3,7 @@ from django.utils.translation import gettext_lazy as _
 from orchestra.contrib.orchestration import ServiceController
 
 from . import WebAppServiceMixin
-from ..settings import WEBAPP_NEW_SERVERS
+from orchestra.settings import NEW_SERVERS
 
 class StaticController(WebAppServiceMixin, ServiceController):
     """
@@ -15,7 +15,7 @@ class StaticController(WebAppServiceMixin, ServiceController):
     
     def save(self, webapp):
         context = self.get_context(webapp)
-        if context.get('target_server').name in WEBAPP_NEW_SERVERS:
+        if context.get('target_server').name in NEW_SERVERS:
             self.check_webapp_dir(context)
             self.set_under_construction(context)
         else:
@@ -24,7 +24,7 @@ class StaticController(WebAppServiceMixin, ServiceController):
 
     def delete(self, webapp):
         context = self.get_context(webapp)
-        if context.get('target_server').name in WEBAPP_NEW_SERVERS:
+        if context.get('target_server').name in NEW_SERVERS:
             webapp.sftpuser.delete()
         else:
             self.delete_webapp_dir(context)

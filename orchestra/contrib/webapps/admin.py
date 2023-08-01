@@ -109,7 +109,7 @@ class WebAppAdmin(SelectPluginAdminMixin, AccountAdminMixin, ExtendedModelAdmin)
 
     def save_model(self, request, obj, form, change):
         if not change:
-            user = form.cleaned_data['username']
+            user = form.cleaned_data.get('username')
             if user:
                 user = WebappUsers(
                     username=form.cleaned_data['username'],

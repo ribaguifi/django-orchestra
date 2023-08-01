@@ -1,8 +1,8 @@
 import pkgutil
 import textwrap
-
+from django.template import Template, Context
 from .. import settings
-
+from orchestra.settings import NEW_SERVERS
 
 class WebAppServiceMixin(object):
     model = 'webapps.WebApp'
@@ -19,6 +19,7 @@ class WebAppServiceMixin(object):
             CREATED=0
             if [[ ! -e %(app_path)s ]]; then
                 mkdir -p %(app_path)s
+                chown %(sftpuser)s:%(sftpuser)s %(app_path)s
                 CREATED=1
             elif [[ -z $( ls -A %(app_path)s ) ]]; then
                 CREATED=1
@@ -38,6 +39,15 @@ class WebAppServiceMixin(object):
     
     def set_under_construction(self, context):
         if context['under_construction_path']:
+            # cambios de permisos en servidores nuevos
+            perms = Template(textwrap.dedent("""\
+            {% if sftpuser %}
+                        chown -R {{ sftpuser }}:{{ sftpuser }} {{ app_path }}/* {% else %}
+                        chown -R {{ user }}:{{ group }} {{ app_path }}/*
+            {% endif %}
+            """
+            ))
+            context.update({'perms' :  perms.render(Context(context))})
             self.append(textwrap.dedent("""
                 # Set under construction if needed
                 if [[ $CREATED == 1 && ! $(ls -A %(app_path)s | head -n1) ]]; then
@@ -46,11 +56,11 @@ class WebAppServiceMixin(object):
                         sleep 2
                         if [[ ! $(ls -A %(app_path)s | head -n1) ]]; then
                             cp -r %(under_construction_path)s %(app_path)s
-                            chown -R %(user)s:%(group)s %(app_path)s/*
+                            %(perms)s
                         fi' &> /dev/null &
                 fi""") % context
             )
-    
+
     def delete_webapp_dir(self, context):
         if context['deleted_app_path']:
             self.append(textwrap.dedent("""\
@@ -68,8 +78,8 @@ class WebAppServiceMixin(object):
     def get_context(self, webapp):
         context = webapp.type_instance.get_directive_context()
         context.update({
-            'user': webapp.sftpuser.username if webapp.target_server.name in settings.WEBAPP_NEW_SERVERS else webapp.get_username(),
-            'group': webapp.sftpuser.username if webapp.target_server.name in settings.WEBAPP_NEW_SERVERS else webapp.get_groupname(),
+            'user': webapp.get_username(),
+            'group': webapp.get_groupname(),
             'app_name': webapp.name,
             'app_type': webapp.type,
             'app_path': webapp.get_path(),
@@ -77,6 +87,7 @@ class WebAppServiceMixin(object):
             'under_construction_path': settings.WEBAPPS_UNDER_CONSTRUCTION_PATH,
             'is_mounted': webapp.content_set.exists(),
             'target_server': webapp.target_server,
+            'sftpuser' : webapp.sftpuser.username if webapp.target_server.name in NEW_SERVERS else None
         })
         context['deleted_app_path'] = settings.WEBAPPS_MOVE_ON_DELETE_PATH % context
         return context

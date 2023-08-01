@@ -5,6 +5,7 @@ from collections import OrderedDict
 from django.template import Template, Context
 from django.utils.translation import gettext_lazy as _
 
+from orchestra.settings import NEW_SERVERS
 from orchestra.contrib.orchestration import ServiceController
 
 from . import WebAppServiceMixin
@@ -34,7 +35,12 @@ class PHPController(WebAppServiceMixin, ServiceController):
     def save(self, webapp):
         self.delete_old_config(webapp)
         context = self.get_context(webapp)
-        self.create_webapp_dir(context)
+        
+        if context.get('target_server').name in NEW_SERVERS:
+            self.check_webapp_dir(context)
+        else:
+            self.create_webapp_dir(context)
+
         if webapp.type_instance.is_fpm:
             self.save_fpm(webapp, context)
         elif webapp.type_instance.is_fcgid:
@@ -122,11 +128,10 @@ class PHPController(WebAppServiceMixin, ServiceController):
     def delete(self, webapp):
         context = self.get_context(webapp)
         self.delete_old_config(webapp)
-#        if webapp.type_instance.is_fpm:
-#            self.delete_fpm(webapp, context)
-#        elif webapp.type_instance.is_fcgid:
-#            self.delete_fcgid(webapp, context)
-        self.delete_webapp_dir(context)
+        if context.get('target_server').name in NEW_SERVERS:
+            webapp.sftpuser.delete()
+        else:
+            self.delete_webapp_dir(context)
 
     def has_sibilings(self, webapp, context):
         return type(webapp).objects.filter(
@@ -229,12 +234,21 @@ class PHPController(WebAppServiceMixin, ServiceController):
         fpm_config = Template(textwrap.dedent("""\
             ;; {{ banner }}
             [{{ user }}-{{app_name}}]
+            {% if sftpuser %}
+            user = {{ sftpuser }}
+            group = {{ sftpuser }}
+
+            listen = {{ fpm_listen | safe }}
+            listen.owner = root
+            listen.group = {{ sftpuser }}
+            {% else %}
             user = {{ user }}
             group = {{ group }}
 
             listen = {{ fpm_listen | safe }}
             listen.owner = {{ user }}
             listen.group = {{ group }}
+            {% endif %}
 
             pm = ondemand
             pm.max_requests = {{ max_requests }}
@@ -313,6 +327,7 @@ class PHPController(WebAppServiceMixin, ServiceController):
         context = super().get_context(webapp)
         context.update({
             'max_requests': settings.WEBAPPS_PHP_MAX_REQUESTS,
+            'target_server': webapp.target_server,
         })
         self.update_fpm_context(webapp, context)
         self.update_fcgid_context(webapp, context)
