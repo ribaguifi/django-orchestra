@@ -99,10 +99,24 @@ WEBAPPS_PHP_VERSIONS = Setting('WEBAPPS_PHP_VERSIONS', (
         ('5.3-cgi', 'PHP 5.3 FCGID'),
         ('5.2-cgi', 'PHP 5.2 FCGID'),
         ('4-cgi', 'PHP 4 FCGID'),
-        ('7-fpm', 'PHP 7 FPM')
+        ('7.0-fpm', 'PHP 7 FPM'),
+        ('7.3-fpm', 'PHP 7.3 FPM'),
+        ('7.4-fpm', 'PHP 7.4 FPM (web-11)'), 
+        ('8.1-fpm', 'PHP 8.1 FPM (web-12)'),
+        ('8.2-fpm', 'PHP 8.2 FPM (web-12)'),
     ),
     help_text="Execution modle choose by ending -fpm or -cgi.",
     validators=[Setting.validate_choices]
+)
+
+WEBAPPS_PHP_VERSIONS_SERVERS = Setting('WEBAPPS_PHP_VERSIONS_SERVERS', {
+    'web.pangea.lan' : ('php5.6-fpm', '7.0-fpm',),
+    'web-ng' : ('5.6-fpm', '7.0-fpm', '7.3-fpm',),
+    'web-11.pangea.lan':  ('7.4-fpm',),
+    'web-12.pangea.lan' : ('8.1-fpm', '8.2-fpm'),
+    'bookworm' : ('8.1-fpm', '8.2-fpm'),
+    },
+    help_text="PHP available for each server",
 )
 
 

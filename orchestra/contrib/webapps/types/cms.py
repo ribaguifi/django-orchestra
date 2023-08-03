@@ -6,10 +6,13 @@ from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 
 from orchestra.contrib.databases.models import Database, DatabaseUser
+from orchestra.contrib.orchestration.models import Server
 from orchestra.forms.widgets import SpanWidget
 from orchestra.utils.python import random_ascii
+from orchestra.settings import NEW_SERVERS
 
 from .php import PHPApp, PHPAppForm, PHPAppSerializer
+from .. import settings
 
 
 class CMSAppForm(PHPAppForm):
@@ -68,14 +71,20 @@ class CMSApp(PHPApp):
 
     def get_password(self):
         return random_ascii(10)
+    
+    def get_server(self):
+        server = self.instance.target_server
+        return server
 
     def validate(self):
         super(CMSApp, self).validate()
         create = not self.instance.pk
         if create:
-            db = Database(name=self.get_db_name(), account=self.instance.account, type=self.db_type)
+            default_server_mysql = Server.objects.get(name=settings.WEBAPPS_DEFAULT_MYSQL_DATABASE_HOST)
+            server = self.get_server() if self.get_server().name in NEW_SERVERS else default_server_mysql
+            db = Database(name=self.get_db_name(), account=self.instance.account, type=self.db_type, target_server=server)
             user = DatabaseUser(username=self.get_db_user(), password=self.get_password(),
-                    account=self.instance.account, type=self.db_type)
+                    account=self.instance.account, type=self.db_type, target_server=server)
             for obj in (db, user):
                 try:
                     obj.full_clean()
@@ -88,9 +97,11 @@ class CMSApp(PHPApp):
         db_name = self.get_db_name()
         db_user = self.get_db_user()
         password = self.get_password()
-        db, db_created = self.instance.account.databases.get_or_create(name=db_name, type=self.db_type)
+        default_server_mysql = Server.objects.get(name=settings.WEBAPPS_DEFAULT_MYSQL_DATABASE_HOST)
+        server = self.get_server() if self.get_server().name in NEW_SERVERS else default_server_mysql
+        db, db_created = self.instance.account.databases.get_or_create(name=db_name, type=self.db_type, target_server=server)
         if db_created:
-            user = DatabaseUser(username=db_user, account=self.instance.account, type=self.db_type)
+            user = DatabaseUser(username=db_user, account=self.instance.account, type=self.db_type, target_server=server)
             user.set_password(password)
             user.save()
             db.users.add(user)

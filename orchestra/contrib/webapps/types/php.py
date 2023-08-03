@@ -26,18 +26,24 @@ class PHPAppForm(ExtendedPluginDataForm):
         initial=settings.WEBAPPS_DEFAULT_PHP_VERSION,
         help_text=help_message)
     
-    # def clean_php_version(self):
-    #     # TODO: restriccin PHP diferentes servers
-    #     if not self.instance.id:
-    #         webapp_server = self.cleaned_data.get("target_server")
-    #         php_version = self.cleaned_data.get('php_version')
-    #         if webapp_server is None:
-    #             pass
-    #         else:
-    #             if webapp_server.name in NEW_SERVERS and not username:
-    #                 self.add_error("php_version", _(f"Server {webapp_server} not allow {php_version}"))
-    
+    def clean_php_version(self):
+        # valida que la version PHP este asignada al servidor
+        php_version = self.cleaned_data.get('php_version')
+        if not self.instance.id:
+            webapp_server = self.cleaned_data.get("target_server")
+        else:
+            webapp_server = self.instance.target_server
+                        
+        if webapp_server is None:
+            pass
+        else:
+            if php_version not in settings.WEBAPPS_PHP_VERSIONS_SERVERS[webapp_server.name]:
+                self.add_error("php_version", _(f"Server {webapp_server.name} not allow {php_version}"))
+            else:
+                return php_version
 
+        
+    
 class PHPAppSerializer(serializers.Serializer):
     php_version = serializers.ChoiceField(label=_("PHP version"),
         choices=settings.WEBAPPS_PHP_VERSIONS,

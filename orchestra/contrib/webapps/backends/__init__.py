@@ -19,7 +19,7 @@ class WebAppServiceMixin(object):
             CREATED=0
             if [[ ! -e %(app_path)s ]]; then
                 mkdir -p %(app_path)s
-                chown %(sftpuser)s:%(sftpuser)s %(app_path)s
+                #chown %(sftpuser)s:%(sftpuser)s %(app_path)s
                 CREATED=1
             elif [[ -z $( ls -A %(app_path)s ) ]]; then
                 CREATED=1

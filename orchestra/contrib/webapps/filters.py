@@ -33,7 +33,7 @@ class DetailListFilter(SimpleListFilter):
             for field, values in apptype.get_detail_lookups().items():
                 for value in values:
                     lookup_map[value[0]] = field
-                    ret.add(value)
+                    ret.add(tuple(value))
         self.lookup_map = lookup_map
         return sorted(list(ret), key=lambda e: e[1])
     
@@ -47,5 +47,5 @@ class DetailListFilter(SimpleListFilter):
             except KeyError:
                 return queryset
             else:
-                return queryset.filter(data__contains='"%s":"%s"' % (field, value))
+                return queryset.filter(data__contains=value)
         return queryset

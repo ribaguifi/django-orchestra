@@ -4,6 +4,8 @@ import textwrap
 from django.utils.translation import gettext_lazy as _
 
 from orchestra.contrib.orchestration import ServiceController, replace
+from orchestra.settings import NEW_SERVERS
+from django.template import Template, Context
 
 from .. import settings
 
@@ -41,6 +43,14 @@ class WordPressController(WebAppServiceMixin, ServiceController):
     
     def save(self, webapp):
         context = self.get_context(webapp)
+        perms = Template(textwrap.dedent("""\
+            {% if sftpuser %}
+            exc('chown -R {{ sftpuser }}:{{ sftpuser }} {{ app_path }}'); {% else %}
+            exc('chown -R {{ user }}:{{ group }} {{ app_path }}');
+            {% endif %}
+            """
+        ))
+        context.update({'perms' :  perms.render(Context(context))})
         self.append(textwrap.dedent("""\
             if (count(glob("%(app_path)s/*")) > 1) {
                 die("App directory not empty.");
@@ -96,7 +106,8 @@ class WordPressController(WebAppServiceMixin, ServiceController):
             foreach ( $config_file as $line_num => $line ) {
                 fwrite($fw, $line);
             }
-            exc('chown -R %(user)s:%(group)s %(app_path)s');
+            //exc('chown -R %(user)s:%(group)s %(app_path)s');
+            %(perms)s
             
             // Run wordpress installation process
             
@@ -140,9 +151,10 @@ class WordPressController(WebAppServiceMixin, ServiceController):
             'db_name': webapp.data['db_name'],
             'db_user': webapp.data['db_user'],
             'password': webapp.data['password'],
-            'db_host': settings.WEBAPPS_DEFAULT_MYSQL_DATABASE_HOST,
+            'db_host': 'localhost' if webapp.target_server.name in NEW_SERVERS else settings.WEBAPPS_DEFAULT_MYSQL_DATABASE_HOST,
             'email': webapp.account.email,
             'title': "%s blog's" % webapp.account.get_full_name(),
-            'cms_cache_dir': os.path.normpath(settings.WEBAPPS_CMS_CACHE_DIR)
+            'cms_cache_dir': os.path.normpath(settings.WEBAPPS_CMS_CACHE_DIR),
+            'sftpuser':  webapp.sftpuser.username if webapp.target_server.name in NEW_SERVERS else None ,
         })
         return replace(context, '"', "'")
