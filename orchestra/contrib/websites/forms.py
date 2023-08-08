@@ -3,6 +3,8 @@ from collections import defaultdict
 from django import forms
 from django.core.exceptions import ValidationError
 
+from orchestra.contrib.webapps.models import WebApp
+
 from .utils import normurlpath
 from .validators import validate_domain_protocol, validate_server_name
 
@@ -26,6 +28,25 @@ class WebsiteAdminForm(forms.ModelForm):
         except ValidationError as err:
             self.add_error('domains', err)
         return self.cleaned_data
+    
+    def clean_target_server(self):
+        # valida que el webapp pertenezca al server indicado
+        try:
+            server = self.cleaned_data['target_server']
+        except:
+            server = self.instance.target_server
+
+        diferentServer = False
+        for i in range(int(self.data['content_set-TOTAL_FORMS']) + 1):
+            if f"content_set-{i}-webapp" in self.data.keys() and f"content_set-{i}-DELETE" not in self.data.keys():
+                if self.data[f"content_set-{i}-webapp"]:
+                    idWebapp = self.data[f"content_set-{i}-webapp"]
+                    webapp = WebApp.objects.get(id=idWebapp)
+                    if webapp.target_server.id != server.id :
+                        diferentServer = True
+        if diferentServer:
+            self.add_error("target_server", f"Some Webapp does not belong to the {server.name} server")
+        return server
 
 
 class WebsiteDirectiveInlineFormSet(forms.models.BaseInlineFormSet):

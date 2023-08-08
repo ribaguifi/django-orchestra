@@ -4,6 +4,7 @@ import textwrap
 from django.utils.translation import gettext_lazy as _
 
 from orchestra.contrib.orchestration import ServiceController
+from orchestra.settings import NEW_SERVERS
 
 from .. import settings
 
@@ -29,7 +30,8 @@ class WebalizerController(ServiceController):
             cat << 'EOF' > %(webalizer_conf_path)s
             %(webalizer_conf)s
             EOF
-            chown %(user)s:www-data %(webalizer_path)s
+            # chown %(user)s:www-data %(webalizer_path)s
+            chown www-data:www-data %(webalizer_path)s
             chmod g+xr %(webalizer_path)s
             """) % context
         )
@@ -54,18 +56,35 @@ class WebalizerController(ServiceController):
             'webalizer_conf_path': os.path.join(settings.WEBSITES_WEBALIZER_PATH, conf_file),
             'user': content.webapp.account.username,
             'banner': self.get_banner(),
+            'target_server': content.website.target_server,
         }
-        context['webalizer_conf'] = textwrap.dedent("""\
-            # %(banner)s
-            LogFile            %(site_logs)s
-            LogType            clf
-            OutputDir          %(webalizer_path)s
-            HistoryName        webalizer.hist
-            Incremental        yes
-            IncrementalName    webalizer.current
-            ReportTitle        Stats of
-            HostName           %(site_name)s
-            
+        if context.get('target_server').name in NEW_SERVERS:
+            context['webalizer_conf'] = textwrap.dedent("""\
+                # %(banner)s
+                LogFile            %(site_logs)s
+                LogType            clf
+                OutputDir          %(webalizer_path)s
+                HistoryName        awffull.hist
+                Incremental        yes
+                IncrementalName    awffull.current
+                ReportTitle        Stats of
+                HostName           %(site_name)s
+                """) % context
+        else:
+            context['webalizer_conf'] = textwrap.dedent("""\
+                # %(banner)s
+                LogFile            %(site_logs)s
+                LogType            clf
+                OutputDir          %(webalizer_path)s
+                HistoryName        webalizer.hist
+                Incremental        yes
+                IncrementalName    webalizer.current
+                ReportTitle        Stats of
+                HostName           %(site_name)s                                                        
+                """) % context
+        
+        context['webalizer_conf'] = context['webalizer_conf'] + textwrap.dedent("""\
+                                                                                
             PageType       htm*
             PageType       php*
             PageType       shtml
@@ -84,20 +103,28 @@ class WebalizerController(ServiceController):
             HideURL        *.ra
             
             IncludeURL     *
-            
-            SearchEngine   yahoo.com       p=
-            SearchEngine   altavista.com   q=
-            SearchEngine   google.com      q=
-            SearchEngine   eureka.com      q=
-            SearchEngine   lycos.com       query=
-            SearchEngine   hotbot.com      MT=
-            SearchEngine   msn.com         MT=
-            SearchEngine   infoseek.com    qt=
-            SearchEngine   webcrawler      searchText=
-            SearchEngine   excite          search=
-            SearchEngine   netscape.com    search=
-            SearchEngine   mamma.com       query=
-            SearchEngine   alltheweb.com   query=
+                
+            SearchEngine    google.         q=
+            SearchEngine    yahoo.          p=
+            SearchEngine    msn.            q=
+            SearchEngine    search.aol      query=
+            SearchEngine    altavista.      q=
+            SearchEngine    lycos.          query=
+            SearchEngine    hotbot.         query=
+            SearchEngine    alltheweb.      query=
+            SearchEngine    infoseek.       qt=
+            SearchEngine    webcrawler      searchText=
+            SearchEngine    excite          search=
+            SearchEngine    netscape.       query=
+            SearchEngine    ask.com         q=
+            SearchEngine    webwombat.      ix=
+            SearchEngine    earthlink.      q=
+            SearchEngine    search.comcast. q=
+            SearchEngine    search.mywebsearch.     searchfor=
+            SearchEngine    reference.com   q=
+            SearchEngine    mamma.com       query=
+            # Last attempt catch all
+            SearchEngine    search.         q=
             
             DumpSites      yes""") % context
         return context

@@ -60,7 +60,7 @@ class ContentInline(AccountAdminMixin, admin.TabularInline):
 
 class WebsiteAdmin(SelectAccountAdminMixin, ExtendedModelAdmin):
     list_display = (
-        'name', 'display_domains', 'display_webapps', 'account_link', 'display_active'
+        'name', 'display_domains', 'display_webapps', 'account_link', 'target_server', 'display_active'
     )
     list_filter = (
         'protocol', IsActiveListFilter, HasWebAppsListFilter, HasDomainsFilter
