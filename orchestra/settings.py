@@ -93,7 +93,6 @@ ORCHESTRA_SSH_CONTROL_PATH = Setting('ORCHESTRA_SSH_CONTROL_PATH',
 
 NEW_SERVERS = Setting('NEW_SERVERS',
     (
-        'bookworm',
         'web-11.pangea.lan',
         'web-12.pangea.lan',
     )

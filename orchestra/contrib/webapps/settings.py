@@ -114,7 +114,6 @@ WEBAPPS_PHP_VERSIONS_SERVERS = Setting('WEBAPPS_PHP_VERSIONS_SERVERS', {
     'web-ng' : ('5.6-fpm', '7.0-fpm', '7.3-fpm',),
     'web-11.pangea.lan':  ('7.4-fpm',),
     'web-12.pangea.lan' : ('8.1-fpm', '8.2-fpm'),
-    'bookworm' : ('8.1-fpm', '8.2-fpm'),
     },
     help_text="PHP available for each server",
 )
