@@ -3,7 +3,7 @@ import os
 from django import forms
 from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
-from orchestra.plugins.forms import ExtendedPluginDataForm
+from orchestra.plugins.forms import ExtendedPluginDataForm, PluginDataForm
 
 from ..options import AppOption
 from . import AppType
@@ -32,6 +32,7 @@ class WebalizerApp(AppType):
         "Statistics will be collected once this app is mounted into one or more Websites.")
     icon = 'orchestra/icons/apps/Stats.png'
     option_groups = ()
+    form = PluginDataForm
     
     def get_directive(self):
         webalizer_path = os.path.join(self.instance.get_path(), '%(site_name)s')
