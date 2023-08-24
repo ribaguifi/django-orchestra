@@ -58,7 +58,7 @@ class WebAppAdmin(SelectPluginAdminMixin, AccountAdminMixin, ExtendedModelAdmin)
     list_display = (
         'name', 'display_type', 'display_detail', 'display_websites', 'account_link', 'target_server', 
     )
-    list_filter = ('type', HasWebsiteListFilter, DetailListFilter)
+    list_filter = ('type', HasWebsiteListFilter, DetailListFilter, 'target_server')
     inlines = [WebAppOptionInline]
     readonly_fields = ('account_link',)
     change_readonly_fields = ('name', 'type', 'display_websites', 'display_sftpuser', 'target_server',)

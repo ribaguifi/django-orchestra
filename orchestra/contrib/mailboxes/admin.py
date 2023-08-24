@@ -20,7 +20,7 @@ from orchestra.core import caches
 
 from . import settings
 from .actions import SendMailboxEmail, SendAddressEmail
-from .filters import HasMailboxListFilter, HasForwardListFilter, HasAddressListFilter
+from .filters import HasMailboxListFilter, HasForwardListFilter, HasAddressListFilter, HasTipeServerFilter
 from .forms import MailboxCreationForm, MailboxChangeForm, AddressForm
 from .models import Mailbox, Address, Autoresponse
 from .widgets import OpenCustomFilteringOnSelect
@@ -40,7 +40,7 @@ class MailboxAdmin(ChangePasswordAdminMixin, SelectAccountAdminMixin, ExtendedMo
     list_display = (
         'name', 'account_link', 'display_filtering', 'display_addresses', 'display_active',
     )
-    list_filter = (IsActiveListFilter, HasAddressListFilter, 'filtering')
+    list_filter = (IsActiveListFilter, HasAddressListFilter, 'filtering', HasTipeServerFilter)
     search_fields = (
         'account__username', 'account__short_name', 'account__full_name', 'name',
         'addresses__name', 'addresses__domain__name',

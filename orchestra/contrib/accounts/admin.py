@@ -26,12 +26,13 @@ from .actions import (list_contacts, service_report, delete_related_services, di
     enable_selected)
 from .forms import AccountCreationForm
 from .models import Account
+from .filters import HasTipeServerFilter
 
 
 class AccountAdmin(ChangePasswordAdminMixin, auth.UserAdmin, ExtendedModelAdmin):
     list_display = ('username', 'full_name', 'type', 'is_active')
     list_filter = (
-        'type', 'is_active',
+        'type', 'is_active', HasTipeServerFilter
     )
     add_fieldsets = (
         (_("User"), {
