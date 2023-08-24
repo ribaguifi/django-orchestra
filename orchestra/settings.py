@@ -97,3 +97,12 @@ NEW_SERVERS = Setting('NEW_SERVERS',
         'web-12.pangea.lan',
     )
 )
+
+WEB_SERVERS = Setting('WEBAPPS_SERVERS', (
+    'web.pangea.lan',
+    'web-ng',
+    'web-11.pangea.lan',
+    'web-12.pangea.lan',
+    'bookworm',
+    )
+)

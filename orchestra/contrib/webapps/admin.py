@@ -15,6 +15,7 @@ from orchestra.contrib.systemusers.models import WebappUsers
 from orchestra.forms.widgets import DynamicHelpTextSelect
 from orchestra.plugins.admin import SelectPluginAdminMixin, display_plugin_field
 from orchestra.utils.html import get_on_site_link
+from orchestra.settings import NEW_SERVERS
 
 from .filters import HasWebsiteListFilter, DetailListFilter
 from .models import WebApp, WebAppOption
@@ -110,7 +111,8 @@ class WebAppAdmin(SelectPluginAdminMixin, AccountAdminMixin, ExtendedModelAdmin)
     def save_model(self, request, obj, form, change):
         if not change:
             user = form.cleaned_data.get('username')
-            if user:
+            server = form.cleaned_data.get('target_server')
+            if user and server.name in NEW_SERVERS:
                 user = WebappUsers(
                     username=form.cleaned_data['username'],
                     account_id=obj.account.pk,

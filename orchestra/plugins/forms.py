@@ -7,9 +7,11 @@ from orchestra.forms.widgets import SpanWidget
 from django.core.exceptions import ValidationError
 from orchestra.core import validators
 from orchestra.utils.python import random_ascii
-from orchestra.settings import NEW_SERVERS
+from orchestra.settings import NEW_SERVERS, WEB_SERVERS
 from django.utils.translation import gettext_lazy as _
 
+import textwrap
+from orchestra.contrib.orchestration.models import Server
 
 class PluginForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
@@ -20,7 +22,6 @@ class PluginForm(forms.ModelForm):
             self.fields[self.plugin_field].widget = SpanWidget(original=value, display=display)
             help_text = self.fields[self.plugin_field].help_text
             self.fields[self.plugin_field].help_text = getattr(self.plugin, 'help_text', help_text)
-
 
 class PluginDataForm(PluginForm):
     data = forms.CharField(widget=forms.HiddenInput, required=False)
@@ -98,6 +99,7 @@ class ExtendedPluginDataForm(PluginDataForm):
         widget=forms.PasswordInput,
         help_text=_("Enter the same password as above, for verification."))
 
+    target_server = forms.ModelChoiceField(queryset=Server.objects.filter(name__in=WEB_SERVERS),)
 
     def __init__(self, *args, **kwargs):
         super(ExtendedPluginDataForm, self).__init__(*args, **kwargs)
@@ -106,6 +108,18 @@ class ExtendedPluginDataForm(PluginDataForm):
             self.fields['username'].widget = forms.HiddenInput()
             self.fields['password1'].widget = forms.HiddenInput()
             self.fields['password2'].widget = forms.HiddenInput()
+
+        if not self.instance.pk:
+            self.fields['target_server'].widget.attrs['onChange'] = textwrap.dedent("""\
+                field = $(".field-username, .field-password1, .field-password2");
+                input = $("#id_username, #id_password1, #id_password2");
+                if (%s.includes(this.options[this.selectedIndex].text)) {
+                    field.removeClass("hidden");
+                } else {                                                                 
+                    field.addClass("hidden");
+                    input.val("");
+                };"""  % list(NEW_SERVERS)
+            )
 
     def clean_username(self):
         if not self.instance.id:
