@@ -182,7 +182,6 @@ class MailmanController(MailmanVirtualDomainController):
         context.update({
             'banner': self.get_banner(mail_list),
             'name': mail_list.name,
-            'password': mail_list.password,
             'domain': mail_list.address_domain or settings.LISTS_DEFAULT_DOMAIN,
             'address_name': mail_list.get_address_name(),
             'address_domain': mail_list.address_domain,

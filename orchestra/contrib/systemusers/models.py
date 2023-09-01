@@ -146,7 +146,7 @@ class WebappUsers(models.Model):
     System users for webapp
     Username max_length determined by LINUX system user/group lentgh: 32
     """
-    username = models.CharField(_("username"), max_length=32, unique=True,
+    username = models.CharField(_("username"), max_length=32,
         help_text=_("Required. 32 characters or fewer. Letters, digits and ./-/_ only."),
         validators=[validators.validate_username])
     password = models.CharField(_("password"), max_length=128)

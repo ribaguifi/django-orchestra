@@ -81,7 +81,7 @@ class SystemUserAdmin(ChangePasswordAdminMixin, SelectAccountAdminMixin, Extende
 
 class WebappUserAdmin(ChangePasswordAdminMixin, SelectAccountAdminMixin, ExtendedModelAdmin):
     list_display = (
-        'username', 'account_link', 'shell', 'home', 'target_server'
+        'username', 'account_link', 'home', 'target_server'
     )
     fieldsets = (
         (None, {

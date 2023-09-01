@@ -16,7 +16,7 @@ from .filters import HasCustomAddressListFilter
 from .models import List
 
 
-class ListAdmin(ChangePasswordAdminMixin, SelectAccountAdminMixin, ExtendedModelAdmin):
+class ListAdmin(SelectAccountAdminMixin, ExtendedModelAdmin):
     list_display = (
         'name', 'address_name', 'address_domain_link', 'account_link', 'display_active'
     )
@@ -31,7 +31,7 @@ class ListAdmin(ChangePasswordAdminMixin, SelectAccountAdminMixin, ExtendedModel
         }),
         (_("Admin"), {
             'classes': ('wide',),
-            'fields': ('admin_email', 'password1', 'password2'),
+            'fields': ('admin_email',),
         }),
     )
     fieldsets = (
@@ -45,35 +45,15 @@ class ListAdmin(ChangePasswordAdminMixin, SelectAccountAdminMixin, ExtendedModel
                 ) % settings.LISTS_DEFAULT_DOMAIN,
             'fields': (('address_name', 'address_domain'),)
         }),
-        (_("Admin"), {
-            'classes': ('wide',),
-            'fields': ('password',),
-        }),
     )
     search_fields = ('name', 'address_name', 'address_domain__name', 'account__username')
     list_filter = (IsActiveListFilter, HasCustomAddressListFilter)
     readonly_fields = ('account_link',)
     change_readonly_fields = ('name',)
-    form = NonStoredUserChangeForm
-    add_form = UserCreationForm
     list_select_related = ('account', 'address_domain',)
     filter_by_account_fields = ['address_domain']
     actions = (disable, enable, list_accounts)
     
     address_domain_link = admin_link('address_domain', order='address_domain__name')
-    
-    def get_urls(self):
-        useradmin = UserAdmin(List, self.admin_site)
-        return [
-            url(r'^(\d+)/password/$',
-                self.admin_site.admin_view(useradmin.user_change_password))
-        ] + super(ListAdmin, self).get_urls()
-    
-    def save_model(self, request, obj, form, change):
-        """ set password """
-        if not change:
-            obj.set_password(form.cleaned_data["password1"])
-        super(ListAdmin, self).save_model(request, obj, form, change)
-
 
 admin.site.register(List, ListAdmin)

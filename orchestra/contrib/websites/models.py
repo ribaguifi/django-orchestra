@@ -40,7 +40,7 @@ class Website(models.Model):
     comments = models.TextField(default="", blank=True)
 
     class Meta:
-        unique_together = ('name', 'account')
+        unique_together = ('name', 'account', 'target_server')
 
     def __str__(self):
         return self.name

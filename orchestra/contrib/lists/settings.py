@@ -9,13 +9,14 @@ LISTS_DOMAIN_MODEL = Setting('LISTS_DOMAIN_MODEL',
 
 
 LISTS_DEFAULT_DOMAIN = Setting('LISTS_DEFAULT_DOMAIN',
-    'lists.{}'.format(ORCHESTRA_BASE_DOMAIN),
+    'grups.{}'.format(ORCHESTRA_BASE_DOMAIN),
     help_text="Uses <tt>ORCHESTRA_BASE_DOMAIN</tt> by default."
 )
 
 
 LISTS_LIST_URL = Setting('LISTS_LIST_URL',
-    'https://lists.{}/mailman/listinfo/%(name)s'.format(ORCHESTRA_BASE_DOMAIN),
+    # 'https://lists.{}/mailman/listinfo/%(name)s'.format(ORCHESTRA_BASE_DOMAIN),
+    'https://www.{0}/mailman3/lists/%(name)s.{0}'.format(LISTS_DEFAULT_DOMAIN),
     help_text="Uses <tt>ORCHESTRA_BASE_DOMAIN</tt> by default."
 )
 
