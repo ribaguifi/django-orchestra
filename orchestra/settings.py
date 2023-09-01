@@ -104,6 +104,5 @@ WEB_SERVERS = Setting('WEBAPPS_SERVERS', (
     'web-ng',
     'web-11.pangea.lan',
     'web-12.pangea.lan',
-    'bookworm',
     )
 )
