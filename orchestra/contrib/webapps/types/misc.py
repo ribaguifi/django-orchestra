@@ -23,6 +23,11 @@ class StaticApp(AppType):
         return ('static', self.instance.get_path())
 
 
+class WebalizerAppform(PluginDataForm):
+    def __init__(self, *args, **kwargs):
+        super(WebalizerAppform, self).__init__(*args, **kwargs)
+        self.fields['sftpuser'].widget = forms.HiddenInput()
+
 class WebalizerApp(AppType):
     name = 'webalizer'
     verbose_name = "Webalizer"
@@ -32,7 +37,8 @@ class WebalizerApp(AppType):
         "Statistics will be collected once this app is mounted into one or more Websites.")
     icon = 'orchestra/icons/apps/Stats.png'
     option_groups = ()
-    form = PluginDataForm
+    # form = PluginDataForm
+    form = WebalizerAppform
     
     def get_directive(self):
         webalizer_path = os.path.join(self.instance.get_path(), '%(site_name)s')

@@ -29,7 +29,6 @@ class PluginDataForm(PluginForm):
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['sftpuser'].widget = forms.HiddenInput()
         if self.instance:
             for field in self.declared_fields:
                 initial = self.fields[field].initial
@@ -103,6 +102,7 @@ class ExtendedPluginDataForm(PluginDataForm):
 
     def __init__(self, *args, **kwargs):
         super(ExtendedPluginDataForm, self).__init__(*args, **kwargs)
+        self.fields['sftpuser'].widget = forms.HiddenInput()
         if self.instance.id is not None:
             self.fields['username'].widget = forms.HiddenInput()
             self.fields['password1'].widget = forms.HiddenInput()
