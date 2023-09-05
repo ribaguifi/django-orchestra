@@ -812,7 +812,8 @@ class WebappUserController(ServiceController):
     
     def get_groups(self, user):
         groups = []
-        groups = list(user.account.systemusers.exclude(username=user.username).values_list('username', flat=True))
+        # groups = list(user.account.systemusers.exclude(username=user.username).values_list('username', flat=True))
+        groups.append(user.account.main_systemuser.username)
         groups.append("webapp-systemusers")
         return groups 
     
