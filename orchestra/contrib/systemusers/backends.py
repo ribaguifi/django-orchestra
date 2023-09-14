@@ -700,7 +700,6 @@ class UNIXUserControllerNewServers(ServiceController):
     def get_groups(self, user):
         groups = []
         if user.is_main:
-            groups = list(user.account.systemusers.exclude(username=user.username).values_list('username', flat=True))
             groups.append("main-systemusers")
         return groups 
     

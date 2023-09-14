@@ -25,7 +25,6 @@ class PluginForm(forms.ModelForm):
 
 class PluginDataForm(PluginForm):
     data = forms.CharField(widget=forms.HiddenInput, required=False)
-    target_server = forms.ModelChoiceField(queryset=Server.objects.filter(name__in=WEB_SERVERS),)
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -99,6 +98,8 @@ class ExtendedPluginDataForm(PluginDataForm):
     password2 = forms.CharField(label=_("Password confirmation"), required=False,
         widget=forms.PasswordInput,
         help_text=_("Enter the same password as above, for verification."))
+
+    target_server = forms.ModelChoiceField(queryset=Server.objects.filter(name__in=WEB_SERVERS),)
 
     def __init__(self, *args, **kwargs):
         super(ExtendedPluginDataForm, self).__init__(*args, **kwargs)

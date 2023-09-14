@@ -12,7 +12,6 @@ from orchestra.utils.python import random_ascii
 
 class SaaSBaseForm(PluginDataForm):
     site_url = forms.CharField(label=_("Site URL"), widget=SpanWidget(), required=False)
-    target_server = forms.CharField(required=False, widget=forms.HiddenInput())
     
     class Meta:
         exclude = ('database',)
