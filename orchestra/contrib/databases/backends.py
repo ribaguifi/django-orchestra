@@ -89,20 +89,12 @@ class MySQLUserController(ServiceController):
         if user.type != user.MYSQL:
             return
         context = self.get_context(user)
-        if user.target_server.name != "mysql.pangea.lan":
-            self.append(textwrap.dedent("""\
-                # Create user %(username)s
-                mysql -e 'CREATE USER IF NOT EXISTS "%(username)s"@"%(host)s";' 
-                mysql -e 'ALTER USER IF EXISTS "%(username)s"@"%(host)s" IDENTIFIED BY PASSWORD "%(password)s";'\
-                """) % context
-            )
-        else:
-            self.append(textwrap.dedent("""\
-                # Create user %(username)s
-                mysql -e 'CREATE USER "%(username)s"@"%(host)s";' || true # User already exists
-                mysql -e 'UPDATE mysql.user SET Password="%(password)s" WHERE User="%(username)s";'\
-                """) % context
-            )
+        self.append(textwrap.dedent("""\
+            # Create user %(username)s
+            mysql -e 'CREATE USER IF NOT EXISTS "%(username)s"@"%(host)s";' 
+            mysql -e 'ALTER USER IF EXISTS "%(username)s"@"%(host)s" IDENTIFIED BY PASSWORD "%(password)s";'\
+            """) % context
+        )
     
     def delete(self, user):
         if user.type != user.MYSQL:
