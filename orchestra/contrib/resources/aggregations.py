@@ -32,7 +32,12 @@ class Last(Aggregation):
     verbose_name = _("Last value")
     
     def filter(self, dataset, date=None):
-        dataset = dataset.order_by('object_id', '-id').distinct('monitor')
+
+        # dataset = dataset.order_by('object_id', '-id').distinct('monitor')
+        now = timezone.now()
+        epoch = now - datetime.timedelta(minutes=2)
+        dataset = dataset.filter( created_at__range=(epoch, now ))
+
         if date is not None:
             dataset = dataset.filter(created_at__lte=date)
         return dataset
