@@ -19,7 +19,7 @@ class NextCloudAPIMixin(object):
     def validate_response(self, response):
         request = response.request
         context = (request.method, response.url, request.body, response.status_code)
-        sys.stderr.write("%s %s '%s' HTTP %s\n" % context)
+        # sys.stderr.write("%s %s '%s' HTTP %s\n" % context)
         if response.status_code != requests.codes.ok:
             raise RuntimeError("%s %s '%s' HTTP %s" % context)
         root = ET.fromstring(response.text)
