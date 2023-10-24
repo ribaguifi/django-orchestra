@@ -58,12 +58,12 @@ class DatabaseForm(forms.ModelForm):
         
 
 class DatabaseCreationForm(DatabaseUserCreationForm):
-    username = forms.CharField(label=_("Username"), max_length=16,
+    username = forms.CharField(label=_("Username"), max_length=32,
         required=False, validators=[validators.validate_name],
-        help_text=_("Required. 16 characters or fewer. Letters, digits and "
+        help_text=_("Required. 32 characters or fewer. Letters, digits and "
                     "@/./+/-/_ only."),
         error_messages={
-            'invalid': _("This value may contain 16 characters or fewer, only letters, numbers and "
+            'invalid': _("This value may contain 32 characters or fewer, only letters, numbers and "
                          "@/./+/-/_ characters.")})
     user = forms.ModelChoiceField(required=False, queryset=DatabaseUser.objects)
 
