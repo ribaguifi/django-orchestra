@@ -8,7 +8,7 @@ from django.db.models import F, Count, Value as V
 from django.db.models.functions import Concat
 from django.utils.html import format_html, format_html_join
 from django.utils.safestring import mark_safe
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from orchestra.admin import ExtendedModelAdmin, ChangePasswordAdminMixin
 from orchestra.admin.actions import disable, enable

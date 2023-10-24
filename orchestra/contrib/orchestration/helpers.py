@@ -5,7 +5,7 @@ from django.core.mail import mail_admins
 from django.urls import reverse, NoReverseMatch
 from django.utils.html import escape
 from django.utils.safestring import mark_safe
-from django.utils.translation import ungettext, ugettext_lazy as _
+from django.utils.translation import ngettext, gettext_lazy as _
 
 from orchestra import settings as orchestra_settings
 from orchestra.admin.utils import change_url
@@ -125,7 +125,7 @@ def get_messages(logs):
     async_url = get_backend_url(async_ids)
     async_msg = ''
     if run_async:
-        async_msg = ungettext(
+        async_msg = ngettext(
             _('<a href="{async_url}">{name}</a> is running on the background'),
             _('<a href="{async_url}">{run_async} backends</a> are running on the background'),
             run_async)
@@ -133,7 +133,7 @@ def get_messages(logs):
         if total == 1:
             msg = _('<a href="{url}">{name}</a> has fail to execute')
         else:
-            msg = ungettext(
+            msg = ngettext(
                 _('<a href="{url}">{errors} out of {total} backends</a> has fail to execute'),
                 _('<a href="{url}">{errors} out of {total} backends</a> have fail to execute'),
                 errors)
@@ -147,13 +147,13 @@ def get_messages(logs):
             if total == 1:
                 msg = _('<a href="{url}">{name}</a> has been executed')
             else:
-                msg = ungettext(
+                msg = ngettext(
                     _('<a href="{url}">{successes} out of {total} backends</a> has been executed'),
                     _('<a href="{url}">{successes} out of {total} backends</a> have been executed'),
                     successes)
             msg += ', ' + str(async_msg)
         else:
-            msg = ungettext(
+            msg = ngettext(
                 _('<a href="{url}">{name}</a> has been executed'),
                 _('<a href="{url}">{total} backends</a> have been executed'),
                 total)

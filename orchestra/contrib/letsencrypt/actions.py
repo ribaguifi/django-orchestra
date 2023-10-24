@@ -1,7 +1,7 @@
 from django.contrib import messages, admin
 from django.template.response import TemplateResponse
 from django.utils.safestring import mark_safe
-from django.utils.translation import ungettext, ugettext, ugettext_lazy as _
+from django.utils.translation import ngettext, gettext, gettext_lazy as _
 
 from orchestra.admin.utils import admin_link
 from orchestra.contrib.orchestration import Operation, helpers
@@ -16,12 +16,12 @@ def letsencrypt(modeladmin, request, queryset):
     content_error = ''
     contentless = queryset.exclude(content__path='/').distinct()
     if contentless:
-        content_error = ungettext(
-            ugettext("Selected website %s doesn't have a webapp mounted on <tt>/</tt>."),
-            ugettext("Selected websites %s don't have a webapp mounted on <tt>/</tt>."),
+        content_error = ngettext(
+            gettext("Selected website %s doesn't have a webapp mounted on <tt>/</tt>."),
+            gettext("Selected websites %s don't have a webapp mounted on <tt>/</tt>."),
             len(contentless),
         )
-        content_error += ugettext("<br>Websites need a webapp (e.g. static) mounted on </tt>/</tt> "
+        content_error += gettext("<br>Websites need a webapp (e.g. static) mounted on </tt>/</tt> "
                                   "for let's encrypt HTTP-01 challenge to work.")
         content_error = content_error % ', '.join((admin_link()(website) for website in contentless))
         content_error = '<ul class="errorlist"><li>%s</li></ul>' % content_error
@@ -76,19 +76,19 @@ def letsencrypt(modeladmin, request, queryset):
                     'no_https': no_https
                 }
                 if errors:
-                    msg = ungettext(
+                    msg = ngettext(
                         _("No lineages found for websites {name}."),
                         _("No lineages found for {errors} websites."),
                         errors)
                     messages.error(request, msg % context)
                 if successes:
-                    msg = ungettext(
+                    msg = ngettext(
                         _("{name} website has successfully been encrypted."),
                         _("{successes} websites have been successfully encrypted."),
                         successes)
                     messages.success(request, msg.format(**context))
                 if no_https:
-                    msg = ungettext(
+                    msg = ngettext(
                         _("{name} website does not have <b>HTTPS protocol</b> enabled."),
                         _("{no_https} websites do not have <b>HTTPS protocol</b> enabled."),
                         no_https)
@@ -99,7 +99,7 @@ def letsencrypt(modeladmin, request, queryset):
     context = {
         'title': _("Let's encrypt!"),
         'action_name': _("Encrypt"),
-        'content_message': ugettext("You are going to request certificates for the following domains.<br>"
+        'content_message': gettext("You are going to request certificates for the following domains.<br>"
             "This operation is safe to run multiple times, "
             "existing certificates will not be regenerated. "
             "Also notice that let's encrypt does not currently support wildcard certificates.") + content_error,

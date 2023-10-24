@@ -2,8 +2,8 @@ import os
 import textwrap
 from collections import OrderedDict
 
-from django.template import Template
-from django.utils.translation import ugettext_lazy as _
+from django.template import Template, Context
+from django.utils.translation import gettext_lazy as _
 
 from orchestra.contrib.orchestration import ServiceController
 
@@ -245,7 +245,7 @@ class PHPController(WebAppServiceMixin, ServiceController):
             php_admin_value[{{ name | safe }}] = {{ value | safe }}{% endfor %}
             """
         ))
-        return fpm_config.render(context)
+        return fpm_config.render(Context(context))
 
     def get_fcgid_wrapper(self, webapp, context):
         opt = webapp.type_instance

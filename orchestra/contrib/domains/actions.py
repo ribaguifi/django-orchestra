@@ -7,7 +7,7 @@ from django.db.models.functions import Concat, Coalesce
 from django.forms.models import modelformset_factory
 from django.shortcuts import render
 from django.utils.safestring import mark_safe
-from django.utils.translation import ungettext, ugettext_lazy as _
+from django.utils.translation import ngettext, gettext_lazy as _
 from django.template.response import TemplateResponse
 
 from orchestra.admin.utils import get_object_from_url, change_url, admin_link
@@ -84,7 +84,7 @@ def edit_records(modeladmin, request, queryset):
                 change_message = modeladmin.construct_change_message(request, fake_form, [formset])
                 modeladmin.log_change(request, formset.instance, change_message)
             num = len(formsets)
-            message = ungettext(
+            message = ngettext(
                 _("Records for one selected domain have been updated."),
                 _("Records for %i selected domains have been updated.") % num,
                 num)
@@ -127,7 +127,7 @@ def set_soa(modeladmin, request, queryset):
                 modeladmin.log_change(request, domain, change_message)
                 domain.save()
             num = len(queryset)
-            msg = ungettext(
+            msg = ngettext(
                 _("SOA record for one domain has been updated."),
                 _("SOA record for %s domains has been updated.") % num,
                 num

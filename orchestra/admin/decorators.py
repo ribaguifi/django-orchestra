@@ -4,11 +4,10 @@ from django.contrib import messages
 from django.contrib.admin import helpers
 from django.core.exceptions import ValidationError
 from django.template.response import TemplateResponse
-from django.utils.decorators import available_attrs
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 from django.utils.html import format_html
 from django.utils.text import capfirst
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 
 def admin_field(method):
@@ -50,7 +49,7 @@ def action_with_confirmation(action_name=None, extra_context=None, validator=Non
     """
     
     def decorator(func, extra_context=extra_context, template=template, action_name=action_name, validatior=validator):
-        @wraps(func, assigned=available_attrs(func))
+        @wraps(func)
         def inner(modeladmin, request, queryset, action_name=action_name, extra_context=extra_context, validator=validator):
             if validator is not None:
                 try:
@@ -69,10 +68,10 @@ def action_with_confirmation(action_name=None, extra_context=None, validator=Non
             action_value = func.__name__
             
             if len(queryset) == 1:
-                objects_name = force_text(opts.verbose_name)
+                objects_name = force_str(opts.verbose_name)
                 obj = queryset.get()
             else:
-                objects_name = force_text(opts.verbose_name_plural)
+                objects_name = force_str(opts.verbose_name_plural)
                 obj = None
             if not action_name:
                 action_name = func.__name__

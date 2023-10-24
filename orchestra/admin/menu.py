@@ -3,7 +3,7 @@ from copy import deepcopy
 from admin_tools.menu import items, Menu
 from django.urls import reverse
 from django.utils.text import capfirst
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from orchestra.core import services, accounts, administration
 
@@ -73,7 +73,7 @@ class OrchestraMenu(Menu):
         self.children = [
 #            items.MenuItem(
 #                mark_safe('{site_name} <span style="{version_style}">v{version}</span>'.format(
-#                    site_name=force_text(settings.SITE_VERBOSE_NAME),
+#                    site_name=force_str(settings.SITE_VERBOSE_NAME),
 #                    version_style="text-transform:none; float:none; font-size:smaller; background:none;",
 #                    version=get_version())),
 #                reverse('admin:index')

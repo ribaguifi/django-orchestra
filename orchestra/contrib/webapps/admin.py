@@ -1,9 +1,9 @@
 from django import forms
 from django.contrib import admin
 from django.urls import reverse
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 from django.utils.safestring import mark_safe
-from django.utils.translation import ugettext, ugettext_lazy as _
+from django.utils.translation import gettext, gettext_lazy as _
 
 from orchestra.admin import ExtendedModelAdmin
 from orchestra.admin.utils import admin_link, get_modeladmin
@@ -24,7 +24,7 @@ class WebAppOptionInline(admin.TabularInline):
     extra = 1
 
     OPTIONS_HELP_TEXT = {
-        op.name: force_text(op.help_text) for op in AppOption.get_plugins()
+        op.name: force_str(op.help_text) for op in AppOption.get_plugins()
     }
 
     class Media:
@@ -74,14 +74,15 @@ class WebAppAdmin(SelectPluginAdminMixin, AccountAdminMixin, ExtendedModelAdmin)
             site_url = content.get_absolute_url()
             site_link = get_on_site_link(site_url)
             website = content.website
-            name = "%s on %s %s" % (website.name, content.path, site_link)
+            #name = "%s on %s %s" % (website.name, content.path, site_link)
+            name = "%s on %s" % (website.name, content.path)
             link = admin_link(display=name)(website)
             websites.append(link)
         if not websites:
             add_url = reverse('admin:websites_website_add')
             add_url += '?account=%s' % webapp.account_id
             plus = '<strong style="color:green; font-size:12px">+</strong>'
-            websites.append('<a href="%s">%s%s</a>' % (add_url, plus, ugettext("Add website")))
+            websites.append('<a href="%s">%s%s</a>' % (add_url, plus, gettext("Add website")))
         return '<br>'.join(websites)
     display_websites.short_description = _("web sites")
 

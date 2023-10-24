@@ -1,5 +1,5 @@
 from django.utils.text import format_lazy
-from django.utils.translation import ugettext_lazy
+from django.utils.translation import gettext_lazy
 
 
 def get_chunks(porders, ini, end, ix=0):
@@ -141,7 +141,7 @@ def get_rate_methods_help_text(rate_class):
         format_lazy('{}' * 4, *['<br>&nbsp;&nbsp;', method.verbose_name, ': ', method.help_text])
             for method in rate_class.get_methods().values()
     ]
-    prefix = ugettext_lazy("Algorithm used to interprete the rating table.")
+    prefix = gettext_lazy("Algorithm used to interprete the rating table.")
     help_text_items = [prefix] + method_help_texts
     return format_lazy(
         '{}' * len(help_text_items),

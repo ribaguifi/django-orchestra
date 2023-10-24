@@ -1,5 +1,5 @@
 from django import forms
-from django.conf.urls import url
+from django.urls import re_path as url
 from django.contrib import admin, messages
 from django.contrib.admin.utils import unquote
 from django.urls import reverse
@@ -9,7 +9,7 @@ from django.db.models.functions import Coalesce
 from django.templatetags.static import static
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.shortcuts import redirect
 
 from orchestra.admin import ExtendedModelAdmin
@@ -126,7 +126,7 @@ class ClosedBillLineInline(BillLineInline):
             return line.compute_total()
     display_total.short_description = _("Total")
 
-    def has_add_permission(self, request):
+    def has_add_permission(self, request, obj):
         return False
 
 

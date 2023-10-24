@@ -1,7 +1,7 @@
 from urllib.parse import parse_qs
 
 from django.apps import apps
-from django.conf.urls import url
+from django.urls import re_path as url
 from django.contrib import admin, messages
 from django.contrib.contenttypes.admin import GenericTabularInline
 from django.contrib.contenttypes.forms import BaseGenericInlineFormSet
@@ -13,7 +13,7 @@ from django.templatetags.static import static
 from django.utils.functional import cached_property
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
-from django.utils.translation import ungettext, ugettext_lazy as _
+from django.utils.translation import ngettext, gettext_lazy as _
 
 from orchestra.admin import ExtendedModelAdmin
 from orchestra.admin.utils import insertattr, get_modeladmin, admin_link, admin_date
@@ -70,7 +70,7 @@ class ResourceAdmin(ExtendedModelAdmin):
                 if monitor not in backends:
                     not_routed.append(monitor)
             if not_routed:
-                messages.warning(request, ungettext(
+                messages.warning(request, ngettext(
                     _("%(not_routed)s monitor doesn't have any configured route."),
                     _("%(not_routed)s monitors don't have any configured route."),
                     len(not_routed),

@@ -4,7 +4,7 @@ import textwrap
 from django import forms
 from django.utils.safestring import mark_safe
 
-from django.contrib.admin.templatetags.admin_static import static
+from django.templatetags.static import static
 
 
 class SpanWidget(forms.Widget):

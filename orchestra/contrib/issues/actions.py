@@ -2,7 +2,7 @@ import sys
 
 from django.contrib import messages
 from django.db import transaction
-from django.utils.translation import ungettext, ugettext_lazy as _
+from django.utils.translation import ngettext, gettext_lazy as _
 
 from orchestra.admin.decorators import action_with_confirmation
 
@@ -102,7 +102,7 @@ def mark_as_unread(modeladmin, request, queryset):
         ticket.mark_as_unread_by(request.user)
         modeladmin.log_change(request, ticket, 'Marked as unread')
     num = len(queryset)
-    msg = ungettext(
+    msg = ngettext(
         _("Selected ticket has been marked as unread."),
         _("%i selected tickets have been marked as unread.") % num,
         num)
@@ -116,7 +116,7 @@ def mark_as_read(modeladmin, request, queryset):
         ticket.mark_as_read_by(request.user)
         modeladmin.log_change(request, ticket, 'Marked as read')
     num = len(queryset)
-    msg = ungettext(
+    msg = ngettext(
         _("Selected ticket has been marked as read."),
         _("%i selected tickets have been marked as read.") % num,
         num)

@@ -38,7 +38,7 @@ class Plugin(object):
     
     @classmethod
     def get_verbose_name(cls):
-        # don't evaluate p.verbose_name ugettext_lazy
+        # don't evaluate p.verbose_name gettext_lazy
         verbose = getattr(cls.verbose_name, '_proxy____args', [cls.verbose_name])
         if verbose[0]:
             return cls.verbose_name

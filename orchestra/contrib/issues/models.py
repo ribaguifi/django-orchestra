@@ -1,7 +1,7 @@
 from django.conf import settings as djsettings
 from django.db import models
 from django.db.models import query, Q
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from orchestra.contrib.contacts import settings as contacts_settings
 from orchestra.contrib.contacts.models import Contact

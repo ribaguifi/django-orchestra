@@ -6,7 +6,7 @@ import xml.etree.ElementTree as ET
 from urllib.parse import urlparse
 
 import requests
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from orchestra.contrib.orchestration import ServiceController
 from orchestra.contrib.resources import ServiceMonitor
@@ -33,7 +33,7 @@ class NextCloudAPIMixin(object):
     def api_call(self, action, url_path, *args, **kwargs):
         BASE_URL = settings.SAAS_NEXTCLOUD_API_URL.rstrip('/')
         url = '/'.join((BASE_URL, url_path))
-        response = action(url, headers={'OCS-APIRequest':'true'}, *args, **kwargs)
+        response = action(url, headers={'OCS-APIRequest':'true'}, verify=False, *args, **kwargs)
         self.validate_response(response)
         return response
     

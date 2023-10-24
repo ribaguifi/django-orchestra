@@ -2,8 +2,8 @@ import os
 import re
 import textwrap
 
-from django.template import Template
-from django.utils.translation import ugettext_lazy as _
+from django.template import Template, Context
+from django.utils.translation import gettext_lazy as _
 
 from orchestra.contrib.orchestration import ServiceController
 from orchestra.contrib.resources import ServiceMonitor
@@ -78,7 +78,7 @@ class Apache2Controller(ServiceController):
                 {{ line | safe }}{% endfor %}
             </VirtualHost>
             """)
-        ).render(context)
+        ).render(Context(context))
 
     def render_redirect_https(self, context):
         context['port'] = self.HTTP_PORT
@@ -96,7 +96,7 @@ class Apache2Controller(ServiceController):
                 RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI}
             </VirtualHost>
             """)
-        ).render(context)
+        ).render(Context(context))
 
     def save(self, site):
         context = self.get_context(site)

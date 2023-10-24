@@ -7,7 +7,7 @@ from django.db import transaction
 from django.shortcuts import render, redirect
 from django.utils.safestring import mark_safe
 from django.utils.text import capfirst
-from django.utils.translation import ungettext, ugettext_lazy as _
+from django.utils.translation import ngettext, gettext_lazy as _
 
 from orchestra.admin.decorators import action_with_confirmation
 from orchestra.admin.utils import change_url
@@ -38,11 +38,11 @@ def process_transactions(modeladmin, request, queryset):
     opts = modeladmin.model._meta
     num = len(queryset)
     context = {
-        'title': ungettext(
+        'title': ngettext(
             _("One selected transaction has been processed."),
             _("%s Selected transactions have been processed.") % num,
             num),
-        'content_message': ungettext(
+        'content_message': ngettext(
             _("The following transaction process has been generated, "
               "you may want to save it on your computer now."),
             _("The following %s transaction processes have been generated, "
@@ -63,7 +63,7 @@ def mark_as_executed(modeladmin, request, queryset):
         transaction.mark_as_executed()
         modeladmin.log_change(request, transaction, _("Executed"))
     num = len(queryset)
-    msg = ungettext(
+    msg = ngettext(
         _("One selected transaction has been marked as executed."),
         _("%s selected transactions have been marked as executed.") % num,
         num)
@@ -79,7 +79,7 @@ def mark_as_secured(modeladmin, request, queryset):
         transaction.mark_as_secured()
         modeladmin.log_change(request, transaction, _("Secured"))
     num = len(queryset)
-    msg = ungettext(
+    msg = ngettext(
         _("One selected transaction has been marked as secured."),
         _("%s selected transactions have been marked as secured.") % num,
         num)
@@ -95,7 +95,7 @@ def mark_as_rejected(modeladmin, request, queryset):
         transaction.mark_as_rejected()
         modeladmin.log_change(request, transaction, _("Rejected"))
     num = len(queryset)
-    msg = ungettext(
+    msg = ngettext(
         _("One selected transaction has been marked as rejected."),
         _("%s selected transactions have been marked as rejected.") % num,
         num)
@@ -134,7 +134,7 @@ def mark_process_as_executed(modeladmin, request, queryset):
         process.mark_as_executed()
         modeladmin.log_change(request, process, _("Executed"))
     num = len(queryset)
-    msg = ungettext(
+    msg = ngettext(
         _("One selected process has been marked as executed."),
         _("%s selected processes have been marked as executed.") % num,
         num)
@@ -150,7 +150,7 @@ def abort(modeladmin, request, queryset):
         process.abort()
         modeladmin.log_change(request, process, _("Aborted"))
     num = len(queryset)
-    msg = ungettext(
+    msg = ngettext(
         _("One selected process has been aborted."),
         _("%s selected processes have been aborted.") % num,
         num)
@@ -166,7 +166,7 @@ def commit(modeladmin, request, queryset):
         transaction.mark_as_rejected()
         modeladmin.log_change(request, transaction, _("Rejected"))
     num = len(queryset)
-    msg = ungettext(
+    msg = ngettext(
         _("One selected transaction has been marked as rejected."),
         _("%s selected transactions have been marked as rejected.") % num,
         num)

@@ -1,7 +1,7 @@
 import hashlib
 
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from orchestra.core import validators
 
@@ -23,9 +23,11 @@ class Database(models.Model):
     account = models.ForeignKey('accounts.Account', on_delete=models.CASCADE,
             verbose_name=_("Account"),  related_name='databases')
     comments = models.TextField(default="", blank=True)
+    target_server = models.ForeignKey('orchestration.Server', on_delete=models.CASCADE,
+        verbose_name=_("Server"), default=3 )
 
     class Meta:
-        unique_together = ('name', 'type')
+        unique_together = ('name', 'type', 'target_server')
 
     def __str__(self):
         return "%s" % self.name
@@ -54,7 +56,12 @@ class DatabaseUser(models.Model):
     MYSQL = Database.MYSQL
     POSTGRESQL = Database.POSTGRESQL
 
-    username = models.CharField(_("username"), max_length=16, # MySQL usernames 16 char long
+    typeOfPermision = [
+        ('all','all'),
+        ('ro', 'read only'),
+    ]
+
+    username = models.CharField(_("username"), max_length=32, # MySQL usernames 16 char long
             validators=[validators.validate_name])
     password = models.CharField(_("password"), max_length=256)
     type = models.CharField(_("type"), max_length=32,
@@ -62,10 +69,14 @@ class DatabaseUser(models.Model):
             default=settings.DATABASES_DEFAULT_TYPE)
     account = models.ForeignKey('accounts.Account', on_delete=models.CASCADE,
             verbose_name=_("Account"), related_name='databaseusers')
+    target_server = models.ForeignKey('orchestration.Server', on_delete=models.CASCADE,
+        verbose_name=_("Server"), default=3 )
+    permision = models.CharField(verbose_name=_("Permisson"), max_length=20, choices=typeOfPermision, default='all')
+
 
     class Meta:
         verbose_name_plural = _("DB users")
-        unique_together = ('username', 'type')
+        unique_together = ('username', 'type', 'target_server')
 
     def __str__(self):
         return self.username

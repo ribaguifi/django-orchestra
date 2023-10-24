@@ -8,7 +8,7 @@ from django.db.models import Count
 from django.shortcuts import redirect
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from orchestra.admin import ExtendedModelAdmin
 from orchestra.admin.utils import admin_link, admin_colored, admin_date, wrap_admin_view
@@ -115,7 +115,7 @@ class MessageAdmin(ExtendedModelAdmin):
     display_to.short_description = _("To")
 
     def get_urls(self):
-        from django.conf.urls import url
+        from django.urls import re_path as url
         urls = super().get_urls()
         info = self.model._meta.app_label, self.model._meta.model_name
         urls.insert(0,

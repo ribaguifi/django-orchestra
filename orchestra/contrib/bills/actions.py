@@ -12,7 +12,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.utils import translation, timezone
 from django.utils.safestring import mark_safe
-from django.utils.translation import ungettext, ugettext_lazy as _
+from django.utils.translation import ngettext, gettext_lazy as _
 
 from orchestra.admin.decorators import action_with_confirmation
 from orchestra.admin.forms import AdminFormSet
@@ -69,7 +69,7 @@ def close_bills(modeladmin, request, queryset, action='close_bills'):
                     'url': url,
                     'num': num,
                 }
-                message = ungettext(
+                message = ngettext(
                     _('<a href="%(url)s">One related transaction</a> has been created') % context,
                     _('<a href="%(url)s">%(num)i related transactions</a> have been created') % context,
                     num)
@@ -111,7 +111,7 @@ def send_bills_action(modeladmin, request, queryset):
         bill.send()
         modeladmin.log_change(request, bill, 'Sent')
         num += 1
-    messages.success(request, ungettext(
+    messages.success(request, ngettext(
         _("One bill has been sent."),
         _("%i bills have been sent.") % num,
         num))
@@ -135,7 +135,7 @@ def download_bills(modeladmin, request, queryset):
             pdf = bill.as_pdf()
             archive.writestr('%s.pdf' % bill.number, pdf)
         archive.close()
-        response = HttpResponse(bytesio.getvalue(), content_type='application/pdf')
+        response = HttpResponse(bytesio.getvalue(), content_type='application/zip')
         response['Content-Disposition'] = 'attachment; filename="orchestra-bills.zip"'
         return response
     bill = queryset[0]
@@ -299,7 +299,7 @@ def amend_bills(modeladmin, request, queryset):
         'url': amend_url,
         'num': num,
     }
-    messages.success(request, mark_safe(ungettext(
+    messages.success(request, mark_safe(ngettext(
         _('<a href="%(url)s">One amendment bill</a> have been generated.') % context,
         _('<a href="%(url)s">%(num)i amendment bills</a> have been generated.') % context,
         num

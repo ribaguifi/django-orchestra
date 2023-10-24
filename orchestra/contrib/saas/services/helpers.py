@@ -2,7 +2,7 @@ from collections import defaultdict
 from urllib.parse import urlparse
 
 from django.core.exceptions import ValidationError
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from orchestra.contrib.websites.models import Website, WebsiteDirective, Content
 from orchestra.contrib.websites.validators import validate_domain_protocol

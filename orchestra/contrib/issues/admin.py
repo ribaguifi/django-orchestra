@@ -1,5 +1,5 @@
 from django import forms
-from django.conf.urls import url
+from django.urls import re_path as url
 from django.contrib import admin
 from django.urls import reverse
 from django.db import models
@@ -7,7 +7,7 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils.html import format_html, strip_tags
 from django.utils.safestring import mark_safe
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from markdown import markdown
 
 from orchestra.admin import ExtendedModelAdmin
@@ -68,7 +68,7 @@ class MessageReadOnlyInline(admin.TabularInline):
         return header + content
     content_html.short_description = _("Content")
 
-    def has_add_permission(self, request):
+    def has_add_permission(self, request, obj):
         return False
 
     def has_delete_permission(self, request, obj=None):

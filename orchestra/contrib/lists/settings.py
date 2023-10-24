@@ -21,20 +21,20 @@ LISTS_LIST_URL = Setting('LISTS_LIST_URL',
 
 
 LISTS_MAILMAN_POST_LOG_PATH = Setting('LISTS_MAILMAN_POST_LOG_PATH',
-    '/var/log/mailman/post'
+    '/var/log/mailman3/smtp'
 )
 
 
 LISTS_MAILMAN_ROOT_DIR = Setting('LISTS_MAILMAN_ROOT_DIR',
-    '/var/lib/mailman'
+    '/var/lib/mailman3'
 )
 
 
 LISTS_VIRTUAL_ALIAS_PATH = Setting('LISTS_VIRTUAL_ALIAS_PATH',
-    '/etc/postfix/mailman_virtual_aliases'
+    '/etc/postfix/mailman3_virtusertable'
 )
 
 
 LISTS_VIRTUAL_ALIAS_DOMAINS_PATH = Setting('LISTS_VIRTUAL_ALIAS_DOMAINS_PATH',
-    '/etc/postfix/mailman_virtual_domains'
+    '/etc/postfix/mailman3_virtdomains'
 )

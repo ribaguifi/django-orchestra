@@ -5,10 +5,10 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 from django.utils.functional import cached_property
 from django.utils.module_loading import autodiscover_modules
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from orchestra.core.validators import validate_ip_address, validate_hostname, OrValidator
 from orchestra.models.fields import NullableCharField, MultiSelectField
@@ -128,7 +128,7 @@ class BackendOperationQuerySet(models.QuerySet):
     def create(self, **kwargs):
         instance = kwargs.get('instance')
         if instance and 'instance_repr' not in kwargs:
-            kwargs['instance_repr'] = force_text(instance)[:256]
+            kwargs['instance_repr'] = force_str(instance)[:256]
         return super(BackendOperationQuerySet, self).create(**kwargs)
 
 
@@ -207,7 +207,7 @@ class Route(models.Model):
     run_async = models.BooleanField(default=False,
         help_text=_("Whether or not block the request/response cycle waitting this backend to "
                     "finish its execution. Usually you want slave servers to run asynchronously."))
-    async_actions = MultiSelectField(max_length=256, blank=True,
+    async_actions = MultiSelectField(max_length=256, blank=True, choices=[],
         help_text=_("Specify individual actions to be executed asynchronoulsy."))
 #    method = models.CharField(_("method"), max_lenght=32, choices=method_choices,
 #            default=MethodBackend.get_default())

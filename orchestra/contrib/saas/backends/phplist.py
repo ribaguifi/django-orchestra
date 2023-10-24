@@ -4,7 +4,7 @@ import sys
 import textwrap
 
 import requests
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from orchestra.contrib.orchestration import ServiceController
 from orchestra.contrib.resources import ServiceMonitor

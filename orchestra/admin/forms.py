@@ -5,8 +5,8 @@ from django import forms
 from django.contrib.admin import helpers
 from django.core import validators
 from django.forms.models import modelformset_factory, BaseModelFormSet
-from django.template import Template
-from django.utils.translation import ugettext_lazy as _
+from django.template import Template, Context
+from django.utils.translation import gettext_lazy as _
 
 from orchestra.forms.widgets import SpanWidget
 
@@ -31,7 +31,7 @@ class AdminFormMixin(object):
         context = {
             'adminform': adminform
         }
-        return template.render(context)
+        return template.render(Context(context))
 
 
 class AdminFormSet(BaseModelFormSet):
@@ -74,7 +74,7 @@ class AdminFormSet(BaseModelFormSet):
         context = {
             'formset': self
         }
-        return template.render(context)
+        return template.render(Context(context))
 
 
 class AdminPasswordChangeForm(forms.Form):

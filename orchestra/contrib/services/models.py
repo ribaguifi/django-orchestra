@@ -7,7 +7,7 @@ from django.db import models
 from django.apps import apps
 from django.utils.functional import cached_property
 from django.utils.module_loading import autodiscover_modules
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from orchestra.core import caches, validators
 from orchestra.utils.python import import_class
@@ -109,7 +109,7 @@ class Service(models.Model):
         help_text=_(
             "Python <a href='https://docs.python.org/2/library/functions.html#eval'>expression</a> "
             "used for generating the description for the bill lines of this services.<br>"
-            "Defaults to <tt>'%s: %s' % (ugettext(handler.description), instance)</tt>"
+            "Defaults to <tt>'%s: %s' % (gettext(handler.description), instance)</tt>"
         ))
     ignore_period = models.CharField(_("ignore period"), max_length=16, blank=True,
         help_text=_("Period in which orders will be ignored if cancelled. "

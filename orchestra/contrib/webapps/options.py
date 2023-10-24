@@ -3,7 +3,7 @@ import re
 from functools import lru_cache
 
 from django.core.exceptions import ValidationError
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from orchestra import plugins
 from orchestra.utils.python import import_class
@@ -204,6 +204,10 @@ class PHPIncludePath(PHPAppOption):
     verbose_name = _("Include path")
     regex = r'^[^ ]+$'
 
+class PHPOpenBasedir(PHPAppOption):
+    name = 'open_basedir'
+    verbose_name = _("Open basedir")
+    regex = r'^[^ ]+$'
 
 class PHPMagicQuotesGPC(PHPAppOption):
     name = 'magic_quotes_gpc'

@@ -35,7 +35,7 @@ class MultiSelectField(models.CharField):
             return value
         return []
 
-    def from_db_value(self, value, expression, connection, context):
+    def from_db_value(self, value, expression, connection):
         if value:
             if isinstance(value, str):
                 return value.split(',')

@@ -1,5 +1,5 @@
 from django.contrib import messages
-from django.utils.translation import ungettext, ugettext_lazy as _
+from django.utils.translation import ngettext, gettext_lazy as _
 
 from .models import Transaction
 
@@ -29,7 +29,7 @@ def post_delete_processes(modeladmin, request, related_transactions):
         transaction.save(update_fields=('state', 'modified_at'))
         num += 1
         modeladmin.log_change(request, transaction, _("Unprocessed"))
-    messages.success(request, ungettext(
+    messages.success(request, ngettext(
         "One related transaction has been marked as <i>waitting for processing</i>",
         "%i related transactions have been marked as <i>waitting for processing</i>." % num,
         num

@@ -4,7 +4,7 @@ import re
 import textwrap
 
 from django.core.exceptions import ObjectDoesNotExist
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from orchestra.contrib.orchestration import ServiceController
 from orchestra.contrib.resources import ServiceMonitor
@@ -437,15 +437,20 @@ class DovecotMaildirDisk(ServiceMonitor):
     def prepare(self):
         super().prepare()
         current_date = self.current_date.strftime("%Y-%m-%d %H:%M:%S %Z")
+        # self.append(textwrap.dedent("""\
+        #     function monitor () {
+        #         awk 'BEGIN { size = 0 } NR > 1 { size += $1 } END { print size }' $1 || echo 0
+        #     }"""))
         self.append(textwrap.dedent("""\
             function monitor () {
-                awk 'BEGIN { size = 0 } NR > 1 { size += $1 } END { print size }' $1 || echo 0
+                 SIZE=$(du -sb $1/Maildir/ 2> /dev/null || echo 0) && echo $SIZE | awk '{print $1}'
             }"""))
     
     def monitor(self, mailbox):
         context = self.get_context(mailbox)
-        self.append("echo %(object_id)s $(monitor %(maildir_path)s)" % context)
-    
+        # self.append("echo %(object_id)s $(monitor %(maildir_path)s)" % context)
+        self.append("echo %(object_id)s $(monitor %(home)s)" % context)
+
     def get_context(self, mailbox):
         context = {
             'home': mailbox.get_home(),

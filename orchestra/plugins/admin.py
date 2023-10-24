@@ -1,9 +1,9 @@
 import re
 
-from django.conf.urls import url
+from django.urls import re_path as url
 from django.contrib.admin.utils import unquote
 from django.shortcuts import render, redirect
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from orchestra.admin.utils import wrap_admin_view
 
@@ -46,7 +46,7 @@ class SelectPluginAdminMixin(object):
         opts = self.model._meta
         info = opts.app_label, opts.model_name
         select_urls = [
-            url("select-plugin/$",
+            url("add/select-plugin/$",
                 wrap_admin_view(self, self.select_plugin_view),
                 name='%s_%s_select_plugin' % info),
         ]

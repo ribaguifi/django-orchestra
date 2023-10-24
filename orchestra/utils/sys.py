@@ -111,7 +111,8 @@ def runiterator(command, display=False, stdin=b''):
         if state.exit_code != None:
             p.stdout.close()
             p.stderr.close()
-            raise StopIteration
+            return
+            # raise StopIteration
 
 
 def join(iterator, display=False, silent=False, valid_codes=(0,)):
@@ -165,6 +166,11 @@ def sshrun(addr, command, *args, executable='bash', persist=False, options=None,
         'stricthostkeychecking': 'no',
         'BatchMode': 'yes',
         'EscapeChar': 'none',
+        # Send keep alives to prevent stale or broken connections when no data is being sent
+        # default tcp timeout: 900 seconds
+        'ServerAliveInterval': '300',
+        # Max number of consecutive keep alives without response
+        'ServerAliveCountMax': '2',
     }
     if persist:
         base_options.update({

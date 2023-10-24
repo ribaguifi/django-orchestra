@@ -4,8 +4,8 @@ from django.apps import apps
 from django.contrib.admin import SimpleListFilter
 from django.db.models import Q, Prefetch, F
 from django.utils import timezone
-from django.utils.encoding import force_text
-from django.utils.translation import ugettext_lazy as _
+from django.utils.encoding import force_str
+from django.utils.translation import gettext_lazy as _
 
 from . import settings
 from .models import MetricStorage
@@ -118,7 +118,7 @@ class IgnoreOrderListFilter(SimpleListFilter):
         """ Enable default selection different than All """
         for lookup, title in self.lookup_choices:
             title = title._proxy____args[0]
-            selected = self.value() == force_text(lookup)
+            selected = self.value() == force_str(lookup)
             if not selected and title == "Not ignored" and self.value() is None:
                 selected = True
             # end of workaround

@@ -1,9 +1,9 @@
-from django.conf.urls import url
+from django.urls import re_path as url
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from orchestra.admin import ExtendedModelAdmin, ChangePasswordAdminMixin
 from orchestra.admin.utils import change_url
@@ -11,7 +11,7 @@ from orchestra.contrib.accounts.actions import list_accounts
 from orchestra.contrib.accounts.admin import SelectAccountAdminMixin
 
 from .filters import HasUserListFilter, HasDatabaseListFilter
-from .forms import DatabaseCreationForm, DatabaseUserChangeForm, DatabaseUserCreationForm
+from .forms import DatabaseCreationForm, DatabaseUserChangeForm, DatabaseUserCreationForm, DatabaseForm
 from .models import Database, DatabaseUser
 
 def save_selected(modeladmin, request, queryset):
@@ -23,18 +23,18 @@ class DatabaseAdmin(SelectAccountAdminMixin, ExtendedModelAdmin):
     list_display = ('name', 'type', 'display_users', 'account_link')
     list_filter = ('type', HasUserListFilter)
     search_fields = ('name', 'account__username')
-    change_readonly_fields = ('name', 'type')
+    change_readonly_fields = ('name', 'type', 'target_server')
     extra = 1
     fieldsets = (
         (None, {
             'classes': ('extrapretty',),
-            'fields': ('account_link', 'name', 'type', 'users', 'display_users', 'comments'),
+            'fields': ('account_link', 'name', 'type', 'users', 'display_users', 'comments', 'target_server'),
         }),
     )
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('account_link', 'name', 'type')
+            'fields': ('account_link', 'name', 'type', 'target_server')
         }),
         (_("Create new user"), {
             'classes': ('wide',),
@@ -45,11 +45,12 @@ class DatabaseAdmin(SelectAccountAdminMixin, ExtendedModelAdmin):
             'fields': ('user',)
         }),
     )
+    form = DatabaseForm
     add_form = DatabaseCreationForm
     readonly_fields = ('account_link', 'display_users',)
     filter_horizontal = ['users']
-    filter_by_account_fields = ('users',)
-    list_prefetch_related = ('users',)
+    # filter_by_account_fields = ('users',)
+    # list_prefetch_related = ('users',)
     actions = (list_accounts, save_selected)
 
     @mark_safe
@@ -71,6 +72,7 @@ class DatabaseAdmin(SelectAccountAdminMixin, ExtendedModelAdmin):
                     username=form.cleaned_data['username'],
                     type=obj.type,
                     account_id=obj.account.pk,
+                    target_server=form.cleaned_data['target_server'],
                 )
                 user.set_password(form.cleaned_data["password1"])
             user.save()
@@ -78,22 +80,22 @@ class DatabaseAdmin(SelectAccountAdminMixin, ExtendedModelAdmin):
 
 
 class DatabaseUserAdmin(SelectAccountAdminMixin, ChangePasswordAdminMixin, ExtendedModelAdmin):
-    list_display = ('username', 'type', 'display_databases', 'account_link')
+    list_display = ('username', 'target_server', 'type', 'display_databases', 'account_link')
     list_filter = ('type', HasDatabaseListFilter)
     search_fields = ('username', 'account__username')
     form = DatabaseUserChangeForm
     add_form = DatabaseUserCreationForm
-    change_readonly_fields = ('username', 'type')
+    change_readonly_fields = ('username', 'type', 'target_server')
     fieldsets = (
         (None, {
             'classes': ('extrapretty',),
-            'fields': ('account_link', 'username', 'password', 'type', 'display_databases')
+            'fields': ('account_link', 'username', 'password', 'type', 'display_databases', 'target_server', 'permision')
         }),
     )
     add_fieldsets = (
         (None, {
             'classes': ('extrapretty',),
-            'fields': ('account_link', 'username', 'password1', 'password2', 'type')
+            'fields': ('account_link', 'username', 'password1', 'password2', 'type', 'target_server', 'permision')
         }),
     )
     readonly_fields = ('account_link', 'display_databases',)

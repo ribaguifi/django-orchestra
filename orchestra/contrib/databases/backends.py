@@ -1,6 +1,6 @@
 import textwrap
 
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from orchestra.contrib.orchestration import ServiceController, replace
 from orchestra.contrib.resources import ServiceMonitor
@@ -36,10 +36,16 @@ class MySQLController(ServiceController):
                 'username': user.username,
                 'grant': 'WITH GRANT OPTION' if user == context['owner'] else ''
             })
-            self.append(textwrap.dedent("""\
-                mysql -e 'GRANT ALL PRIVILEGES ON `%(database)s`.* TO "%(username)s"@"%(host)s" %(grant)s;'\
-                """) % context
-            )
+            if user.permision == "ro":
+                self.append(textwrap.dedent("""\
+                    mysql -e 'GRANT SELECT ON `%(database)s`.* TO "%(username)s"@"%(host)s" %(grant)s;'\
+                    """) % context
+                )
+            else:
+                self.append(textwrap.dedent("""\
+                    mysql -e 'GRANT ALL PRIVILEGES ON `%(database)s`.* TO "%(username)s"@"%(host)s" %(grant)s;'\
+                    """) % context
+                )
     
     def delete(self, database):
         if database.type != database.MYSQL:
@@ -83,12 +89,20 @@ class MySQLUserController(ServiceController):
         if user.type != user.MYSQL:
             return
         context = self.get_context(user)
-        self.append(textwrap.dedent("""\
-            # Create user %(username)s
-            mysql -e 'CREATE USER "%(username)s"@"%(host)s";' || true # User already exists
-            mysql -e 'UPDATE mysql.user SET Password="%(password)s" WHERE User="%(username)s";'\
-            """) % context
-        )
+        if user.target_server.name != "mysql.pangea.lan":
+            self.append(textwrap.dedent("""\
+                # Create user %(username)s
+                mysql -e 'CREATE USER IF NOT EXISTS "%(username)s"@"%(host)s";' 
+                mysql -e 'ALTER USER IF EXISTS "%(username)s"@"%(host)s" IDENTIFIED BY PASSWORD "%(password)s";'\
+                """) % context
+            )
+        else:
+            self.append(textwrap.dedent("""\
+                # Create user %(username)s
+                mysql -e 'CREATE USER "%(username)s"@"%(host)s";' || true # User already exists
+                mysql -e 'UPDATE mysql.user SET Password="%(password)s" WHERE User="%(username)s";'\
+                """) % context
+            )
     
     def delete(self, user):
         if user.type != user.MYSQL:
@@ -172,7 +186,7 @@ class MysqlDisk(ServiceMonitor):
     def get_context(self, db):
         context = {
             'db_name': db.name,
-            'db_dirname': db.name.replace('-', '@003f'),
+            'db_dirname': db.name.replace('-', '@002d'),
             'db_id': db.pk,
             'db_type': db.type,
         }

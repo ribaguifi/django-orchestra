@@ -18,6 +18,6 @@ requests
 phonenumbers==8.12.27
 django-countries
 django-localflavor==3.1
-amqp<2.0,>=1.4.9
+amqp
 anyjson
 pytz

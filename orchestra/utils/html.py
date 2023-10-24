@@ -2,7 +2,7 @@ import textwrap
 
 from django.templatetags.static import static
 from django.utils.html import format_html
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from orchestra.utils.sys import run
 
@@ -19,7 +19,8 @@ def html_to_pdf(html, pagination=False):
     }
     cmd = textwrap.dedent("""\
         PATH=$PATH:/usr/local/bin/
-        xvfb-run -a -s "-screen 0 2480x3508x16" wkhtmltopdf -q \\
+        xvfb-run -a -s "-screen 0 2480x3508x16" wkhtmltopdf -q  \\
+            --enable-local-file-access \\
             --use-xserver \\
             %(pagination)s \\
             --margin-bottom 22 \\

@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.urls import reverse
 from django.db import models
 from django.utils.html import format_html
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from orchestra.admin import ExtendedModelAdmin
 from orchestra.admin.utils import insertattr, admin_link

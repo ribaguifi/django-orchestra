@@ -4,7 +4,7 @@ from collections import OrderedDict
 from django import forms
 from django.core.exceptions import ValidationError
 from django.apps import apps
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from orchestra.forms import UserCreationForm
 

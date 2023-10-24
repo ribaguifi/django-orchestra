@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.contrib.admin import helpers
 from django.shortcuts import render
 from django.utils.safestring import mark_safe
-from django.utils.translation import ungettext, ugettext_lazy as _
+from django.utils.translation import ngettext, gettext_lazy as _
 
 from orchestra.admin.utils import get_object_from_url, change_url
 from orchestra.contrib.orchestration.helpers import message_user

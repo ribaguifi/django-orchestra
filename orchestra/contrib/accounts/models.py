@@ -5,7 +5,7 @@ from django.db import models
 from django.db.models import signals
 from django.apps import apps
 from django.utils import timezone, translation
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 #from orchestra.contrib.orchestration.middlewares import OperationsMiddleware
 #from orchestra.contrib.orchestration import Operation
@@ -164,7 +164,6 @@ class Account(auth.AbstractBaseUser):
                 return True
             elif obj and getattr(obj, 'account', None) == self:
                 return True
-
 
     def has_perms(self, perm_list, obj=None):
         """

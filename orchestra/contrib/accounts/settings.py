@@ -1,4 +1,4 @@
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from orchestra.contrib.settings import Setting
 from orchestra.settings import ORCHESTRA_BASE_DOMAIN

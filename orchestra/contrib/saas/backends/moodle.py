@@ -1,7 +1,7 @@
 import textwrap
 from urllib.parse import urlparse
 
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from orchestra.contrib.orchestration import ServiceController
 

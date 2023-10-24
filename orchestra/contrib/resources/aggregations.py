@@ -3,7 +3,7 @@ import decimal
 import itertools
 
 from django.utils import timezone
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from orchestra.utils.python import AttrDict
 

@@ -1,13 +1,13 @@
 from datetime import datetime
 
 from django.utils import timezone
-from django.utils.translation import ungettext, ugettext as _
+from django.utils.translation import ngettext, gettext as _
 
 
 def verbose_time(n, units, ago='ago'):
     if n >= 5:
         return _("{n} {units} {ago}").format(n=int(n), units=units, ago=ago)
-    return ungettext(
+    return ngettext(
         _("{n:.1f} {s_units} {ago}"),
         _("{n:.1f} {units} {ago}"), n
     ).format(n=n, units=units, s_units=units[:-1], ago=ago)
@@ -22,7 +22,7 @@ OLDER_CHUNKS = (
 
 def _un(singular__plural, n=None):
     singular, plural = singular__plural
-    return ungettext(singular, plural, n)
+    return ngettext(singular, plural, n)
 
 
 def naturaldatetime(date, show_seconds=False):

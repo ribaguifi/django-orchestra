@@ -1,8 +1,8 @@
 from django.contrib.admin.options import get_content_type_for_model
 from django.conf import settings as django_settings
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 from django.utils.module_loading import autodiscover_modules
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from rest_framework.routers import DefaultRouter
 
 from orchestra import settings
@@ -52,7 +52,7 @@ class LogApiMixin(object):
             user_id=request.user.pk,
             content_type_id=get_content_type_for_model(instance).pk,
             object_id=instance.pk,
-            object_repr=force_text(instance),
+            object_repr=force_str(instance),
             action_flag=action,
             change_message=message,
         )

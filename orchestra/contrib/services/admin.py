@@ -1,11 +1,11 @@
 from django import forms
-from django.conf.urls import url
+from django.urls import re_path as url
 from django.contrib import admin
 from django.urls import reverse
 from django.template.response import TemplateResponse
 from django.utils import timezone
 from django.utils.html import format_html
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from orchestra.admin import ChangeViewActionsMixin
 from orchestra.admin.actions import disable, enable

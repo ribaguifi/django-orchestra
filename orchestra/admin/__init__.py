@@ -6,7 +6,7 @@ from django.contrib import admin
 from django.urls import reverse
 from django.shortcuts import render, redirect
 from django.utils.safestring import mark_safe
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from .dashboard import *
 from .options import *

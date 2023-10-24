@@ -170,10 +170,10 @@ django-admin.py compilemessages -l ca
 
 https://docs.djangoproject.com/en/1.7/topics/i18n/translation/#joining-strings-string-concat
 
-from django.utils.translation import ugettext
+from django.utils.translation import gettext
 from django.utils import translation
 translation.activate('ca')
-ugettext("Description")
+gettext("Description")
 
 * saas validate_creation generic approach, for all backends. standard output
 

@@ -1,7 +1,7 @@
 from django.contrib import admin, messages
-from django.shortcuts import render_to_response
+from django.shortcuts import render
 from django.views import generic
-from django.utils.translation import ngettext, ugettext_lazy as _
+from django.utils.translation import ngettext, gettext_lazy as _
 
 from orchestra.contrib.settings import Setting
 from orchestra.utils import sys
@@ -84,7 +84,7 @@ class SettingView(generic.edit.FormView):
                     _("%s changes successfully applied, orchestra is being restarted.") % n,
                     n),
             }
-            return render_to_response(self.reload_template_name, context)
+            return render(None, self.reload_template_name, context)
         else:
             messages.success(self.request, _("No changes have been detected."))
         return super(SettingView, self).form_valid(form)

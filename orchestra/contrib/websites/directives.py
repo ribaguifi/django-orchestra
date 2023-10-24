@@ -3,7 +3,7 @@ from collections import defaultdict
 from functools import lru_cache
 
 from django.core.exceptions import ValidationError
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from orchestra import plugins
 from orchestra.utils.python import import_class
@@ -83,7 +83,7 @@ class SiteDirective(plugins.Plugin, metaclass=plugins.PluginMount):
         if value is not None:
             if self.unique_value and value in values.get(self.name, []):
                 errors['value'].append(ValidationError(
-                    _("This value is already used by other %s.") % force_text(self.get_verbose_name())
+                    _("This value is already used by other %s.") % force_str(self.get_verbose_name())
                 ))
         values[self.name].append(value)
         if errors:

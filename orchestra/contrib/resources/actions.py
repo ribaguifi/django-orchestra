@@ -1,7 +1,7 @@
 from django.urls import reverse
 from django.shortcuts import redirect, render
 from django.utils.safestring import mark_safe
-from django.utils.translation import ungettext, ugettext_lazy as _
+from django.utils.translation import ngettext, gettext_lazy as _
 
 
 def run_monitor(modeladmin, request, queryset):
@@ -18,7 +18,7 @@ def run_monitor(modeladmin, request, queryset):
         num = len(queryset)
         # TODO listfilter by uuid: task.request.id + ?task_id__in=ids
         link = reverse('admin:djcelery_taskstate_changelist')
-        msg = ungettext(
+        msg = ngettext(
             _("One selected resource has been <a href='%s'>scheduled for monitoring</a>.") % link,
             _("%s selected resource have been <a href='%s'>scheduled for monitoring</a>.") % (num, link),
             num)

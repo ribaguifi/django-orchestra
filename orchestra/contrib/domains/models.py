@@ -1,6 +1,6 @@
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.utils.translation import ungettext, ugettext_lazy as _
+from django.utils.translation import ngettext, gettext_lazy as _
 
 from orchestra.core.validators import validate_ipv4_address, validate_ipv6_address, validate_ascii
 from orchestra.utils.python import AttrDict
@@ -114,7 +114,7 @@ class Domain(models.Model):
     def get_description(self):
         if self.is_top:
             num = self.subdomains.count()
-            return ungettext(
+            return ngettext(
                 _("top domain with one subdomain"),
                 _("top domain with %d subdomains") % num,
                 num)
@@ -144,6 +144,10 @@ class Domain(models.Model):
                 tail.append(subdomain)
             else:
                 zone += subdomain.render_records()
+        ###darmengo 2021-03-25 add autoconfig
+        if self.has_default_mx():
+            zone += 'autoconfig.{}.     30m IN A 109.69.8.133\n'.format(self.name)
+        ###END darmengo 2021-03-25 add autoconfig
         for subdomain in sorted(tail, key=lambda x: len(x.name), reverse=True):
             zone += subdomain.render_records()
         return zone.strip()

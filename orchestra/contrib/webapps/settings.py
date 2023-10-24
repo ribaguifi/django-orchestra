@@ -235,6 +235,7 @@ WEBAPPS_ENABLED_OPTIONS = Setting('WEBAPPS_ENABLED_OPTIONS', (
         'orchestra.contrib.webapps.options.PHPDisplayErrors',
         'orchestra.contrib.webapps.options.PHPExtension',
         'orchestra.contrib.webapps.options.PHPIncludePath',
+        'orchestra.contrib.webapps.options.PHPOpenBasedir',
         'orchestra.contrib.webapps.options.PHPMagicQuotesGPC',
         'orchestra.contrib.webapps.options.PHPMagicQuotesRuntime',
         'orchestra.contrib.webapps.options.PHPMaginQuotesSybase',

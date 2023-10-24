@@ -1,5 +1,5 @@
 from django import forms
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 
 from orchestra.admin.utils import admin_link
 from orchestra.forms.widgets import SpanWidget
@@ -10,7 +10,7 @@ class PluginForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if self.plugin_field in self.fields:
             value = self.plugin.get_name()
-            display = '%s <a href=".">change</a>' % force_text(self.plugin.verbose_name)
+            display = '%s <a href=".">change</a>' % force_str(self.plugin.verbose_name)
             self.fields[self.plugin_field].widget = SpanWidget(original=value, display=display)
             help_text = self.fields[self.plugin_field].help_text
             self.fields[self.plugin_field].help_text = getattr(self.plugin, 'help_text', help_text)

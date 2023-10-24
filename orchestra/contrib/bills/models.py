@@ -8,9 +8,9 @@ from django.db.models import F, Sum
 from django.db.models.functions import Coalesce
 from django.template import loader
 from django.utils import timezone, translation
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 from django.utils.functional import cached_property
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from orchestra.admin.utils import change_url
 from orchestra.contrib.accounts.models import Account
@@ -209,7 +209,7 @@ class Bill(models.Model):
 
     def get_payment_state_display(self):
         value = self.payment_state
-        return force_text(dict(self.PAYMENT_STATES).get(value, value))
+        return force_str(dict(self.PAYMENT_STATES).get(value, value))
 
     def get_current_transaction(self):
         return self.transactions.exclude_rejected().first()

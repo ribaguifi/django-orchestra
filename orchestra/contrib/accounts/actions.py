@@ -9,10 +9,10 @@ from django.db import router
 from django.shortcuts import redirect, render
 from django.template.response import TemplateResponse
 from django.utils import timezone
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 from django.utils.html import format_html
 from django.utils.text import capfirst
-from django.utils.translation import ungettext, ugettext_lazy as _
+from django.utils.translation import ngettext, gettext_lazy as _
 
 from orchestra.core import services
 
@@ -84,7 +84,7 @@ def delete_related_services(modeladmin, request, queryset):
     def format(obj, account=False):
         has_admin = obj.__class__ in admin_site._registry
         opts = obj._meta
-        no_edit_link = '%s: %s' % (capfirst(opts.verbose_name), force_text(obj))
+        no_edit_link = '%s: %s' % (capfirst(opts.verbose_name), force_str(obj))
 
         if has_admin:
             try:
@@ -154,7 +154,7 @@ def delete_related_services(modeladmin, request, queryset):
         if accounts:
             relateds = len(to_delete)
             for obj in to_delete:
-                obj_display = force_text(obj)
+                obj_display = force_str(obj)
                 modeladmin.log_deletion(request, obj, obj_display)
                 obj.delete()
             context = {
@@ -167,9 +167,9 @@ def delete_related_services(modeladmin, request, queryset):
         return None
 
     if len(queryset) == 1:
-        objects_name = force_text(opts.verbose_name)
+        objects_name = force_str(opts.verbose_name)
     else:
-        objects_name = force_text(opts.verbose_name_plural)
+        objects_name = force_str(opts.verbose_name_plural)
 
     model_count = {}
     for model, objs in collector.model_objs.items():
@@ -214,7 +214,7 @@ def disable_selected(modeladmin, request, queryset, disable=True):
             account.disable() if disable else account.enable()
             modeladmin.log_change(request, account, verbose_action_name.capitalize())
             n += 1
-        modeladmin.message_user(request, ungettext(
+        modeladmin.message_user(request, ngettext(
             _("One account has been successfully %s.") % verbose_action_name,
             _("%i accounts have been successfully %s.") % (n, verbose_action_name),
             n)
@@ -227,7 +227,7 @@ def disable_selected(modeladmin, request, queryset, disable=True):
     def format(obj):
         has_admin = obj.__class__ in admin_site._registry
         opts = obj._meta
-        no_edit_link = '%s: %s' % (capfirst(opts.verbose_name), force_text(obj))
+        no_edit_link = '%s: %s' % (capfirst(opts.verbose_name), force_str(obj))
         if has_admin:
             try:
                 admin_url = reverse(
@@ -258,9 +258,9 @@ def disable_selected(modeladmin, request, queryset, disable=True):
         display.append([format(account), current])
 
     if len(queryset) == 1:
-        objects_name = force_text(opts.verbose_name)
+        objects_name = force_str(opts.verbose_name)
     else:
-        objects_name = force_text(opts.verbose_name_plural)
+        objects_name = force_str(opts.verbose_name_plural)
 
     context = dict(
         admin_site.each_context(request),

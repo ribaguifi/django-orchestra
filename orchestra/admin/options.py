@@ -1,7 +1,7 @@
 from urllib import parse
 
 from django import forms
-from django.conf.urls import url
+from django.urls import re_path as url
 from django.contrib import admin, messages
 from django.contrib.admin.options import IS_POPUP_VAR
 from django.contrib.admin.utils import unquote
@@ -12,9 +12,9 @@ from django.forms.models import BaseInlineFormSet
 from django.shortcuts import get_object_or_404
 from django.template.response import TemplateResponse
 from django.utils.decorators import method_decorator
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 from django.utils.html import escape
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.views.decorators.debug import sensitive_post_parameters
 
 from orchestra.models.utils import has_db_field
@@ -230,7 +230,7 @@ class ExtendedModelAdmin(ChangeViewActionsMixin,
         if obj is None:
             opts = self.model._meta
             raise Http404(_('%(name)s object with primary key %(key)r does not exist.') % {
-                'name': force_text(opts.verbose_name), 'key': escape(object_id)})
+                'name': force_str(opts.verbose_name), 'key': escape(object_id)})
         return obj
 
 

@@ -1,6 +1,6 @@
 import textwrap
 
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from orchestra.contrib.orchestration import ServiceController, replace
 from orchestra.contrib.resources import ServiceMonitor
@@ -18,7 +18,7 @@ class MailmanVirtualDomainController(ServiceController):
     doc_settings = (settings,
         ('LISTS_VIRTUAL_ALIAS_DOMAINS_PATH',)
     )
-    
+
     def is_hosted_domain(self, domain):
         """ whether or not domain MX points to this server """
         return domain.has_default_mx()
@@ -48,11 +48,11 @@ class MailmanVirtualDomainController(ServiceController):
     
     def save(self, mail_list):
         context = self.get_context(mail_list)
-        #self.include_virtual_alias_domain(context)
+        self.include_virtual_alias_domain(context)
     
     def delete(self, mail_list):
         context = self.get_context(mail_list)
-        #self.exclude_virtual_alias_domain(context)
+        self.exclude_virtual_alias_domain(context)
     
     def commit(self):
         context = self.get_context_files()
@@ -100,29 +100,70 @@ class MailmanController(MailmanVirtualDomainController):
         aliases = ['# %(banner)s' % context]
         for suffix in self.address_suffixes:
             context['suffix'] = suffix
-            # Because mailman doesn't properly handle lists aliases we need two virtual aliases
-            aliases.append("%(address_name)s%(suffix)s@%(domain)s\t%(name)s%(suffix)s@grups.pangea.org" % context)
+            # Because mailman doesn't properly handle lists aliases we need virtual aliases
             if context['address_name'] != context['name']:
-                # And another with the original list name; Mailman generates links with it
-                aliases.append("%(name)s%(suffix)s@%(domain)s\t%(name)s%(suffix)s" % context)
+                aliases.append("%(address_name)s%(suffix)s@%(domain)s\t%(name)s%(suffix)s@grups.pangea.org" % context)
         return '\n'.join(aliases)
     
+
     def save(self, mail_list):
         context = self.get_context(mail_list)
+
         # Create list
         cmd = "/opt/mailman/venv/bin/python /usr/local/admin/orchestra_mailman3/save.py %(name)s %(admin)s %(address_name)s@%(domain)s" % context
         if not mail_list.active:
             cmd += ' --inactive'
         self.append(cmd)
 
+        # Custom domain
+        if mail_list.address:
+            context.update({
+                'aliases': self.get_virtual_aliases(context),
+                'num_entries': 2 if context['address_name'] != context['name'] else 1,
+            })
+            self.append(textwrap.dedent("""\
+                # Create list alias for custom domain
+                aliases='%(aliases)s'
+                if ! grep '\s\s*%(name)s\s*$' %(virtual_alias)s > /dev/null; then
+                    echo "${aliases}" >> %(virtual_alias)s
+                    UPDATED_VIRTUAL_ALIAS=1
+                else
+                    if grep -E '(%(address_name)s|%(name)s)@(%(address_domain)s|grups.pangea.org)' %(virtual_alias)s  > /dev/null ; then
+                        sed -i -e '/^.*%(name)s\(-admin\|-bounces\|-confirm\|-join\|-leave\|-owner\|-request\|-subscribe\|-unsubscribe\|@\).*$/d' \\
+                            -e '/# .*%(name)s$/d' %(virtual_alias)s
+                        echo "${aliases}" >> %(virtual_alias)s
+                        UPDATED_VIRTUAL_ALIAS=1
+                    fi
+                fi """) % context
+            )
+        else:
+            self.append(textwrap.dedent("""\
+                # Cleanup possible ex-custom domain
+                if grep '\s\s*%(name)s\s*$' %(virtual_alias)s > /dev/null; then
+                    #sed -i "/^.*\s%(name)s\s*$/d" %(virtual_alias)s
+                    sed -i -e '/^.*%(name)s\(-admin\|-bounces\|-confirm\|-join\|-leave\|-owner\|-request\|-subscribe\|-unsubscribe\|@\).*$/d' \\
+                        -e '/# .*%(name)s$/d' %(virtual_alias)s
+                fi""") % context
+            )
+
+
     def delete(self, mail_list):
         context = self.get_context(mail_list)
+
+        # Custom domain delete
+        self.append(textwrap.dedent("""\
+            # Cleanup possible ex-custom domain
+            if grep '\s\s*%(name)s\s*$' %(virtual_alias)s > /dev/null; then
+                sed -i -e '/^.*%(name)s\(-admin\|-bounces\|-confirm\|-join\|-leave\|-owner\|-request\|-subscribe\|-unsubscribe\|@\).*$/d' \\
+                    -e '/# .*%(name)s$/d' %(virtual_alias)s
+            fi""") % context
+        )
+
         # Delete list
-        cmd = "/opt/mailman/venv/bin/python /usr/local/admin/orchestra_mailman3/delete.py %(name)s %(admin)s %(address_name)s@%(domain)s" % context
-        if not mail_list.active:
-            cmd += ' --inactive'
+        cmd = "/opt/mailman/venv/bin/python /usr/local/admin/orchestra_mailman3/delete.py %(name)s" % context
         self.append(cmd)
-    
+
+
     def commit(self):
         pass
 

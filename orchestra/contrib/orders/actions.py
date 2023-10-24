@@ -3,7 +3,7 @@ from django.urls import reverse
 from django.db import transaction
 from django.utils import timezone
 from django.utils.safestring import mark_safe
-from django.utils.translation import ungettext, ugettext_lazy as _
+from django.utils.translation import ngettext, gettext_lazy as _
 from django.shortcuts import render
 
 from orchestra.admin.utils import change_url
@@ -95,7 +95,7 @@ class BillSelectedOrders(object):
                     url = reverse('admin:bills_bill_changelist')
                     ids = ','.join([str(b.id) for b in bills])
                     url += '?id__in=%s' % ids
-                msg = ungettext(
+                msg = ngettext(
                     '<a href="{url}">One bill</a> has been created.',
                     '<a href="{url}">{num} bills</a> have been created.',
                     num).format(url=url, num=num)
@@ -126,7 +126,7 @@ def mark_as_ignored(modeladmin, request, queryset):
         order.mark_as_ignored()
         modeladmin.log_change(request, order, 'Marked as ignored')
     num = len(queryset)
-    msg = ungettext(
+    msg = ngettext(
         _("Selected order has been marked as ignored."),
         _("%i selected orders have been marked as ignored.") % num,
         num)
@@ -140,7 +140,7 @@ def mark_as_not_ignored(modeladmin, request, queryset):
         order.mark_as_not_ignored()
         modeladmin.log_change(request, order, 'Marked as not ignored')
     num = len(queryset)
-    msg = ungettext(
+    msg = ngettext(
         _("Selected order has been marked as not ignored."),
         _("%i selected orders have been marked as not ignored.") % num,
         num)

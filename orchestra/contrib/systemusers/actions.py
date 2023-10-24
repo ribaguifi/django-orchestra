@@ -3,7 +3,7 @@ import os
 from django.contrib import messages, admin
 from django.core.exceptions import PermissionDenied
 from django.template.response import TemplateResponse
-from django.utils.translation import ungettext, ugettext_lazy as _
+from django.utils.translation import ngettext, gettext_lazy as _
 
 from orchestra.contrib.orchestration import Operation, helpers
 

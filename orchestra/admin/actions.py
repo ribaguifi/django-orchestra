@@ -3,7 +3,7 @@ from functools import partial
 from django.contrib import admin
 from django.core.mail import send_mass_mail
 from django.shortcuts import render
-from django.utils.translation import ungettext, ugettext_lazy as _
+from django.utils.translation import ngettext, gettext_lazy as _
 
 from .. import settings
 
@@ -81,7 +81,7 @@ class SendEmail(object):
             if extra_to:
                 emails.append((subject, message, email_from, extra_to))
             send_mass_mail(emails, fail_silently=False)
-            msg = ungettext(
+            msg = ngettext(
                 _("Message has been sent to one %s.") % self.opts.verbose_name_plural,
                 _("Message has been sent to %i %s.") % (num, self.opts.verbose_name_plural),
                 num
@@ -124,7 +124,7 @@ def base_disable(modeladmin, request, queryset, disable=True):
         'verbose_name_plural': opts.verbose_name_plural,
         'num': num
     }
-    msg = ungettext(
+    msg = ngettext(
         _("Selected %(verbose_name)s and related services has been %(action_name)s.") % context,
         _("%(num)s selected %(verbose_name_plural)s and related services have been %(action_name)s.") % context,
         num)

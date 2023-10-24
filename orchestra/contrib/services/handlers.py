@@ -8,7 +8,7 @@ from dateutil import relativedelta
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.utils import timezone, translation
-from django.utils.translation import ugettext, ugettext_lazy as _
+from django.utils.translation import gettext, gettext_lazy as _
 
 from orchestra import plugins
 from orchestra.utils.humanize import text2int
@@ -34,11 +34,13 @@ class ServiceHandler(plugins.Plugin, metaclass=plugins.PluginMount):
         self.service = service
 
     def __getattr__(self, attr):
+        if attr.startswith('__'):
+            raise AttributeError(f'{self} does not have attribute {attr}')
         return getattr(self.service, attr)
 
     @classmethod
     def get_choices(cls):
-        choices = super(ServiceHandler, cls).get_choices()
+        choices = super().get_choices()
         return [('', _("Default"))] + choices
 
     def validate_content_type(self, service):
@@ -75,7 +77,7 @@ class ServiceHandler(plugins.Plugin, metaclass=plugins.PluginMount):
         return {
             'instance': instance,
             'obj': instance,
-            'ugettext': ugettext,
+            'gettext': gettext,
             'handler': self,
             'service': self.service,
             instance._meta.model_name: instance,
@@ -134,7 +136,7 @@ class ServiceHandler(plugins.Plugin, metaclass=plugins.PluginMount):
         account = getattr(instance, 'account', instance)
         with translation.override(account.language):
             if not self.order_description:
-                return '%s: %s' % (ugettext(self.description), instance)
+                return '%s: %s' % (gettext(self.description), instance)
             return eval(self.order_description, safe_locals)
 
     def get_billing_point(self, order, bp=None, **options):

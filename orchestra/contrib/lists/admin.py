@@ -1,7 +1,7 @@
 from django.contrib import admin
-from django.conf.urls import url
+from django.urls import re_path as url
 from django.contrib.auth.admin import UserAdmin
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from orchestra.admin import ExtendedModelAdmin, ChangePasswordAdminMixin
 from orchestra.admin.actions import disable, enable

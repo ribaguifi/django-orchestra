@@ -3,7 +3,7 @@ from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django.core.exceptions import ValidationError
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from orchestra.core import validators
 
@@ -31,6 +31,32 @@ class DatabaseUserCreationForm(forms.ModelForm):
         return password2
 
 
+class DatabaseForm(forms.ModelForm):
+
+    class Meta:
+            model = Database
+            fields = ('name', 'users', 'type', 'account', 'target_server')
+            
+    def __init__(self, *args, **kwargs):
+        super(DatabaseForm, self).__init__(*args, **kwargs)
+        # muestra solo los usuarios del mismo server
+        account_id = self.instance.account_id
+        database_server_id = self.instance.target_server_id
+        if account_id:         
+            self.fields['users'].queryset = DatabaseUser.objects.filter(account=account_id, target_server=database_server_id)
+
+    def clean(self):
+        # verifica que los usuarios petenecen al servidor de la bbdd
+        database_server_id = self.instance.target_server_id
+        users = self.cleaned_data.get('users')
+        if users and database_server_id:
+            for user in users:
+                if user.target_server_id != database_server_id:
+                    self.add_error("users", _(f"{user.username} does not belong to the database server"))
+
+        return self.cleaned_data
+        
+
 class DatabaseCreationForm(DatabaseUserCreationForm):
     username = forms.CharField(label=_("Username"), max_length=16,
         required=False, validators=[validators.validate_name],
@@ -50,13 +76,14 @@ class DatabaseCreationForm(DatabaseUserCreationForm):
         account_id = self.initial.get('account', self.initial_account)
         if account_id:
             qs = self.fields['user'].queryset.filter(account=account_id).order_by('username')
-            choices = [ (u.pk, "%s (%s)" % (u, u.get_type_display())) for u in qs ]
+            choices = [ (u.pk, "%s (%s) (%s)" % (u, u.get_type_display(), str(u.target_server.name) )) for u in qs ]
             self.fields['user'].queryset = qs
             self.fields['user'].choices = [(None, '--------'),] + choices
 
     def clean_username(self):
         username = self.cleaned_data.get('username')
-        if DatabaseUser.objects.filter(username=username).exists():
+        server = self.cleaned_data.get('target_server')
+        if DatabaseUser.objects.filter(username=username, target_server=server).exists():
             raise ValidationError("Provided username already exists.")
         return username
 
@@ -75,6 +102,9 @@ class DatabaseCreationForm(DatabaseUserCreationForm):
         user = self.cleaned_data.get('user')
         if user and user.type != self.cleaned_data.get('type'):
             msg = _("Database type and user type doesn't match")
+            raise ValidationError(msg)
+        if user and user.target_server != self.cleaned_data.get('target_server'):
+            msg = _("Database server and user server doesn't match")
             raise ValidationError(msg)
         return user
 

@@ -1,3 +1,4 @@
+
 import smtplib
 from datetime import timedelta
 from socket import error as SocketError
@@ -5,7 +6,6 @@ from socket import error as SocketError
 from django.core.mail import get_connection
 from django.db.models import Q
 from django.utils import timezone
-from django.utils.encoding import smart_str
 
 from orchestra.utils.sys import LockFile, OperationLocked
 
@@ -31,7 +31,7 @@ def send_message(message, connection=None, bulk=settings.MAILER_BULK_MESSAGES):
             return
     error = None
     try:
-        connection.connection.sendmail(message.from_address, [message.to_address], smart_str(message.content))
+        connection.connection.sendmail(message.from_address, [message.to_address], message.content.encode())
     except (SocketError,
             smtplib.SMTPSenderRefused,
             smtplib.SMTPRecipientsRefused,
