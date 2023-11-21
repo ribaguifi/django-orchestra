@@ -1,9 +1,10 @@
-from django.contrib.auth.mixins import UserPassesTestMixin
+from django.conf import settings
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.utils.translation import gettext_lazy as _
 from django.views.generic.base import ContextMixin
-from django.conf import settings
 
 from orchestra import get_version
+
 from . import api
 from .auth import SESSION_KEY_TOKEN
 
@@ -49,30 +50,13 @@ class ExtendedPaginationMixin:
         return paginate_by
 
 
-class UserTokenRequiredMixin(UserPassesTestMixin):
-    """
-    Checks that the request has a token that authenticates him/her.
-    If the user is logged adds context variable 'profile' with its information.
-    """
+class UserTokenRequiredMixin(LoginRequiredMixin):
 
-    def test_func(self):
-        """Check that the user has an authorized token."""
-        token = self.request.session.get(SESSION_KEY_TOKEN, None)
-        if token is None:
-            return False
-
-        # initialize orchestra api orm
-        self.orchestra = api.Orchestra(auth_token=token)
-
-        # verify if the token is valid
-        if self.orchestra.verify_credentials() is None:
-            return False
-
-        return True
-
+    # TODO XXX adapt this code
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context.update({
-            'profile': self.orchestra.retrieve_profile(),
+            # TODO XXX
+            # 'profile': self.orchestra.retrieve_profile(),
         })
         return context

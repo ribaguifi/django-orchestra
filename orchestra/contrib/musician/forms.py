@@ -6,6 +6,7 @@ from django.utils.translation import gettext_lazy as _
 
 from . import api
 
+
 class LoginForm(AuthenticationForm):
 
     def clean(self):
@@ -13,14 +14,13 @@ class LoginForm(AuthenticationForm):
         password = self.cleaned_data.get('password')
 
         if username is not None and password:
-            orchestra = api.Orchestra(username=username, password=password)
+            orchestra = api.Orchestra(self.request, username=username, password=password)
 
-            if orchestra.auth_token is None:
+            if orchestra.user is None:
                 raise self.get_invalid_login_error()
             else:
                 self.username = username
-                self.token = orchestra.auth_token
-                self.user = orchestra.retrieve_profile()
+                self.user = orchestra.user
 
         return self.cleaned_data
 

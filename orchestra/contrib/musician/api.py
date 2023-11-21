@@ -1,12 +1,13 @@
 import urllib.parse
 
-import requests
 from django.conf import settings
+from django.contrib.auth import authenticate, login
 from django.http import Http404
 from django.urls.exceptions import NoReverseMatch
 from django.utils.translation import gettext_lazy as _
 
-from .models import Address, DatabaseService, Domain, Mailbox, SaasService, UserAccount, WebSite
+from .models import (Address, DatabaseService, Domain, Mailbox, SaasService,
+                     UserAccount, WebSite)
 
 DOMAINS_PATH = 'domains/'
 TOKEN_PATH = '/api-token-auth/'
@@ -37,14 +38,10 @@ API_PATHS = {
 
 
 class Orchestra(object):
-    def __init__(self, *args, username=None, password=None, **kwargs):
-        self.base_url = kwargs.pop('base_url', settings.API_BASE_URL)
+    def __init__(self, request, username=None, password=None, **kwargs):
+        self.request = request
         self.username = username
-        self.session = requests.Session()
-        self.auth_token = kwargs.pop("auth_token", None)
-
-        if self.auth_token is None:
-            self.auth_token = self.authenticate(self.username, password)
+        self.user = self.authenticate(self.username, password)
 
     def build_absolute_uri(self, path_name):
         path = API_PATHS.get(path_name, None)
@@ -55,13 +52,14 @@ class Orchestra(object):
         return urllib.parse.urljoin(self.base_url, path)
 
     def authenticate(self, username, password):
-        url = self.build_absolute_uri('token-auth')
-        response = self.session.post(
-            url,
-            data={"username": username, "password": password},
-        )
+        user = authenticate(self.request, username=username, password=password)
 
-        return response.json().get("token", None)
+        if user is not None:
+            login(self.request, user)
+            return user
+
+        # Return an 'invalid login' error message.
+        return None
 
     def request(self, verb, resource=None, url=None, data=None, render_as="json", querystring=None, raise_exception=True):
         assert verb in ["HEAD", "GET", "POST", "PATCH", "PUT", "DELETE"]

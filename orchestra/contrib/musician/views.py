@@ -1,12 +1,13 @@
+import datetime
 import logging
 import smtplib
-import datetime
 
 from django.conf import settings
 from django.contrib import messages
 from django.core.exceptions import ImproperlyConfigured
 from django.core.mail import mail_managers
-from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
+from django.http import (HttpResponse, HttpResponseNotFound,
+                         HttpResponseRedirect)
 from django.urls import reverse_lazy
 from django.utils import translation
 from django.utils.html import format_html
@@ -20,9 +21,11 @@ from django.views.generic.list import ListView
 from requests.exceptions import HTTPError
 
 from orchestra import get_version
-from .auth import login as auth_login
+
+# from .auth import login as auth_login
 from .auth import logout as auth_logout
-from .forms import LoginForm, MailboxChangePasswordForm, MailboxCreateForm, MailboxUpdateForm, MailForm
+from .forms import (LoginForm, MailboxChangePasswordForm, MailboxCreateForm,
+                    MailboxUpdateForm, MailForm)
 from .mixins import (CustomContextMixin, ExtendedPaginationMixin,
                      UserTokenRequiredMixin)
 from .models import (Address, Bill, DatabaseService, Mailbox,
@@ -553,7 +556,6 @@ class LoginView(FormView):
 
     def form_valid(self, form):
         """Security check complete. Log the user in."""
-        auth_login(self.request, form.username, form.token)
 
         # set user language as active language
         user_language = form.user.language
