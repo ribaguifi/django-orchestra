@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'orchestra.contrib.vps',
     'orchestra.contrib.saas',
     'orchestra.contrib.miscellaneous',
+    'orchestra.contrib.musician',
 
     # Third-party apps
     'django_extensions',
@@ -233,6 +234,7 @@ FLUENT_DASHBOARD_ICON_THEME = '../orchestra/icons'
 
 # Django-celery
 import djcelery
+
 djcelery.setup_loader()
 CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
 
