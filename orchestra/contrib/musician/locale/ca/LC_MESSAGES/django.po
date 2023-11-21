@@ -1,0 +1,538 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-11-24 11:04+0100\n"
+"PO-Revision-Date: 2021-11-25 12:53+0100\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: ca\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.0\n"
+
+#: api.py:113 api.py:211
+msgid "No domain found matching the query"
+msgstr "No trobem cap domini que coincideixi amb la teva consulta"
+
+#: api.py:125
+msgid "No object found matching the query"
+msgstr "No trobem cap objecte que coincideixi amb la teva consulta"
+
+#: api.py:178
+msgid "No mailbox found matching the query"
+msgstr "No trobem cap bústia que coincideixi amb la teva consulta"
+
+#: forms.py:65 forms.py:99
+msgid "The two password fields didn’t match."
+msgstr "Les contrasenyes introduïdes no coincideixen."
+
+#: forms.py:68 forms.py:103
+msgid "Password"
+msgstr "Contrasenya"
+
+#: forms.py:73 forms.py:108
+msgid "Password confirmation"
+msgstr "Confirma la contrasenya"
+
+#: forms.py:76 forms.py:111
+msgid "Enter the same password as before, for verification."
+msgstr "Introdueix la mateixa contrasenya per verificar-la."
+
+#: mixins.py:14
+msgid "Domains & websites"
+msgstr "Dominis i llocs web"
+
+#: mixins.py:15
+msgid "Mails"
+msgstr "Correus"
+
+#. Translators: This message appears on the page title
+#: mixins.py:16 views.py:296
+msgid "Mailing lists"
+msgstr "Llistes de correu"
+
+#. Translators: This message appears on the page title
+#: mixins.py:17 models.py:147 views.py:480
+msgid "Databases"
+msgstr "Bases de dades"
+
+#: mixins.py:18
+msgid "SaaS"
+msgstr "SaaS"
+
+#: models.py:148
+msgid "Description details for databases page."
+msgstr "Consulta la configuració de les teves bases de dades."
+
+#. Translators: This message appears on the page title
+#: models.py:235 views.py:185
+msgid "Mail addresses"
+msgstr "Adreces de correu"
+
+#: models.py:236
+msgid "Description details for mail addresses page."
+msgstr "Consulta aquí totes les adreces de correu que tens actives."
+
+#: models.py:311
+msgid "Mailbox"
+msgstr "Bústia de correu"
+
+#: models.py:312
+msgid "Description details for mailbox page."
+msgstr "Aquí trobaràs el detall de les bústies de correu que tens actives."
+
+#: models.py:337
+msgid "Mailing list"
+msgstr "Llista de correu"
+
+#: models.py:338
+msgid "Description details for mailinglist page."
+msgstr "Consulta aquí els detalls de les teves llistes de correu."
+
+#: models.py:364
+msgid "Software as a Service (SaaS)"
+msgstr "Software as a Service (SaaS)"
+
+#: models.py:365
+msgid "Description details for SaaS page."
+msgstr ""
+"Si tens algun servei SaaS (Software as a Service) contractat, aquí trobaràs "
+"els seus detalls de configuració."
+
+#: templates/auth/login.html:59
+msgid "Log in"
+msgstr "Accedeix"
+
+#: templates/auth/login.html:67
+msgid "Forgot your password? Click here to recover"
+msgstr "Has oblidat la teva contrasenya? Fes click aquí per recuperar-la"
+
+#: templates/auth/login.html:77
+msgid "Forgot your password?"
+msgstr "Has oblidat la teva contrasenya?"
+
+#: templates/auth/login.html:83
+#, python-format
+msgid ""
+"Send an email to <a href=\"mailto:%(support_email)s\">%(support_email)s</a> "
+"including your username and we will provide instructions."
+msgstr ""
+"Envia un correu a <a href=\"mailto:%(support_email)s\">%(support_email)s</a> "
+"indicant el teu nom d’usuari/a i t’explicarem què fer."
+
+#: templates/musician/address_check_delete.html:7
+#, python-format
+msgid "Are you sure that you want remove the address: \"%(address_name)s\"?"
+msgstr ""
+"Estàs segur/a que vols esborrar l’adreça de correu: \"%(address_name)s\"?"
+
+#: templates/musician/address_check_delete.html:8
+#: templates/musician/mailbox_check_delete.html:11
+msgid "WARNING: This action cannot be undone."
+msgstr "AVÍS: Aquesta acció es irreversible."
+
+#: templates/musician/address_check_delete.html:9
+#: templates/musician/address_form.html:15
+#: templates/musician/mailbox_check_delete.html:12
+#: templates/musician/mailbox_form.html:25
+msgid "Delete"
+msgstr "Esborrar"
+
+#: templates/musician/address_check_delete.html:10
+#: templates/musician/address_form.html:11
+#: templates/musician/mailbox_change_password.html:11
+#: templates/musician/mailbox_check_delete.html:13
+#: templates/musician/mailbox_form.html:20
+msgid "Cancel"
+msgstr "Cancel·lar"
+
+#: templates/musician/address_form.html:12
+#: templates/musician/mailbox_change_password.html:12
+#: templates/musician/mailbox_form.html:21
+msgid "Save"
+msgstr "Desar"
+
+#: templates/musician/addresses.html:15
+msgid "Email"
+msgstr "Correu electrònic"
+
+#: templates/musician/addresses.html:16
+msgid "Domain"
+msgstr "Domini"
+
+#. Translators: This message appears on the page title
+#: templates/musician/addresses.html:17 templates/musician/mail_base.html:22
+#: views.py:325
+msgid "Mailboxes"
+msgstr "Bústies de correu"
+
+#: templates/musician/addresses.html:18
+msgid "Forward"
+msgstr "Redirecció"
+
+#: templates/musician/addresses.html:38
+msgid "New mail address"
+msgstr "Nova adreça de correu"
+
+#: templates/musician/base.html:60
+msgid "Settings"
+msgstr "Configuració"
+
+#: templates/musician/base.html:63 templates/musician/profile.html:6
+msgid "Profile"
+msgstr "Perfil"
+
+#. Translators: This message appears on the page title
+#: templates/musician/base.html:64 templates/musician/billing.html:6
+#: views.py:163
+msgid "Billing"
+msgstr "Factures"
+
+#: templates/musician/base.html:72
+msgid "Log out"
+msgstr "Surt"
+
+#: templates/musician/billing.html:7
+msgid "Billing page description."
+msgstr "Consulta i descarrega les teves factures."
+
+#: templates/musician/billing.html:19
+msgid "Number"
+msgstr "Número"
+
+#: templates/musician/billing.html:20
+msgid "Bill date"
+msgstr "Data de la factura"
+
+#: templates/musician/billing.html:21 templates/musician/databases.html:17
+#: templates/musician/domain_detail.html:17
+msgid "Type"
+msgstr "Tipus"
+
+#: templates/musician/billing.html:22
+msgid "Total"
+msgstr "Total"
+
+#: templates/musician/billing.html:23
+msgid "Download PDF"
+msgstr "Descarrega el PDF"
+
+#: templates/musician/components/table_paginator.html:15
+msgid "Previous"
+msgstr "Prèvia"
+
+#: templates/musician/components/table_paginator.html:29
+msgid "Next"
+msgstr "Següent"
+
+#: templates/musician/dashboard.html:6
+msgid "Welcome back"
+msgstr "Hola de nou!"
+
+#: templates/musician/dashboard.html:8
+#, python-format
+msgid "Last time you logged in was: %(last_login)s"
+msgstr "El darrer cop que vas accedir va ser el dia: %(last_login)s"
+
+#: templates/musician/dashboard.html:10
+msgid "It's the first time you log into the system, welcome on board!"
+msgstr "És el primer cop que accedeixes, et donem la benvinguda!"
+
+#: templates/musician/dashboard.html:29
+msgid "Notifications"
+msgstr "Notificacions"
+
+#: templates/musician/dashboard.html:33
+msgid "There is no notifications at this time."
+msgstr "No tens cap notificació."
+
+#: templates/musician/dashboard.html:40
+msgid "Your domains and websites"
+msgstr "Els teus dominis i llocs web"
+
+#: templates/musician/dashboard.html:41
+msgid "Dashboard page description."
+msgstr ""
+"Aquest és el teu panell de gestió, des d’on podràs consultar la configuració "
+"dels serveis que Pangea t’ofereix."
+
+#: templates/musician/dashboard.html:56
+msgid "view configuration"
+msgstr "veure la configuració"
+
+#: templates/musician/dashboard.html:63
+msgid "Expiration date"
+msgstr "Data de venciment"
+
+#: templates/musician/dashboard.html:70
+msgid "Mail"
+msgstr "Correu"
+
+#: templates/musician/dashboard.html:73
+msgid "mail addresses created"
+msgstr "adreces de correu creades"
+
+#: templates/musician/dashboard.html:78
+msgid "Mail list"
+msgstr "Llista de correu"
+
+#. Translators: This message appears on the page title
+#: templates/musician/dashboard.html:83 views.py:489
+msgid "Software as a Service"
+msgstr "Software as a Service"
+
+#: templates/musician/dashboard.html:85
+msgid "Nothing installed"
+msgstr "No tens res instal·lat"
+
+#: templates/musician/dashboard.html:90 views.py:57
+msgid "Disk usage"
+msgstr "Ús del disc"
+
+#: templates/musician/dashboard.html:107
+msgid "Configuration details"
+msgstr "Detalls de configuració"
+
+#: templates/musician/dashboard.html:114
+msgid "FTP access:"
+msgstr "Accés FTP:"
+
+#. Translators: domain configuration detail modal
+#: templates/musician/dashboard.html:116
+msgid "Contact with the support team to get details concerning FTP access."
+msgstr ""
+"Escriu-nos a <a href=“mailto:%(support_email)s”>%(support_email)s</a> per "
+"saber com accedir al FTP."
+
+#: templates/musician/dashboard.html:125
+msgid "No website configured."
+msgstr "No hi ha cap web configurada."
+
+#: templates/musician/dashboard.html:127
+msgid "Root directory:"
+msgstr "Directori arrel:"
+
+#: templates/musician/dashboard.html:128
+msgid "Type:"
+msgstr "Tipus:"
+
+#: templates/musician/dashboard.html:133
+msgid "View DNS records"
+msgstr "Veure registres DNS"
+
+#: templates/musician/databases.html:21
+msgid "associated to"
+msgstr "associada a"
+
+#: templates/musician/databases.html:34
+msgid "No users for this database."
+msgstr "No hi ha persones usuàries d’aquesta base de dades."
+
+#: templates/musician/databases.html:45
+msgid "Open database manager"
+msgstr "Obre el gestor de bases de dades"
+
+#. Translators: database page when there isn't any database.
+#. Translators: saas page when there isn't any saas.
+#: templates/musician/databases.html:58 templates/musician/saas.html:49
+msgid "Ooops! Looks like there is nothing here!"
+msgstr "Mmmh, sembla que aquí no hi ha res!"
+
+#: templates/musician/domain_detail.html:5
+msgid "Go back"
+msgstr "Tornar"
+
+#: templates/musician/domain_detail.html:7
+msgid "DNS settings for"
+msgstr "Configuració DNS per a"
+
+#: templates/musician/domain_detail.html:8
+msgid "DNS settings page description."
+msgstr "Consulta aquí la teva configuració DNS."
+
+#: templates/musician/domain_detail.html:18
+msgid "Value"
+msgstr "Valor"
+
+#: templates/musician/mail_base.html:6 templates/musician/mailinglists.html:6
+msgid "Go to global"
+msgstr "Totes les adreces"
+
+#: templates/musician/mail_base.html:10 templates/musician/mailinglists.html:9
+msgid "for"
+msgstr "per a"
+
+#: templates/musician/mail_base.html:18 templates/musician/mailboxes.html:16
+msgid "Addresses"
+msgstr "Adreces de correu"
+
+#: templates/musician/mailbox_change_password.html:5
+#: templates/musician/mailbox_form.html:24
+msgid "Change password"
+msgstr "Canvia la contrasenya"
+
+#: templates/musician/mailbox_check_delete.html:7
+#, python-format
+msgid "Are you sure that you want remove the mailbox: \"%(name)s\"?"
+msgstr "Estàs segur/a que vols esborrar la bústia de correu: \"%(name)s\"?"
+
+#: templates/musician/mailbox_check_delete.html:9
+msgid ""
+"All mailbox's messages will be <strong>deleted and cannot be recovered</"
+"strong>."
+msgstr ""
+"Tots els missatges <strong>s'esborraran i no es podran recuperar</strong>."
+
+#: templates/musician/mailbox_form.html:9
+msgid "Warning!"
+msgstr "Atenció!"
+
+#: templates/musician/mailbox_form.html:9
+msgid ""
+"You have reached the limit of mailboxes of your subscription so "
+"<strong>extra fees</strong> may apply."
+msgstr ""
+"Has assolit el límit de bústies de correu de la teva subscripció, les noves "
+"bústies poden implicar <strong>costos addicionals</strong>."
+
+#: templates/musician/mailbox_form.html:10
+msgid "Close"
+msgstr "Tancar"
+
+#: templates/musician/mailboxes.html:14
+msgid "Name"
+msgstr "Nom"
+
+#: templates/musician/mailboxes.html:15
+msgid "Filtering"
+msgstr "Filtrat"
+
+#: templates/musician/mailboxes.html:27
+msgid "Update password"
+msgstr "Actualitza la contrasenya"
+
+#: templates/musician/mailboxes.html:43
+msgid "New mailbox"
+msgstr "Nova bústia de correu"
+
+#: templates/musician/mailinglists.html:34
+msgid "Active"
+msgstr "Actiu"
+
+#: templates/musician/mailinglists.html:36
+msgid "Inactive"
+msgstr "Inactiu"
+
+#: templates/musician/profile.html:7
+msgid "Little description on profile page."
+msgstr "Canvia les teves dades d’accés i opcions de perfil des d’aquí."
+
+#: templates/musician/profile.html:11
+msgid "User information"
+msgstr "Informació d’usuari/a"
+
+#: templates/musician/profile.html:21
+msgid "Preferred language:"
+msgstr "Llenguatge preferit:"
+
+#: templates/musician/profile.html:35
+msgid "Billing information"
+msgstr "Informació de facturació"
+
+#: templates/musician/profile.html:49
+msgid "payment method:"
+msgstr "mètode de pagament:"
+
+#: templates/musician/profile.html:60
+msgid "Check your last bills"
+msgstr "Consulta les teves darreres factures"
+
+#: templates/musician/saas.html:18
+msgid "Installed on"
+msgstr "Instal·lat a"
+
+#: templates/musician/saas.html:29
+msgid "Service info"
+msgstr "Informació del servei"
+
+#: templates/musician/saas.html:30
+msgid "active"
+msgstr "actiu"
+
+#: templates/musician/saas.html:37
+msgid "Open service admin panel"
+msgstr "Obre el panell d’administració del servei"
+
+#. Translators: This message appears on the page title
+#: views.py:41
+msgid "Dashboard"
+msgstr "Panell de gestió"
+
+#: views.py:66
+msgid "Traffic"
+msgstr "Tràfic"
+
+#: views.py:97
+msgid "Mailbox usage"
+msgstr "Ús d’espai a la bústia de correu"
+
+#. Translators: This message appears on the page title
+#: views.py:112
+msgid "User profile"
+msgstr "El teu perfil"
+
+#. Translators: This message appears on the page title
+#: views.py:170
+msgid "Download bill"
+msgstr "Descarrega la factura"
+
+#: views.py:283
+msgid "Address deleted!"
+msgstr "S’ha suprimit l’adreça de correu"
+
+#: views.py:285 views.py:422 views.py:469
+msgid "Cannot process your request, please try again later."
+msgstr ""
+"Ara no podem processar la teva petició, torna a intentar-ho una mica més "
+"tard sisplau"
+
+#: views.py:420
+msgid "Mailbox deleted!"
+msgstr "S’ha suprimit la bústia de correu"
+
+#: views.py:467
+msgid "Password updated!"
+msgstr "S’ha actualitzat la contrasenya"
+
+#. Translators: This message appears on the page title
+#: views.py:497
+msgid "Domain details"
+msgstr "Detalls del domini"
+
+#. Translators: This message appears on the page title
+#: views.py:523
+msgid "Login"
+msgstr "Accés"
+
+#~ msgid "mail address left"
+#~ msgstr "adreces de correu per activar"
+
+#~ msgid "Aliases"
+#~ msgstr "Àlies"
+
+#~ msgid "Type details"
+#~ msgstr "Detalls de cada tipus"
+
+#~ msgid "databases created"
+#~ msgstr "bases de dades creades"
+
+#~ msgid "Username"
+#~ msgstr "Nom d’usuari/a"
