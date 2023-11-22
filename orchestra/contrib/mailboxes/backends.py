@@ -69,13 +69,15 @@ class UNIXUserMaildirController(SieveFilteringMixin, ServiceController):
         self.append(textwrap.dedent("""
             # Update/create %(user)s user state
             if id %(user)s ; then
-                old_password=$(getent shadow %(user)s | cut -d':' -f2)
-                usermod %(user)s \\
-                    --shell %(initial_shell)s \\
-                    --password '%(password)s'
-                if [[ "$old_password" != '%(password)s' ]]; then
-                    # Postfix SASL caches passwords
-                    RESTART_POSTFIX=1
+                if [[ "%(changepass)s" == "True" ]]; then
+                    old_password=$(getent shadow %(user)s | cut -d':' -f2)
+                    usermod %(user)s \\
+                        --shell %(initial_shell)s \\
+                        --password '%(password)s'
+                    if [[ "$old_password" != '%(password)s' ]]; then
+                        # Postfix SASL caches passwords
+                        RESTART_POSTFIX=1
+                    fi
                 fi
             else
                 useradd %(user)s \\
@@ -135,6 +137,11 @@ class UNIXUserMaildirController(SieveFilteringMixin, ServiceController):
         super().commit()
     
     def get_context(self, mailbox):
+        # Check if you have to change password
+        try: 
+            changepass = mailbox.changepass
+        except:
+            changepass = True
         context = {
             'user': mailbox.name,
             'group': mailbox.name,
@@ -144,6 +151,7 @@ class UNIXUserMaildirController(SieveFilteringMixin, ServiceController):
             'maildir': os.path.join(mailbox.get_home(), 'Maildir'),
             'initial_shell': self.SHELL,
             'banner': self.get_banner(),
+            'changepass': changepass,
         }
         context['deleted_home'] = settings.MAILBOXES_MOVE_ON_DELETE_PATH % context
         return context

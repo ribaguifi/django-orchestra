@@ -213,6 +213,8 @@ class MailboxAdmin(ChangePasswordAdminMixin, SelectAccountAdminMixin, ExtendedMo
                 old = Mailbox.objects.get(pk=obj.pk)
                 if old.custom_filtering != obj.custom_filtering:
                     messages.warning(request, msg)
+                # pass var to the backend so you don't change the password
+                obj.changepass = None
             elif obj.custom_filtering:
                 messages.warning(request, msg)
         super(MailboxAdmin, self).save_model(request, obj, form, change)
