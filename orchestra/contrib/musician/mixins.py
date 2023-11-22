@@ -52,11 +52,11 @@ class ExtendedPaginationMixin:
 
 class UserTokenRequiredMixin(LoginRequiredMixin):
 
-    # TODO XXX adapt this code
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
+        self.orchestra = api.OrchestraConnector(self.request)
         context.update({
-            # TODO XXX
-            # 'profile': self.orchestra.retrieve_profile(),
+            'profile': self.orchestra.retrieve_profile(),
         })
         return context

@@ -6,8 +6,11 @@ from django.http import Http404
 from django.urls.exceptions import NoReverseMatch
 from django.utils.translation import gettext_lazy as _
 
-from .models import (Address, DatabaseService, Domain, Mailbox, SaasService,
-                     UserAccount, WebSite)
+from orchestra.contrib.domains.models import Domain
+from orchestra.contrib.mailboxes.models import Mailbox
+from orchestra.contrib.websites.models import Website
+
+from .models import Address, DatabaseService, SaasService, UserAccount
 
 DOMAINS_PATH = 'domains/'
 TOKEN_PATH = '/api-token-auth/'
@@ -43,14 +46,6 @@ class Orchestra(object):
         self.username = username
         self.user = self.authenticate(self.username, password)
 
-    def build_absolute_uri(self, path_name):
-        path = API_PATHS.get(path_name, None)
-        if path is None:
-            raise NoReverseMatch(
-                "Not found API path name '{}'".format(path_name))
-
-        return urllib.parse.urljoin(self.base_url, path)
-
     def authenticate(self, username, password):
         user = authenticate(self.request, username=username, password=password)
 
@@ -60,6 +55,21 @@ class Orchestra(object):
 
         # Return an 'invalid login' error message.
         return None
+
+
+class OrchestraConnector:
+    def __init__(self, request):
+        self._request = request
+        self.user = request.user
+        assert not self.user.is_anonymous
+
+    def build_absolute_uri(self, path_name):
+        path = API_PATHS.get(path_name, None)
+        if path is None:
+            raise NoReverseMatch(
+                "Not found API path name '{}'".format(path_name))
+
+        return urllib.parse.urljoin(self.base_url, path)
 
     def request(self, verb, resource=None, url=None, data=None, render_as="json", querystring=None, raise_exception=True):
         assert verb in ["HEAD", "GET", "POST", "PATCH", "PUT", "DELETE"]
@@ -89,18 +99,24 @@ class Orchestra(object):
 
         return status, output
 
-    def retrieve_service_list(self, service_name, querystring=None):
-        pattern_name = '{}-list'.format(service_name)
-        if pattern_name not in API_PATHS:
-            raise ValueError("Unknown service {}".format(service_name))
-        _, output = self.request("GET", pattern_name, querystring=querystring)
-        return output
+    def retrieve_service_list(self, model_class, querystring=None):
+        qs = model_class.objects.filter(account=self.user)
+
+        # TODO filter by querystring
+
+        return qs
+
+        # pattern_name = '{}-list'.format(service_name)
+        # if pattern_name not in API_PATHS:
+        #     raise ValueError("Unknown service {}".format(service_name))
+        # _, output = self.request("GET", pattern_name, querystring=querystring)
+        # return output
 
     def retrieve_profile(self):
-        status, output = self.request("GET", 'my-account')
-        if status >= 400:
+        if self.user.is_anonymous:
             raise PermissionError("Cannot retrieve profile of an anonymous user.")
-        return UserAccount.new_from_json(output[0])
+
+        return self.user    # return UserAccount.new_from_json(output[0])
 
     def retrieve_bill_document(self, pk):
         path = API_PATHS.get('bill-document').format_map({'pk': pk})
@@ -183,8 +199,8 @@ class Orchestra(object):
         return status, response
 
     def retrieve_mailbox_list(self):
-        mailboxes = self.retrieve_service_list(Mailbox.api_name)
-        return [Mailbox.new_from_json(mailbox_data) for mailbox_data in mailboxes]
+        qs = self.retrieve_service_list(Mailbox)
+        return qs
 
     def delete_mailbox(self, pk):
         path = API_PATHS.get('mailbox-detail').format_map({'pk': pk})
@@ -210,7 +226,7 @@ class Orchestra(object):
         return Domain.new_from_json(domain_json)
 
     def retrieve_domain_list(self):
-        output = self.retrieve_service_list(Domain.api_name)
+        output = self.retrieve_service_list(Domain)
         websites = self.retrieve_website_list()
 
         domains = []
@@ -239,8 +255,8 @@ class Orchestra(object):
         return domains
 
     def retrieve_website_list(self):
-        output = self.retrieve_service_list(WebSite.api_name)
-        return [WebSite.new_from_json(website_data) for website_data in output]
+        qs = self.retrieve_service_list(Website)
+        return qs
 
     def filter_websites_by_domain(self, websites, domain_id):
         matching = []
