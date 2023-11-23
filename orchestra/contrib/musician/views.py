@@ -23,6 +23,7 @@ from requests.exceptions import HTTPError
 from orchestra import get_version
 from orchestra.contrib.bills.models import Bill
 from orchestra.contrib.domains.models import Domain
+from orchestra.contrib.mailboxes.models import Address, Mailbox
 from orchestra.contrib.saas.models import SaaS
 from orchestra.utils.html import html_to_pdf
 
@@ -32,10 +33,11 @@ from .forms import (LoginForm, MailboxChangePasswordForm, MailboxCreateForm,
                     MailboxUpdateForm, MailForm)
 from .mixins import (CustomContextMixin, ExtendedPaginationMixin,
                      UserTokenRequiredMixin)
-from .models import Address
+from .models import Address as AddressService
 from .models import Bill as BillService
-from .models import (DatabaseService, Mailbox, MailinglistService,
-                     PaymentSource, SaasService)
+from .models import DatabaseService
+from .models import Mailbox as MailboxService
+from .models import MailinglistService, SaasService
 from .settings import ALLOWED_RESOURCES
 from .utils import get_bootstraped_percent
 
@@ -227,28 +229,21 @@ class BillDownloadView(CustomContextMixin, UserTokenRequiredMixin, View):
 
 
 class MailView(ServiceListView):
-    service_class = Address
+    service_class = AddressService
+    model = Address
     template_name = "musician/addresses.html"
     extra_context = {
         # Translators: This message appears on the page title
         'title': _('Mail addresses'),
     }
 
-    def get_queryset(self):
-        # retrieve mails applying filters (if any)
-        queryfilter = self.get_queryfilter()
-        addresses = self.orchestra.retrieve_mail_address_list(
-            querystring=queryfilter
-        )
-        return addresses
-
     def get_queryfilter(self):
         """Retrieve query params (if any) to filter queryset"""
         domain_id = self.request.GET.get('domain')
         if domain_id:
-            return "domain={}".format(domain_id)
+            return {"domain": domain_id}
 
-        return ''
+        return {}
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -366,7 +361,8 @@ class MailingListsView(ServiceListView):
 
 
 class MailboxesView(ServiceListView):
-    service_class = Mailbox
+    service_class = MailboxService
+    model = Mailbox
     template_name = "musician/mailboxes.html"
     extra_context = {
         # Translators: This message appears on the page title
@@ -375,7 +371,8 @@ class MailboxesView(ServiceListView):
 
 
 class MailboxCreateView(CustomContextMixin, UserTokenRequiredMixin, FormView):
-    service_class = Mailbox
+    service_class = MailboxService
+    model = Mailbox
     template_name = "musician/mailbox_form.html"
     form_class = MailboxCreateForm
     success_url = reverse_lazy("musician:mailbox-list")
