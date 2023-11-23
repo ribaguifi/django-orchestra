@@ -23,6 +23,7 @@ from requests.exceptions import HTTPError
 
 from orchestra import get_version
 from orchestra.contrib.bills.models import Bill
+from orchestra.contrib.databases.models import Database
 from orchestra.contrib.domains.models import Domain
 from orchestra.contrib.lists.models import List
 from orchestra.contrib.mailboxes.models import Address, Mailbox
@@ -428,6 +429,7 @@ class MailboxChangePasswordView(CustomContextMixin, UserTokenRequiredMixin, Upda
 
 class DatabasesView(ServiceListView):
     template_name = "musician/databases.html"
+    model = Database
     service_class = DatabaseService
     extra_context = {
         # Translators: This message appears on the page title

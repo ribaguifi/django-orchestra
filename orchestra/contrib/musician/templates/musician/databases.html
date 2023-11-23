@@ -27,7 +27,7 @@
       <div class="col-md-4">
         <h4>Database users</h4>
         <ul class="list-unstyled pl-2">
-        {% for user in database.users %}
+        {% for user in database.users.all %}
           {# TODO(@slamora) render in two columns #}
           <li><span class="d-inline-block w-25">{{ user.username }}</span> <i class="fas fa-user-edit"></i></li>
         {% empty %}
