@@ -24,6 +24,7 @@ from requests.exceptions import HTTPError
 from orchestra import get_version
 from orchestra.contrib.bills.models import Bill
 from orchestra.contrib.domains.models import Domain
+from orchestra.contrib.lists.models import List
 from orchestra.contrib.mailboxes.models import Address, Mailbox
 from orchestra.contrib.saas.models import SaaS
 from orchestra.utils.html import html_to_pdf
@@ -307,6 +308,7 @@ class AddressDeleteView(CustomContextMixin, UserTokenRequiredMixin, DeleteView):
 
 class MailingListsView(ServiceListView):
     service_class = MailinglistService
+    model = List
     template_name = "musician/mailinglists.html"
     extra_context = {
         # Translators: This message appears on the page title
