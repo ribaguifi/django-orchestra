@@ -29,7 +29,7 @@
         <td>{{ mailbox.filtering }}</td>
         <td>
           {% for addr in mailbox.addresses.all %}
-            <a href="{% url 'musician:address-update' addr.data.id %}">
+            <a href="{% url 'musician:address-update' addr.pk %}">
               {{ addr.full_address_name }}
             </a><br/>
           {% endfor %}
