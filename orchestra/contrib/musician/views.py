@@ -8,6 +8,7 @@ from django.core.exceptions import ImproperlyConfigured
 from django.core.mail import mail_managers
 from django.http import (HttpResponse, HttpResponseNotFound,
                          HttpResponseRedirect)
+from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.utils import translation
 from django.utils.html import format_html
@@ -21,7 +22,10 @@ from django.views.generic.list import ListView
 from requests.exceptions import HTTPError
 
 from orchestra import get_version
+from orchestra.contrib.bills.models import Bill
 from orchestra.contrib.domains.models import Domain
+from orchestra.contrib.saas.models import SaaS
+from orchestra.utils.html import html_to_pdf
 
 # from .auth import login as auth_login
 from .auth import logout as auth_logout
@@ -29,8 +33,10 @@ from .forms import (LoginForm, MailboxChangePasswordForm, MailboxCreateForm,
                     MailboxUpdateForm, MailForm)
 from .mixins import (CustomContextMixin, ExtendedPaginationMixin,
                      UserTokenRequiredMixin)
-from .models import (Address, Bill, DatabaseService, Mailbox,
-                     MailinglistService, PaymentSource, SaasService)
+from .models import Address
+from .models import Bill as BillService
+from .models import (DatabaseService, Mailbox, MailinglistService,
+                     PaymentSource, SaasService)
 from .settings import ALLOWED_RESOURCES
 from .utils import get_bootstraped_percent
 
@@ -148,35 +154,35 @@ def profile_set_language(request, code):
 
 class ServiceListView(CustomContextMixin, ExtendedPaginationMixin, UserTokenRequiredMixin, ListView):
     """Base list view to all services"""
-    service_class = None
+    model = None
     template_name = "musician/service_list.html"
 
     def get_queryset(self):
-        if self.service_class is None or self.service_class.api_name is None:
+        if self.model is None :
             raise ImproperlyConfigured(
-                "ServiceListView requires a definiton of 'service'")
+                "ServiceListView requires definiton of 'model' attribute")
 
         queryfilter = self.get_queryfilter()
-        json_qs = self.orchestra.retrieve_service_list(
-            self.service_class.api_name,
-            querystring=queryfilter,
-        )
-        return [self.service_class.new_from_json(data) for data in json_qs]
+        qs = self.model.objects.filter(account=self.request.user, **queryfilter)
+
+        return qs
 
     def get_queryfilter(self):
         """Does nothing by default. Should be implemented on subclasses"""
-        return ''
+        return {}
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context.update({
-            'service': self.service_class,
+            # TODO(@slamora): check where is used on the template
+            'service': self.model.__name__,
         })
         return context
 
 
 class BillingView(ServiceListView):
-    service_class = Bill
+    service_class = BillService
+    model = Bill
     template_name = "musician/billing.html"
     extra_context = {
         # Translators: This message appears on the page title
@@ -185,10 +191,10 @@ class BillingView(ServiceListView):
 
     def get_queryset(self):
         qs = super().get_queryset()
-        qs = sorted(qs, key=lambda x: x.created_on, reverse=True)
-        for q in qs:
-            q.created_on = datetime.datetime.strptime(q.created_on, "%Y-%m-%d")
+        qs = qs.order_by("-created_on")
         return qs
+
+
 
 
 class BillDownloadView(CustomContextMixin, UserTokenRequiredMixin, View):
@@ -197,11 +203,23 @@ class BillDownloadView(CustomContextMixin, UserTokenRequiredMixin, View):
         'title': _('Download bill'),
     }
 
-    def get(self, request, *args, **kwargs):
-        pk = self.kwargs.get('pk')
-        bill = self.orchestra.retrieve_bill_document(pk)
+    def get_object(self):
+        return get_object_or_404(
+            Bill.objects.filter(account=self.request.user),
+            pk=self.kwargs.get('pk')
+        )
 
-        return HttpResponse(bill)
+    def get(self, request, *args, **kwargs):
+        # NOTE: this is a copy of method document() on orchestra.contrib.bills.api.BillViewSet
+        bill = self.get_object()
+
+        # TODO(@slamora): implement download as PDF, now only HTML is reachable via link
+        content_type = request.META.get('HTTP_ACCEPT')
+        if content_type == 'application/pdf':
+            pdf = html_to_pdf(bill.html or bill.render())
+            return HttpResponse(pdf, content_type='application/pdf')
+        else:
+            return HttpResponse(bill.html or bill.render())
 
 
 class MailView(ServiceListView):
@@ -509,6 +527,7 @@ class DatabasesView(ServiceListView):
 
 class SaasView(ServiceListView):
     service_class = SaasService
+    model = SaaS
     template_name = "musician/saas.html"
     extra_context = {
         # Translators: This message appears on the page title
