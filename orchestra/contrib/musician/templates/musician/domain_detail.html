@@ -19,7 +19,7 @@
     </tr>
   </thead>
   <tbody>
-    {% for record in object.records %}
+    {% for record in object.records.all %}
     <tr>
       <td>{{ record.type }}</td>
       <td>{{ record.value }}</td>

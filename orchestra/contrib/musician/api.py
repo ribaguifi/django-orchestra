@@ -217,6 +217,7 @@ class OrchestraConnector:
 
 
     def retrieve_domain(self, pk):
+
         path = API_PATHS.get('domain-detail').format_map({'pk': pk})
 
         url = urllib.parse.urljoin(self.base_url, path)
@@ -226,46 +227,24 @@ class OrchestraConnector:
         return Domain.new_from_json(domain_json)
 
     def retrieve_domain_list(self):
-        output = self.retrieve_service_list(Domain)
-        websites = self.retrieve_website_list()
+        domains = self.retrieve_service_list(Domain)
+        domains = domains.prefetch_related("addresses", "websites")
 
-        domains = []
-        for domain_json in output:
-            # filter querystring
-            querystring = "domain={}".format(domain_json['id'])
-
-            # retrieve services associated to a domain
-            domain_json['addresses'] = self.retrieve_service_list(
-                Address.api_name, querystring)
-
-            # retrieve websites (as they cannot be filtered by domain on the API we should do it here)
-            domain_json['websites'] = self.filter_websites_by_domain(websites, domain_json['id'])
-
-            # TODO(@slamora): update when backend provides resource disk usage data
-            domain_json['usage'] = {
-                # 'usage': 300,
-                # 'total': 650,
-                # 'unit': 'MB',
-                # 'percent': 50,
-            }
-
-            # append to list a Domain object
-            domains.append(Domain.new_from_json(domain_json))
+        # TODO(@slamora): update when backend provides resource disk usage data
+        # initialize domain usage for every domain
+        # for domain in domains:
+            # domain.usage = {
+            #     'usage': 300,
+            #     'total': 650,
+            #     'unit': 'MB',
+            #     'percent': 50,
+            # }
 
         return domains
 
     def retrieve_website_list(self):
         qs = self.retrieve_service_list(Website)
         return qs
-
-    def filter_websites_by_domain(self, websites, domain_id):
-        matching = []
-        for website in websites:
-            web_domains = [web_domain.id for web_domain in website.domains]
-            if domain_id in web_domains:
-                matching.append(website)
-
-        return matching
 
     def verify_credentials(self):
         """

@@ -21,6 +21,7 @@ from django.views.generic.list import ListView
 from requests.exceptions import HTTPError
 
 from orchestra import get_version
+from orchestra.contrib.domains.models import Domain
 
 # from .auth import login as auth_login
 from .auth import logout as auth_logout
@@ -523,19 +524,7 @@ class DomainDetailView(CustomContextMixin, UserTokenRequiredMixin, DetailView):
     }
 
     def get_queryset(self):
-        # Return an empty list to avoid a request to retrieve all the
-        # user domains. We will get a 404 if the domain doesn't exists
-        # while invoking `get_object`
-        return []
-
-    def get_object(self, queryset=None):
-        if queryset is None:
-            queryset = self.get_queryset()
-
-        pk = self.kwargs.get(self.pk_url_kwarg)
-        domain = self.orchestra.retrieve_domain(pk)
-
-        return domain
+        return Domain.objects.filter(account=self.request.user)
 
 
 class LoginView(FormView):
