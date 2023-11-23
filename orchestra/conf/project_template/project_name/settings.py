@@ -235,6 +235,8 @@ LOGIN_URL = 'musician:login'
 LOGOUT_REDIRECT_URL = 'musician:login'
 
 
+USER_SUPPORT_EMAIL = "support@example.com"
+
 #################################
 ## 3RD PARTY APPS CONFIGURATION ##
 #################################

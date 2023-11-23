@@ -113,7 +113,9 @@
           <div class="domain-ftp pb-3 border-bottom">
             <h6 class="pl-4 mb-4">{% trans "FTP access:" %}</h6>
             {# Translators: domain configuration detail modal #}
-            <p>{% trans "Contact with the support team to get details concerning FTP access." %}</p>
+            <p>
+              {% blocktrans %}E-mail us at {{ support_email_anchor }} to get details concerning FTP access.{% endblocktrans %}
+            </p>
             {% comment %}
             <!-- hidden until API provides FTP information -->
             <label>{% trans "Username" %}:</label> <span id="config-username" class="font-weight-bold">username</span><br/>

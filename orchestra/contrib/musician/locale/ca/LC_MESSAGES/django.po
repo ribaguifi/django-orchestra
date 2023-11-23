@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-24 11:04+0100\n"
+"POT-Creation-Date: 2023-11-23 19:57+0100\n"
 "PO-Revision-Date: 2021-11-25 12:53+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -18,53 +18,53 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 3.0\n"
 
-#: api.py:113 api.py:211
+#: api.py:127 api.py:226
 msgid "No domain found matching the query"
 msgstr "No trobem cap domini que coincideixi amb la teva consulta"
 
-#: api.py:125
+#: api.py:139
 msgid "No object found matching the query"
 msgstr "No trobem cap objecte que coincideixi amb la teva consulta"
 
-#: api.py:178
+#: api.py:192
 msgid "No mailbox found matching the query"
 msgstr "No trobem cap bústia que coincideixi amb la teva consulta"
 
-#: forms.py:65 forms.py:99
+#: forms.py:57 forms.py:88
 msgid "The two password fields didn’t match."
 msgstr "Les contrasenyes introduïdes no coincideixen."
 
-#: forms.py:68 forms.py:103
+#: forms.py:60 forms.py:92
 msgid "Password"
 msgstr "Contrasenya"
 
-#: forms.py:73 forms.py:108
+#: forms.py:65 forms.py:97
 msgid "Password confirmation"
 msgstr "Confirma la contrasenya"
 
-#: forms.py:76 forms.py:111
+#: forms.py:68 forms.py:100
 msgid "Enter the same password as before, for verification."
 msgstr "Introdueix la mateixa contrasenya per verificar-la."
 
-#: mixins.py:14
+#: mixins.py:17
 msgid "Domains & websites"
 msgstr "Dominis i llocs web"
 
-#: mixins.py:15
+#: mixins.py:18
 msgid "Mails"
 msgstr "Correus"
 
 #. Translators: This message appears on the page title
-#: mixins.py:16 views.py:296
+#: mixins.py:19 views.py:324
 msgid "Mailing lists"
 msgstr "Llistes de correu"
 
 #. Translators: This message appears on the page title
-#: mixins.py:17 models.py:147 views.py:480
+#: mixins.py:20 models.py:147 views.py:446
 msgid "Databases"
 msgstr "Bases de dades"
 
-#: mixins.py:18
+#: mixins.py:21
 msgid "SaaS"
 msgstr "SaaS"
 
@@ -73,7 +73,7 @@ msgid "Description details for databases page."
 msgstr "Consulta la configuració de les teves bases de dades."
 
 #. Translators: This message appears on the page title
-#: models.py:235 views.py:185
+#: models.py:235 views.py:247
 msgid "Mail addresses"
 msgstr "Adreces de correu"
 
@@ -170,7 +170,7 @@ msgstr "Domini"
 
 #. Translators: This message appears on the page title
 #: templates/musician/addresses.html:17 templates/musician/mail_base.html:22
-#: views.py:325
+#: views.py:355
 msgid "Mailboxes"
 msgstr "Bústies de correu"
 
@@ -182,23 +182,27 @@ msgstr "Redirecció"
 msgid "New mail address"
 msgstr "Nova adreça de correu"
 
-#: templates/musician/base.html:60
+#: templates/musician/base.html:63
 msgid "Settings"
 msgstr "Configuració"
 
-#: templates/musician/base.html:63 templates/musician/profile.html:6
+#: templates/musician/base.html:66 templates/musician/profile.html:6
 msgid "Profile"
 msgstr "Perfil"
 
 #. Translators: This message appears on the page title
-#: templates/musician/base.html:64 templates/musician/billing.html:6
-#: views.py:163
+#: templates/musician/base.html:67 templates/musician/billing.html:6
+#: views.py:205
 msgid "Billing"
 msgstr "Factures"
 
-#: templates/musician/base.html:72
+#: templates/musician/base.html:82
 msgid "Log out"
 msgstr "Surt"
+
+#: templates/musician/base.html:93
+msgid "Language"
+msgstr ""
 
 #: templates/musician/billing.html:7
 msgid "Billing page description."
@@ -285,7 +289,7 @@ msgid "Mail list"
 msgstr "Llista de correu"
 
 #. Translators: This message appears on the page title
-#: templates/musician/dashboard.html:83 views.py:489
+#: templates/musician/dashboard.html:83 views.py:456
 msgid "Software as a Service"
 msgstr "Software as a Service"
 
@@ -293,7 +297,7 @@ msgstr "Software as a Service"
 msgid "Nothing installed"
 msgstr "No tens res instal·lat"
 
-#: templates/musician/dashboard.html:90 views.py:57
+#: templates/musician/dashboard.html:90 views.py:70
 msgid "Disk usage"
 msgstr "Ús del disc"
 
@@ -305,26 +309,30 @@ msgstr "Detalls de configuració"
 msgid "FTP access:"
 msgstr "Accés FTP:"
 
-#. Translators: domain configuration detail modal
-#: templates/musician/dashboard.html:116
-msgid "Contact with the support team to get details concerning FTP access."
+#: templates/musician/dashboard.html:117
+#, fuzzy, python-format
+#| msgid ""
+#| "Send an email to <a href=\"mailto:%(support_email)s\">%(support_email)s</"
+#| "a> including your username and we will provide instructions."
+msgid ""
+"E-mail us at %(support_email_anchor)s to get details concerning FTP access."
 msgstr ""
-"Escriu-nos a <a href=“mailto:%(support_email)s”>%(support_email)s</a> per "
-"saber com accedir al FTP."
+"Envia un correu a <a href=\"mailto:%(support_email)s\">%(support_email)s</a> "
+"indicant el teu nom d’usuari/a i t’explicarem què fer."
 
-#: templates/musician/dashboard.html:125
+#: templates/musician/dashboard.html:127
 msgid "No website configured."
 msgstr "No hi ha cap web configurada."
 
-#: templates/musician/dashboard.html:127
+#: templates/musician/dashboard.html:129
 msgid "Root directory:"
 msgstr "Directori arrel:"
 
-#: templates/musician/dashboard.html:128
+#: templates/musician/dashboard.html:130
 msgid "Type:"
 msgstr "Tipus:"
 
-#: templates/musician/dashboard.html:133
+#: templates/musician/dashboard.html:135
 msgid "View DNS records"
 msgstr "Veure registres DNS"
 
@@ -472,55 +480,59 @@ msgid "Open service admin panel"
 msgstr "Obre el panell d’administració del servei"
 
 #. Translators: This message appears on the page title
-#: views.py:41
+#: views.py:54
 msgid "Dashboard"
 msgstr "Panell de gestió"
 
-#: views.py:66
+#: views.py:79
 msgid "Traffic"
 msgstr "Tràfic"
 
-#: views.py:97
+#: views.py:117
 msgid "Mailbox usage"
 msgstr "Ús d’espai a la bústia de correu"
 
 #. Translators: This message appears on the page title
-#: views.py:112
+#: views.py:132
 msgid "User profile"
 msgstr "El teu perfil"
 
 #. Translators: This message appears on the page title
-#: views.py:170
+#: views.py:219
 msgid "Download bill"
 msgstr "Descarrega la factura"
 
-#: views.py:283
+#: views.py:310
 msgid "Address deleted!"
 msgstr "S’ha suprimit l’adreça de correu"
 
-#: views.py:285 views.py:422 views.py:469
+#: views.py:312 views.py:412
 msgid "Cannot process your request, please try again later."
 msgstr ""
 "Ara no podem processar la teva petició, torna a intentar-ho una mica més "
 "tard sisplau"
 
-#: views.py:420
+#: views.py:410
 msgid "Mailbox deleted!"
 msgstr "S’ha suprimit la bústia de correu"
 
-#: views.py:467
-msgid "Password updated!"
-msgstr "S’ha actualitzat la contrasenya"
-
 #. Translators: This message appears on the page title
-#: views.py:497
+#: views.py:464
 msgid "Domain details"
 msgstr "Detalls del domini"
 
 #. Translators: This message appears on the page title
-#: views.py:523
+#: views.py:478
 msgid "Login"
 msgstr "Accés"
+
+#~ msgid "Contact with the support team to get details concerning FTP access."
+#~ msgstr ""
+#~ "Escriu-nos a <a href=“mailto:%(support_email)s”>%(support_email)s</a> per "
+#~ "saber com accedir al FTP."
+
+#~ msgid "Password updated!"
+#~ msgstr "S’ha actualitzat la contrasenya"
 
 #~ msgid "mail address left"
 #~ msgstr "adreces de correu per activar"
