@@ -1,8 +1,10 @@
-
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
+
+from orchestra.contrib.domains.models import Domain
+from orchestra.contrib.mailboxes.models import Address, Mailbox
 
 from . import api
 
@@ -25,23 +27,16 @@ class LoginForm(AuthenticationForm):
         return self.cleaned_data
 
 
-class MailForm(forms.Form):
-    name = forms.CharField()
-    domain = forms.ChoiceField()
-    mailboxes = forms.MultipleChoiceField(required=False)
-    forward = forms.EmailField(required=False)
+class MailForm(forms.ModelForm):
+    class Meta:
+        model = Address
+        fields = ("name", "domain", "mailboxes", "forward")
 
     def __init__(self, *args, **kwargs):
-        self.instance = kwargs.pop('instance', None)
-        if self.instance is not None:
-            kwargs['initial'] = self.instance.deserialize()
-
-        domains = kwargs.pop('domains')
-        mailboxes = kwargs.pop('mailboxes')
-
+        self.user = kwargs.pop('user')
         super().__init__(*args, **kwargs)
-        self.fields['domain'].choices = [(d.url, d.name) for d in domains]
-        self.fields['mailboxes'].choices = [(m.url, m.name) for m in mailboxes]
+        self.fields['domain'].queryset = Domain.objects.filter(account=self.user)
+        self.fields['mailboxes'].queryset = Mailbox.objects.filter(account=self.user)
 
     def clean(self):
         cleaned_data = super().clean()
@@ -49,18 +44,15 @@ class MailForm(forms.Form):
             raise ValidationError("A mailbox or forward address should be provided.")
         return cleaned_data
 
-    def serialize(self):
-        assert hasattr(self, 'cleaned_data')
-        serialized_data = {
-            "name": self.cleaned_data["name"],
-            "domain": {"url": self.cleaned_data["domain"]},
-            "mailboxes": [{"url": mbox} for mbox in self.cleaned_data["mailboxes"]],
-            "forward": self.cleaned_data["forward"],
-        }
-        return serialized_data
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        instance.account = self.user
+        if commit:
+            super().save(commit=True)
+        return instance
 
 
-class MailboxChangePasswordForm(forms.Form):
+class MailboxChangePasswordForm(forms.ModelForm):
     error_messages = {
         'password_mismatch': _('The two password fields didn’t match.'),
     }
@@ -76,6 +68,10 @@ class MailboxChangePasswordForm(forms.Form):
         help_text=_("Enter the same password as before, for verification."),
     )
 
+    class Meta:
+        fields = ("password",)
+        model = Mailbox
+
     def clean_password2(self):
         password = self.cleaned_data.get("password")
         password2 = self.cleaned_data.get("password2")
@@ -86,15 +82,8 @@ class MailboxChangePasswordForm(forms.Form):
             )
         return password2
 
-    def serialize(self):
-        assert self.is_valid()
-        serialized_data = {
-            "password": self.cleaned_data["password2"],
-        }
-        return serialized_data
 
-
-class MailboxCreateForm(forms.Form):
+class MailboxCreateForm(forms.ModelForm):
     error_messages = {
         'password_mismatch': _('The two password fields didn’t match.'),
     }
@@ -110,12 +99,17 @@ class MailboxCreateForm(forms.Form):
         strip=False,
         help_text=_("Enter the same password as before, for verification."),
     )
-    addresses = forms.MultipleChoiceField(required=False)
+    addresses = forms.ModelMultipleChoiceField(queryset=Address.objects.none(), required=False)
+
+    class Meta:
+        fields = ("name", "password", "password2", "addresses")
+        model = Mailbox
 
     def __init__(self, *args, **kwargs):
-        addresses = kwargs.pop('addresses')
+        user = kwargs.pop('user')
         super().__init__(*args, **kwargs)
-        self.fields['addresses'].choices = [(addr.url, addr.full_address_name) for addr in addresses]
+        self.fields['addresses'].queryset = Address.objects.filter(account=user)
+        self.user = user
 
     def clean_password2(self):
         password = self.cleaned_data.get("password")
@@ -127,31 +121,16 @@ class MailboxCreateForm(forms.Form):
             )
         return password2
 
-    def serialize(self):
-        assert self.is_valid()
-        serialized_data = {
-            "name": self.cleaned_data["name"],
-            "password": self.cleaned_data["password2"],
-            "addresses": self.cleaned_data["addresses"],
-        }
-        return serialized_data
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        instance.account = self.user
+        if commit:
+            super().save(commit=True)
+        return instance
 
 
-class MailboxUpdateForm(forms.Form):
+class MailboxUpdateForm(forms.ModelForm):
     addresses = forms.MultipleChoiceField(required=False)
-
-    def __init__(self, *args, **kwargs):
-        self.instance = kwargs.pop('instance', None)
-        if self.instance is not None:
-            kwargs['initial'] = self.instance.deserialize()
-
-        addresses = kwargs.pop('addresses')
-        super().__init__(*args, **kwargs)
-        self.fields['addresses'].choices = [(addr.url, addr.full_address_name) for addr in addresses]
-
-    def serialize(self):
-        assert self.is_valid()
-        serialized_data = {
-            "addresses": self.cleaned_data["addresses"],
-        }
-        return serialized_data
+    class Meta:
+        fields = ('addresses',)
+        model = Mailbox

@@ -21,10 +21,10 @@
     <tbody>
       {% for obj in object_list %}
       <tr>
-        <td><a href="{% url 'musician:address-update' obj.id %}">{{ obj.full_address_name }}</a></td>
+        <td><a href="{% url 'musician:address-update' obj.id %}">{{ obj.email }}</a></td>
         <td>{{ obj.domain.name }}</td>
         <td>
-          {% for mailbox in obj.mailboxes %}
+          {% for mailbox in obj.mailboxes.all %}
             <a href="{% url 'musician:mailbox-update' mailbox.id %}">{{ mailbox.name }}</a>
             {% if not forloop.last %}<br/> {% endif %}
           {% endfor %}

@@ -16,7 +16,8 @@ from django.utils.translation import gettext_lazy as _
 from django.views import View
 from django.views.generic.base import RedirectView, TemplateView
 from django.views.generic.detail import DetailView
-from django.views.generic.edit import DeleteView, FormView
+from django.views.generic.edit import (CreateView, DeleteView, FormView,
+                                       UpdateView)
 from django.views.generic.list import ListView
 from requests.exceptions import HTTPError
 
@@ -256,8 +257,9 @@ class MailView(ServiceListView):
         return context
 
 
-class MailCreateView(CustomContextMixin, UserTokenRequiredMixin, FormView):
-    service_class = Address
+class MailCreateView(CustomContextMixin, UserTokenRequiredMixin, CreateView):
+    service_class = AddressService
+    model = Address
     template_name = "musician/address_form.html"
     form_class = MailForm
     success_url = reverse_lazy("musician:address-list")
@@ -265,24 +267,13 @@ class MailCreateView(CustomContextMixin, UserTokenRequiredMixin, FormView):
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs['domains'] = self.orchestra.retrieve_domain_list()
-        kwargs['mailboxes'] = self.orchestra.retrieve_mailbox_list()
+        kwargs['user'] = self.request.user
         return kwargs
 
-    def form_valid(self, form):
-        # handle request errors e.g. 400 validation
-        try:
-            serialized_data = form.serialize()
-            self.orchestra.create_mail_address(serialized_data)
-        except HTTPError as e:
-            form.add_error(field='__all__', error=e)
-            return self.form_invalid(form)
 
-        return super().form_valid(form)
-
-
-class MailUpdateView(CustomContextMixin, UserTokenRequiredMixin, FormView):
-    service_class = Address
+class MailUpdateView(CustomContextMixin, UserTokenRequiredMixin, UpdateView):
+    service_class = AddressService
+    model = Address
     template_name = "musician/address_form.html"
     form_class = MailForm
     success_url = reverse_lazy("musician:address-list")
@@ -290,26 +281,8 @@ class MailUpdateView(CustomContextMixin, UserTokenRequiredMixin, FormView):
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        instance = self.orchestra.retrieve_mail_address(self.kwargs['pk'])
-
-        kwargs.update({
-            'instance': instance,
-            'domains': self.orchestra.retrieve_domain_list(),
-            'mailboxes': self.orchestra.retrieve_mailbox_list(),
-        })
-
+        kwargs["user"] = self.request.user
         return kwargs
-
-    def form_valid(self, form):
-        # handle request errors e.g. 400 validation
-        try:
-            serialized_data = form.serialize()
-            self.orchestra.update_mail_address(self.kwargs['pk'], serialized_data)
-        except HTTPError as e:
-            form.add_error(field='__all__', error=e)
-            return self.form_invalid(form)
-
-        return super().form_valid(form)
 
 
 class AddressDeleteView(CustomContextMixin, UserTokenRequiredMixin, DeleteView):
@@ -355,9 +328,9 @@ class MailingListsView(ServiceListView):
         #   doesn't support filtering by domain
         domain_id = self.request.GET.get('domain')
         if domain_id:
-            return "domain={}".format(domain_id)
+            return {"domain": domain_id}
 
-        return ''
+        return {}
 
 
 class MailboxesView(ServiceListView):
@@ -370,7 +343,7 @@ class MailboxesView(ServiceListView):
     }
 
 
-class MailboxCreateView(CustomContextMixin, UserTokenRequiredMixin, FormView):
+class MailboxCreateView(CustomContextMixin, UserTokenRequiredMixin, CreateView):
     service_class = MailboxService
     model = Mailbox
     template_name = "musician/mailbox_form.html"
@@ -387,67 +360,26 @@ class MailboxCreateView(CustomContextMixin, UserTokenRequiredMixin, FormView):
 
     def is_extra_mailbox(self, profile):
         number_of_mailboxes = len(self.orchestra.retrieve_mailbox_list())
-        return number_of_mailboxes >= profile.allowed_resources('mailbox')
+        # TODO(@slamora): how to retrieve allowed mailboxes?
+        allowed_mailboxes = 2   # TODO(@slamora): harcoded value
+        return number_of_mailboxes >= allowed_mailboxes
+        # return number_of_mailboxes >= profile.allowed_resources('mailbox')
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs.update({
-            'addresses': self.orchestra.retrieve_mail_address_list(),
+            'user': self.request.user,
         })
 
         return kwargs
 
-    def form_valid(self, form):
-        serialized_data = form.serialize()
-        status, response = self.orchestra.create_mailbox(serialized_data)
-
-        if status >= 400:
-            if status == 400:
-                # handle errors & add to form (they will be rendered)
-                form.add_error(field=None, error=response)
-            else:
-                logger.error("{}: {}".format(status, response[:120]))
-                msg = "Sorry, an error occurred while processing your request ({})".format(status)
-                form.add_error(field='__all__', error=msg)
-            return self.form_invalid(form)
-
-        return super().form_valid(form)
-
-
-class MailboxUpdateView(CustomContextMixin, UserTokenRequiredMixin, FormView):
-    service_class = Mailbox
+class MailboxUpdateView(CustomContextMixin, UserTokenRequiredMixin, UpdateView):
+    service_class = MailboxService
+    model = Mailbox
     template_name = "musician/mailbox_form.html"
     form_class = MailboxUpdateForm
     success_url = reverse_lazy("musician:mailbox-list")
     extra_context = {'service': service_class}
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        instance = self.orchestra.retrieve_mailbox(self.kwargs['pk'])
-
-        kwargs.update({
-            'instance': instance,
-            'addresses': self.orchestra.retrieve_mail_address_list(),
-        })
-
-        return kwargs
-
-    def form_valid(self, form):
-        serialized_data = form.serialize()
-        status, response = self.orchestra.update_mailbox(self.kwargs['pk'], serialized_data)
-
-        if status >= 400:
-            if status == 400:
-                # handle errors & add to form (they will be rendered)
-                form.add_error(field=None, error=response)
-            else:
-                logger.error("{}: {}".format(status, response[:120]))
-                msg = "Sorry, an error occurred while processing your request ({})".format(status)
-                form.add_error(field='__all__', error=msg)
-
-            return self.form_invalid(form)
-
-        return super().form_valid(form)
 
 
 class MailboxDeleteView(CustomContextMixin, UserTokenRequiredMixin, DeleteView):
@@ -485,36 +417,11 @@ class MailboxDeleteView(CustomContextMixin, UserTokenRequiredMixin, DeleteView):
             logger.error("Error sending email to managers", exc_info=True)
 
 
-class MailboxChangePasswordView(CustomContextMixin, UserTokenRequiredMixin, FormView):
+class MailboxChangePasswordView(CustomContextMixin, UserTokenRequiredMixin, UpdateView):
     template_name = "musician/mailbox_change_password.html"
+    model = Mailbox
     form_class = MailboxChangePasswordForm
     success_url = reverse_lazy("musician:mailbox-list")
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        self.object = self.get_object()
-        context.update({
-            'object': self.object,
-        })
-        return context
-
-    def get_object(self, queryset=None):
-        obj = self.orchestra.retrieve_mailbox(self.kwargs['pk'])
-        return obj
-
-    def form_valid(self, form):
-        data = {
-            'password': form.cleaned_data['password2']
-        }
-        status, response = self.orchestra.set_password_mailbox(self.kwargs['pk'], data)
-
-        if status < 400:
-            messages.success(self.request,  _('Password updated!'))
-        else:
-            messages.error(self.request, _('Cannot process your request, please try again later.'))
-            logger.error("{}: {}".format(status, str(response)[:100]))
-
-        return super().form_valid(form)
 
 
 class DatabasesView(ServiceListView):
