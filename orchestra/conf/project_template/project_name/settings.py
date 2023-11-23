@@ -71,6 +71,7 @@ INSTALLED_APPS = [
     'passlib.ext.django',
     'django_countries',
 #    'debug_toolbar',
+    'bootstrap4',
 
     # Django.contrib
     'django.contrib.auth',
