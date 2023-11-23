@@ -1,4 +1,3 @@
-import datetime
 import logging
 import smtplib
 
@@ -123,13 +122,10 @@ class ProfileView(CustomContextMixin, UserTokenRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        try:
-            pay_source = self.orchestra.retrieve_service_list(
-                PaymentSource.api_name)[0]
-        except IndexError:
-            pay_source = {}
+        user = self.request.user
         context.update({
-            'payment': PaymentSource.new_from_json(pay_source)
+            'payment': user.paymentsources.first(),
+            'preferred_language_code': user.language.lower(),
         })
 
         return context
@@ -139,11 +135,19 @@ def profile_set_language(request, code):
     # set user language as active language
 
     if any(x[0] == code for x in settings.LANGUAGES):
-        # http://127.0.0.1:8080/profile/setLang/es
         user_language = code
         translation.activate(user_language)
 
-        response = HttpResponseRedirect('/dashboard')
+        redirect_to = request.GET.get('next', '')
+        url_is_safe = is_safe_url(
+            url=redirect_to,
+            allowed_hosts={request.get_host()},
+            require_https=request.is_secure(),
+        )
+        if not url_is_safe:
+            redirect_to = reverse_lazy(settings.LOGIN_REDIRECT_URL)
+
+        response = HttpResponseRedirect(redirect_to)
         response.set_cookie(settings.LANGUAGE_COOKIE_NAME, user_language)
 
         return response

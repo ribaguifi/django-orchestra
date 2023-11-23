@@ -18,7 +18,7 @@
       <div class="col-md-9">
         <p class="card-text">{{ profile.username }}</p>
         <p class="card-text">{{ profile.type }}</p>
-        <p class="card-text">{% trans "Preferred language:" %} {{ profile.language|language_name_local }}</p>
+        <p class="card-text">{% trans "Preferred language:" %} {{ preferred_language_code|language_name_local }}</p>
       </div>
       {% comment %}
       <!-- disabled until set_password is implemented -->

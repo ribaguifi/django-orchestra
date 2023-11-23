@@ -94,7 +94,7 @@
             </a>
             <div class="dropdown-menu">
               {% for code, language in languages %}
-                  <a class="dropdown-item" href="{% url 'musician:profile-set-lang' code %}">{{ language }}</a>
+                  <a class="dropdown-item" href="{% url 'musician:profile-set-lang' code %}?next={{ request.path }}">{{ language }}</a>
               {% endfor %}
             </div>
           </div>
