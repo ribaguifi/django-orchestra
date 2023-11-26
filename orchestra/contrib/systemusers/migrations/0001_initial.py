@@ -11,7 +11,7 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
+        # migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
@@ -25,7 +25,7 @@ class Migration(migrations.Migration):
                 ('directory', models.CharField(blank=True, help_text="Optional directory relative to user's home.", max_length=256, verbose_name='directory')),
                 ('shell', models.CharField(choices=[('/dev/null', 'No shell, FTP only'), ('/bin/rssh', 'No shell, SFTP/RSYNC only'), ('/usr/bin/git-shell', 'No shell, GIT only'), ('/bin/bash', '/bin/bash')], default='/dev/null', max_length=32, verbose_name='shell')),
                 ('is_active', models.BooleanField(default=True, help_text='Designates whether this account should be treated as active. Unselect this instead of deleting accounts.', verbose_name='active')),
-                ('account', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='systemusers', to=settings.AUTH_USER_MODEL, verbose_name='Account')),
+                # ('account', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='systemusers', to=settings.AUTH_USER_MODEL, verbose_name='Account')),
                 ('groups', models.ManyToManyField(blank=True, help_text='A new group will be created for the user. Which additional groups would you like them to be a member of?', to='systemusers.SystemUser')),
             ],
         ),
