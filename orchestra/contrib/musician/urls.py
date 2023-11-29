@@ -8,7 +8,6 @@ from django.urls import path
 
 from . import views
 
-
 app_name = 'musician'
 
 urlpatterns = [
@@ -16,6 +15,7 @@ urlpatterns = [
     path('auth/logout/', views.LogoutView.as_view(), name='logout'),
     path('dashboard/', views.DashboardView.as_view(), name='dashboard'),
     path('domains/<int:pk>/', views.DomainDetailView.as_view(), name='domain-detail'),
+    path('domains/<int:pk>/add-record/', views.DomainAddRecordView.as_view(), name='domain-add-record'),
     path('billing/', views.BillingView.as_view(), name='billing'),
     path('bills/<int:pk>/download/', views.BillDownloadView.as_view(), name='bill-download'),
     path('profile/', views.ProfileView.as_view(), name='profile'),

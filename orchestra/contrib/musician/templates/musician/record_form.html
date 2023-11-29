@@ -1,0 +1,22 @@
+{% extends "musician/base.html" %}
+{% load bootstrap4 i18n %}
+
+{% block content %}
+<a class="btn-arrow-left" href="{% url 'musician:domain-detail' form.domain.pk %}">{% trans "Go back" %}</a>
+
+<h1 class="service-name">{% trans "Add record for" %} <span class="font-weight-light">{{ form.domain.name }}</span></h1>
+
+<form method="post">
+  {% csrf_token %}
+  {% bootstrap_form form %}
+  {% buttons %}
+  <a class="btn btn-light mr-2" href="{% url 'musician:domain-detail' form.domain.pk %}"">{% trans "Cancel" %}</a>
+  <button type="submit" class="btn btn-secondary">{% trans "Save" %}</button>
+  {% if form.instance.pk %}
+  <div class="float-right">
+    <a class="btn btn-danger" href="{% url 'musician:domain-record-delete' form.instance.pk %}">{% trans "Delete" %}</a>
+  </div>
+  {% endif %}
+  {% endbuttons %}
+</form>
+{% endblock %}

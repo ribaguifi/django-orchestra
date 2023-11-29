@@ -27,4 +27,5 @@
     {% endfor %}
   </tbody>
 </table>
+<a class="btn btn-primary mt-4 mb-4" href="{% url 'musician:domain-add-record' object.pk %}">{% trans "Add new record" %}</a></td>
 {% endblock %}

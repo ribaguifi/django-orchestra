@@ -24,7 +24,7 @@ from requests.exceptions import HTTPError
 from orchestra import get_version
 from orchestra.contrib.bills.models import Bill
 from orchestra.contrib.databases.models import Database
-from orchestra.contrib.domains.models import Domain
+from orchestra.contrib.domains.models import Domain, Record
 from orchestra.contrib.lists.models import List
 from orchestra.contrib.mailboxes.models import Address, Mailbox
 from orchestra.contrib.saas.models import SaaS
@@ -33,7 +33,7 @@ from orchestra.utils.html import html_to_pdf
 # from .auth import login as auth_login
 from .auth import logout as auth_logout
 from .forms import (LoginForm, MailboxChangePasswordForm, MailboxCreateForm,
-                    MailboxUpdateForm, MailForm)
+                    MailboxUpdateForm, MailForm, RecordCreateForm)
 from .mixins import (CustomContextMixin, ExtendedPaginationMixin,
                      UserTokenRequiredMixin)
 from .models import Address as AddressService
@@ -466,6 +466,21 @@ class DomainDetailView(CustomContextMixin, UserTokenRequiredMixin, DetailView):
 
     def get_queryset(self):
         return Domain.objects.filter(account=self.request.user)
+
+
+class DomainAddRecordView(CustomContextMixin, UserTokenRequiredMixin, CreateView):
+    model = Record
+    form_class = RecordCreateForm
+    template_name = "musician/record_form.html"
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        domain = get_object_or_404(Domain, account=self.request.user, pk=self.kwargs["pk"])
+        kwargs['domain'] = domain
+        return kwargs
+
+    def get_success_url(self):
+        return reverse_lazy("musician:domain-detail", kwargs={"pk": self.kwargs["pk"]})
 
 
 class LoginView(FormView):

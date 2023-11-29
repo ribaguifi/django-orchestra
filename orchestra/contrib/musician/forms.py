@@ -3,7 +3,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
-from orchestra.contrib.domains.models import Domain
+from orchestra.contrib.domains.models import Domain, Record
 from orchestra.contrib.mailboxes.models import Address, Mailbox
 
 from . import api
@@ -131,6 +131,25 @@ class MailboxCreateForm(forms.ModelForm):
 
 class MailboxUpdateForm(forms.ModelForm):
     addresses = forms.MultipleChoiceField(required=False)
+
     class Meta:
         fields = ('addresses',)
         model = Mailbox
+
+
+class RecordCreateForm(forms.ModelForm):
+
+    class Meta:
+        model = Record
+        fields = ("ttl", "type", "value")
+
+    def __init__(self, *args, **kwargs):
+        self.domain = kwargs.pop('domain')
+        super().__init__(*args, **kwargs)
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        instance.domain = self.domain
+        if commit:
+            super().save(commit=True)
+        return instance
