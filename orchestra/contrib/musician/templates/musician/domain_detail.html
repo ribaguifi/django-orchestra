@@ -4,7 +4,18 @@
 {% block content %}
 <a class="btn-arrow-left" href="{% url 'musician:dashboard' %}">{% trans "Go back" %}</a>
 
-<h1 class="service-name">{% trans "DNS settings for" %} <span class="font-weight-light">{{ object.name }}</span></h1>
+<h1 class="service-name">
+  {% trans "DNS settings for" %} <span class="font-weight-light">{{ object.name }}</span>
+
+</h1>
+
+{% if object.top %}
+<div class="mb-4">
+  <a class="btn btn-sm btn-secondary" href="{% url 'musician:domain-detail' object.top.pk %}">
+    {% trans "Go to top level domain" %} <span class="font-weight-bold">{{ object.top.name }}</span></a>
+</div>
+{% endif %}
+
 <p class="service-description">{% trans "DNS settings page description." %}</p>
 
 <table class="table service-list">
@@ -34,4 +45,15 @@
   </tbody>
 </table>
 <a class="btn btn-primary mt-4 mb-4" href="{% url 'musician:domain-add-record' object.pk %}">{% trans "Add new record" %}</a></td>
+
+<div class="domain-subdomains">
+  <h2>{% trans "Subdomains" %}</h2>
+  <ul>
+  {% for subdomain in object.subdomains.all %}
+    <li><a href="{% url 'musician:domain-detail' subdomain.pk %}">{{ subdomain.name }}</a> <pre>{{ subdomain.records.all|join:", " }}</pre></li>
+  {% empty %}
+    {% trans "Any related subdomain." %}
+  {% endfor %}
+  </ul>
+</div>
 {% endblock %}
