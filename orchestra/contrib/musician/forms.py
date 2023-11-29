@@ -5,6 +5,7 @@ from django.utils.translation import gettext_lazy as _
 
 from orchestra.contrib.domains.models import Domain, Record
 from orchestra.contrib.mailboxes.models import Address, Mailbox
+from orchestra.contrib.musician.validators import ValidateZoneMixin
 
 from . import api
 
@@ -137,7 +138,7 @@ class MailboxUpdateForm(forms.ModelForm):
         model = Mailbox
 
 
-class RecordCreateForm(forms.ModelForm):
+class RecordCreateForm(ValidateZoneMixin, forms.ModelForm):
 
     class Meta:
         model = Record
@@ -155,8 +156,12 @@ class RecordCreateForm(forms.ModelForm):
         return instance
 
 
-class RecordUpdateForm(forms.ModelForm):
+class RecordUpdateForm(ValidateZoneMixin, forms.ModelForm):
 
     class Meta:
         model = Record
         fields = ("ttl", "type", "value")
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.domain = self.instance.domain
