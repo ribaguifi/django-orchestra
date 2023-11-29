@@ -33,7 +33,8 @@ from orchestra.utils.html import html_to_pdf
 # from .auth import login as auth_login
 from .auth import logout as auth_logout
 from .forms import (LoginForm, MailboxChangePasswordForm, MailboxCreateForm,
-                    MailboxUpdateForm, MailForm, RecordCreateForm)
+                    MailboxUpdateForm, MailForm, RecordCreateForm,
+                    RecordUpdateForm)
 from .mixins import (CustomContextMixin, ExtendedPaginationMixin,
                      UserTokenRequiredMixin)
 from .models import Address as AddressService
@@ -478,6 +479,33 @@ class DomainAddRecordView(CustomContextMixin, UserTokenRequiredMixin, CreateView
         domain = get_object_or_404(Domain, account=self.request.user, pk=self.kwargs["pk"])
         kwargs['domain'] = domain
         return kwargs
+
+    def get_success_url(self):
+        return reverse_lazy("musician:domain-detail", kwargs={"pk": self.kwargs["pk"]})
+
+
+class DomainUpdateRecordView(CustomContextMixin, UserTokenRequiredMixin, UpdateView):
+    model = Record
+    form_class = RecordUpdateForm
+    template_name = "musician/record_form.html"
+    pk_url_kwarg = "record_pk"
+
+    def get_queryset(self):
+        qs = Record.objects.filter(domain__account=self.request.user, domain=self.kwargs["pk"])
+        return qs
+
+    def get_success_url(self):
+        return reverse_lazy("musician:domain-detail", kwargs={"pk": self.kwargs["pk"]})
+
+
+class DomainDeleteRecordView(CustomContextMixin, UserTokenRequiredMixin, DeleteView):
+    model = Record
+    template_name = "musician/record_confirm_delete.html"
+    pk_url_kwarg = "record_pk"
+
+    def get_queryset(self):
+        qs = Record.objects.filter(domain__account=self.request.user, domain=self.kwargs["pk"])
+        return qs
 
     def get_success_url(self):
         return reverse_lazy("musician:domain-detail", kwargs={"pk": self.kwargs["pk"]})

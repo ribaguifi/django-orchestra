@@ -22,7 +22,13 @@
     {% for record in object.records.all %}
     <tr>
       <td>{{ record.type }}</td>
-      <td>{{ record.value }}</td>
+      <td>
+        <a href="{% url 'musician:domain-update-record' object.pk record.pk %}">
+          {{ record.value }}
+          <i class="ml-3 fas fa-edit"></i></a>
+        <a href="{% url 'musician:domain-delete-record' object.pk record.pk %}">
+          <i class="ml-3 text-danger fas fa-trash"></i></a>
+        </td>
     </tr>
     {% endfor %}
   </tbody>

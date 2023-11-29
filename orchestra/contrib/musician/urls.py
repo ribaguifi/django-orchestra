@@ -14,8 +14,12 @@ urlpatterns = [
     path('auth/login/', views.LoginView.as_view(), name='login'),
     path('auth/logout/', views.LogoutView.as_view(), name='logout'),
     path('dashboard/', views.DashboardView.as_view(), name='dashboard'),
+
     path('domains/<int:pk>/', views.DomainDetailView.as_view(), name='domain-detail'),
     path('domains/<int:pk>/add-record/', views.DomainAddRecordView.as_view(), name='domain-add-record'),
+    path('domains/<int:pk>/records/<int:record_pk>/update/', views.DomainUpdateRecordView.as_view(), name='domain-update-record'),
+    path('domains/<int:pk>/records/<int:record_pk>/delete/', views.DomainDeleteRecordView.as_view(), name='domain-delete-record'),
+
     path('billing/', views.BillingView.as_view(), name='billing'),
     path('bills/<int:pk>/download/', views.BillDownloadView.as_view(), name='bill-download'),
     path('profile/', views.ProfileView.as_view(), name='profile'),

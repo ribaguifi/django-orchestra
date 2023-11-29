@@ -153,3 +153,10 @@ class RecordCreateForm(forms.ModelForm):
         if commit:
             super().save(commit=True)
         return instance
+
+
+class RecordUpdateForm(forms.ModelForm):
+
+    class Meta:
+        model = Record
+        fields = ("ttl", "type", "value")
