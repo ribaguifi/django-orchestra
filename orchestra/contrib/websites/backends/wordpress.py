@@ -18,7 +18,7 @@ class WordPressURLController(ServiceController):
             self.append(textwrap.dedent("""\
                 mysql %(db_name)s -e 'UPDATE wp_options
                                       SET option_value="%(url)s"
-                                      WHERE option_id IN (1, 2) AND option_value="http:";'
+                                      WHERE option_id IN (1, 2) AND ( option_value="http:" OR option_value="%(wp_path)s" );'
                 """) % context
             )
     
@@ -35,6 +35,7 @@ class WordPressURLController(ServiceController):
         return {
             'url': content.get_absolute_url(),
             'db_name': content.webapp.data.get('db_name'),
+            'wp_path': f"http://{content.webapp.get_path()}" 
         }
 
 
