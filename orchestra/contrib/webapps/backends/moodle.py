@@ -43,6 +43,7 @@ class MoodleController(WebAppServiceMixin, ServiceController):
             # Prevent other backends from writting here
             touch %(app_path)s/.lock
             # Weekly caching
+            mkdir %(cms_cache_dir)s &> /dev/null || true
             moodle_date=$(date -r $(readlink %(cms_cache_dir)s/moodle) +%%s || echo 0)
             if [[ $moodle_date -lt $(($(date +%%s)-7*24*60*60)) ]]; then
                 moodle_url=$(wget https://download.moodle.org/releases/latest/ -O - -q \\
