@@ -33,7 +33,15 @@ class MoodleController(WebAppServiceMixin, ServiceController):
             {% endif %}
             """
         ))
-        context.update({'perms' :  perms.render(Context(context))})
+        linenohub = Template(textwrap.dedent("""\
+            {% if sftpuser %}
+            nohup su - {{sftpuser}} --shell /bin/bash << 'EOF' > $stdout 2> $stderr &
+            {% else %}
+            nohup su - {{user}} --shell /bin/bash << 'EOF' > $stdout 2> $stderr &
+            {% endif %}
+            """
+        ))
+        context.update({'perms' :  perms.render(Context(context)), 'linenohub' :  linenohub.render(Context(context)) })
         self.append(textwrap.dedent("""\
             if [[ $(ls "%(app_path)s" | wc -l) -gt 1 ]]; then
                 echo "App directory not empty." 2> /dev/null
@@ -88,8 +96,7 @@ class MoodleController(WebAppServiceMixin, ServiceController):
             # Run install moodle cli command on the background, because it takes so long...
             stdout=$(mktemp)
             stderr=$(mktemp)
-            # nohup su - %(user)s --shell /bin/bash << 'EOF' > $stdout 2> $stderr &
-            nohup su - %(sftpuser)s --shell /bin/bash << 'EOF' > $stdout 2> $stderr &
+            %(linenohub)s
                 php  -d max_input_vars=5000  %(app_path)s/admin/cli/install_database.php \\
                     --fullname="%(site_name)s" \\
                     --shortname="%(site_name)s" \\
