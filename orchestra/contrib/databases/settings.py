@@ -27,3 +27,12 @@ DATABASES_DEFAULT_HOST = Setting('DATABASES_DEFAULT_HOST',
 DATABASES_MYSQL_DB_DIR = Setting('DATABASES_MYSQL_DB_DIR',
     '/var/lib/mysql',
 )
+
+
+DATABASES_SERVERS = Setting('DATABASES_SERVERS', (
+    'wpmu',
+    'mysql.pangea.lan',
+    'web-11.pangea.lan',
+    'web-12.pangea.lan',
+    )
+)
