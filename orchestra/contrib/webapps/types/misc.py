@@ -8,7 +8,7 @@ from orchestra.plugins.forms import ExtendedPluginDataForm, PluginDataForm
 from ..options import AppOption
 from . import AppType
 from .php import PHPApp, PHPAppForm, PHPAppSerializer
-
+from orchestra.settings import WEB_SERVERS
 
 class StaticApp(AppType):
     name = 'static'
@@ -27,6 +27,8 @@ class WebalizerAppform(PluginDataForm):
     def __init__(self, *args, **kwargs):
         super(WebalizerAppform, self).__init__(*args, **kwargs)
         self.fields['sftpuser'].widget = forms.HiddenInput()
+        qsServer =  self.fields['target_server'].queryset.filter(name__in=WEB_SERVERS)
+        self.fields['target_server'].queryset = qsServer
 
 class WebalizerApp(AppType):
     name = 'webalizer'
