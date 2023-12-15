@@ -27,8 +27,9 @@ class WebalizerAppform(PluginDataForm):
     def __init__(self, *args, **kwargs):
         super(WebalizerAppform, self).__init__(*args, **kwargs)
         self.fields['sftpuser'].widget = forms.HiddenInput()
-        qsServer =  self.fields['target_server'].queryset.filter(name__in=WEB_SERVERS)
-        self.fields['target_server'].queryset = qsServer
+        if self.instance.id is None:
+            qsServer =  self.fields['target_server'].queryset.filter(name__in=WEB_SERVERS)
+            self.fields['target_server'].queryset = qsServer
 
 class WebalizerApp(AppType):
     name = 'webalizer'
