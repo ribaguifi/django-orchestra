@@ -91,7 +91,12 @@ class NextCloudAPIMixin(object):
             'value': saas.password,
         }
         self.api_put('users/%s' % saas.name, data)
+
+    def disable_user(self, saas):
+        self.api_put('users/%s/disable' % saas.name)
     
+    def enable_user(self, saas):
+        self.api_put('users/%s/enable' % saas.name)
     
     def get_user(self, saas):
         """
@@ -151,9 +156,13 @@ class NextCloudController(NextCloudAPIMixin, ServiceController):
     def remove(self, saas, server):
         self.api_delete('users/%s' % saas.name)
     
-    def save(self, saas):
-        # TODO disable user https://github.com/owncloud/core/issues/12601
+    def save(self, saas):      
         self.append(self.update_or_create, saas)
+        if saas.is_active:        
+            self.enable_user(saas)
+        else:
+            self.disable_user(saas)
+
           
     def delete(self, saas):
         self.append(self.remove, saas)
