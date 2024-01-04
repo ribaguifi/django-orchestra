@@ -152,17 +152,16 @@ class NextCloudController(NextCloudAPIMixin, ServiceController):
             else:
                 self.update_group(saas)
                 self.update_quota(saas)
-    
-    def remove(self, saas, server):
-        self.api_delete('users/%s' % saas.name)
-    
-    def save(self, saas):      
-        self.append(self.update_or_create, saas)
         if saas.is_active:        
             self.enable_user(saas)
         else:
             self.disable_user(saas)
 
+    def remove(self, saas, server):
+        self.api_delete('users/%s' % saas.name)
+    
+    def save(self, saas):      
+        self.append(self.update_or_create, saas)
           
     def delete(self, saas):
         self.append(self.remove, saas)
