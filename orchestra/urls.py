@@ -22,6 +22,8 @@ urlpatterns = [
     url(r'^api-token-auth/', obtain_auth_token, name='api-token-auth'),
     url(r'^media/(.+)/(.+)/(.+)/(.+)/(.+)$', serve_private_media, name='private-media'),
 #    url(r'search', 'orchestra.views.search', name='search'),
+    # prometheus metrics
+    url(r'^metrics/', include('django_prometheus.urls')),
 ]
 
 
