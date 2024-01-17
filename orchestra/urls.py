@@ -6,6 +6,7 @@ from orchestra.views import serve_private_media
 
 from . import api
 from .utils.apps import isinstalled
+from orchestra.contrib.metrics.views import metrics_view
 
 
 admin.autodiscover()
@@ -22,8 +23,8 @@ urlpatterns = [
     url(r'^api-token-auth/', obtain_auth_token, name='api-token-auth'),
     url(r'^media/(.+)/(.+)/(.+)/(.+)/(.+)$', serve_private_media, name='private-media'),
 #    url(r'search', 'orchestra.views.search', name='search'),
-    # prometheus metrics
-    url(r'^metrics/', include('django_prometheus.urls')),
+    # METRICS Prometheus
+    url(r'^metrics/', metrics_view, name='metrics'),
 ]
 
 
