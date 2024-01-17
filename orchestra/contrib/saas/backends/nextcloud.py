@@ -10,6 +10,8 @@ from django.utils.translation import gettext_lazy as _
 
 from orchestra.contrib.orchestration import ServiceController
 from orchestra.contrib.resources import ServiceMonitor
+from orchestra.contrib.resources.models import ResourceData
+from orchestra.contrib.saas.models import SaaS
 
 from . import ApacheTrafficByName
 from .. import settings
@@ -52,11 +54,31 @@ class NextCloudAPIMixin(object):
     def create(self, saas):
         data = {
             'userid': saas.name,
-            'password': saas.password
+            'password': saas.password,
         }
         self.api_post('users', data)
+
+    def update_group(self, saas):
+        data = {
+            'groupid': saas.account.username
+        }
+        try:
+            self.api_get('groups/%s' % saas.account.username)
+        except RuntimeError:
+            self.api_post('groups', data)
+        self.api_post(f'users/{saas.name}/groups', data)
     
-    def update(self, saas):
+    def update_quota(self, saas):
+        if hasattr(saas, 'resources') and hasattr(saas.resources, 'nextcloud-disk'):
+            resource = getattr(saas.resources, 'nextcloud-disk')
+            quotaValue = f"{resource.allocated}G" if resource.allocated > 0 else "default"
+            data = {
+                'key': "quota",
+                'value': quotaValue
+            }
+            self.api_put(f'users/{saas.name}', data)
+
+    def update_password(self, saas):
         """
         key: email|quota|display|password
         value: el valor a modificar.
@@ -69,6 +91,12 @@ class NextCloudAPIMixin(object):
             'value': saas.password,
         }
         self.api_put('users/%s' % saas.name, data)
+
+    def disable_user(self, saas):
+        self.api_put('users/%s/disable' % saas.name)
+    
+    def enable_user(self, saas):
+        self.api_put('users/%s/enable' % saas.name)
     
     def get_user(self, saas):
         """
@@ -112,21 +140,29 @@ class NextCloudController(NextCloudAPIMixin, ServiceController):
         try:
             self.api_get('users/%s' % saas.name)
         except RuntimeError:
-            if getattr(saas, 'password'):
+            if getattr(saas, 'password', None):
                 self.create(saas)
+                self.update_group(saas)
+                self.update_quota(saas)
             else:
                 raise
         else:
-            if getattr(saas, 'password'):
-                self.update(saas)
-    
+            if getattr(saas, 'password', None):
+                self.update_password(saas)
+            else:
+                self.update_group(saas)
+                self.update_quota(saas)
+        if saas.is_active:        
+            self.enable_user(saas)
+        else:
+            self.disable_user(saas)
+
     def remove(self, saas, server):
         self.api_delete('users/%s' % saas.name)
     
-    def save(self, saas):
-        # TODO disable user https://github.com/owncloud/core/issues/12601
+    def save(self, saas):      
         self.append(self.update_or_create, saas)
-    
+          
     def delete(self, saas):
         self.append(self.remove, saas)
 

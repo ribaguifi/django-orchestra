@@ -22,10 +22,30 @@ from .models import WebApp, WebAppOption
 from .options import AppOption
 from .types import AppType
 
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
+class WebAppOptionForm(forms.ModelForm):
+
+    class Meta:
+        model = WebAppOption
+        fields = '__all__'
+
+    # en las app de moodle el public-root sera siempre moodle
+    def clean(self):
+        data = self.cleaned_data
+        webapp = self.cleaned_data.get("webapp")
+        if webapp.type == 'moodle-php':
+            if self.cleaned_data.get("name") == 'public-root':
+                data['value'] = 'moodle'
+                data['DELETE'] = False
+        return data
+
 
 class WebAppOptionInline(admin.TabularInline):
     model = WebAppOption
     extra = 1
+    form = WebAppOptionForm
 
     OPTIONS_HELP_TEXT = {
         op.name: force_str(op.help_text) for op in AppOption.get_plugins()
@@ -124,4 +144,16 @@ class WebAppAdmin(SelectPluginAdminMixin, AccountAdminMixin, ExtendedModelAdmin)
                 obj.sftpuser = user
         super(WebAppAdmin, self).save_model(request, obj, form, change)
 
+    # fuerza a las app Moodle a crear public-root moodle
+    def response_add(self, request, obj, post_url_continue=None):
+        if obj.type == 'moodle-php':
+            mywebapp = WebApp.objects.get(id=obj.id)
+            WebAppOption.objects.update_or_create(
+                webapp=mywebapp, 
+                name='public-root',
+                defaults={'value':'moodle'}
+            )
+        return super().response_add(request, obj, post_url_continue)
+
 admin.site.register(WebApp, WebAppAdmin)
+

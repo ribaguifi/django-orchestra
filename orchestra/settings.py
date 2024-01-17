@@ -99,7 +99,8 @@ NEW_SERVERS = Setting('NEW_SERVERS',
     )
 )
 
-WEB_SERVERS = Setting('WEBAPPS_SERVERS', (
+WEB_SERVERS = Setting('WEB_SERVERS', (
+    'wpmu',
     'web.pangea.lan',
     'web-ng',
     'web-11.pangea.lan',

@@ -8,6 +8,7 @@ from django.utils.translation import gettext_lazy as _
 from orchestra.core import validators
 
 from .models import DatabaseUser, Database
+from .settings import DATABASES_SERVERS
 
 
 class DatabaseUserCreationForm(forms.ModelForm):
@@ -21,6 +22,11 @@ class DatabaseUserCreationForm(forms.ModelForm):
     class Meta:
         model = DatabaseUser
         fields = ('username', 'account', 'type')
+
+    def __init__(self, *args, **kwargs):
+        super(DatabaseUserCreationForm, self).__init__(*args, **kwargs)
+        qsServer =  self.fields['target_server'].queryset.filter(name__in=DATABASES_SERVERS)
+        self.fields['target_server'].queryset = qsServer
 
     def clean_password2(self):
         password1 = self.cleaned_data.get("password1")
@@ -74,6 +80,10 @@ class DatabaseCreationForm(DatabaseUserCreationForm):
     def __init__(self, *args, **kwargs):
         super(DatabaseCreationForm, self).__init__(*args, **kwargs)
         account_id = self.initial.get('account', self.initial_account)
+        
+        qsServer =  self.fields['target_server'].queryset.filter(name__in=DATABASES_SERVERS)
+        self.fields['target_server'].queryset = qsServer
+        
         if account_id:
             qs = self.fields['user'].queryset.filter(account=account_id).order_by('username')
             choices = [ (u.pk, "%s (%s) (%s)" % (u, u.get_type_display(), str(u.target_server.name) )) for u in qs ]
