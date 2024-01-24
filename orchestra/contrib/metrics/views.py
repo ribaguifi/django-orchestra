@@ -3,7 +3,14 @@ from django.http import HttpResponse
 from django.views.decorators.http import require_GET
 from prometheus_client.exposition import generate_latest
 from prometheus_client import REGISTRY, CONTENT_TYPE_LATEST
-from .custom_metrics import actualizar_metrica_usuarios, actualizar_metrica_websites, actualizar_metrica_databases
+from .custom_metrics import (
+    actualizar_metrica_usuarios, 
+    actualizar_metrica_websites, 
+    actualizar_metrica_databases, 
+    actualizar_metrica_mailboxes,
+    actualizar_metrica_lists,
+    actualizar_metrica_saas,
+)
 
 @require_GET
 def metrics_view(request):
@@ -11,6 +18,9 @@ def metrics_view(request):
     actualizar_metrica_usuarios()
     actualizar_metrica_websites()
     actualizar_metrica_databases()
+    actualizar_metrica_mailboxes()
+    actualizar_metrica_lists()
+    actualizar_metrica_saas()
 
     # Devolver las métricas exportadas como respuesta HTTP
     output = generate_latest(REGISTRY)

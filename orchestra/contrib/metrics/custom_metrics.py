@@ -5,14 +5,22 @@ from orchestra.contrib.accounts.models import Account
 from orchestra.contrib.websites.models import Website
 from orchestra.contrib.databases.models import Database
 from orchestra.contrib.resources.models import ResourceData
+from orchestra.contrib.mailboxes.models import Mailbox
+from orchestra.contrib.lists.models import List
+from orchestra.contrib.saas.models import SaaS
 
 
 # Crear métricas de tipo Gauge con etiquetas
 usuarios_metrica = Gauge('usuarios', 'Número total de usuarios', ['tipo', 'estado'])
+usuarios_top_size_metrica = Gauge('usuarios_top_size', 'Top 10 cuentas ocupan espacio', ['account'])
 websites_metrica = Gauge('websites_server', 'Número total de websites en server', ['target_server', 'estado'])
 databases_metrica = Gauge('databases', 'Número total de websites en server', ['target_server'])
-databases_top_size_metrica = Gauge('databases_top_size', 'Número total de websites en server', ['database'])
-
+databases_top_size_metrica = Gauge('databases_top_size', 'Top 10 databases ocupan espacio', ['database'])
+mailboxes_metrica = Gauge('mailbox', 'Número total de mailbox', ['estado'])
+mailboxes_top_size_metrica = Gauge('mailboxes_top_size', 'Top 10 mailboxes ocupan espacio', ['mailbox'])
+lists_metrica = Gauge('lists', 'Número total de listas')
+saas_metrica = Gauge('saas', 'Número total de saas', ['service', 'estado'])
+saas_top_size_metrica = Gauge('saas_top_size', 'Top 10 saas ocupan espacio', ['saas'])
 
 def actualizar_metrica_usuarios():
     # Generar una lista de usuarios aleatorios para el ejemplo
@@ -32,6 +40,11 @@ def actualizar_metrica_usuarios():
     for type, value in user_dict.items():
         usuarios_metrica.labels(tipo=type, estado='activo').set(value['activo'])
         usuarios_metrica.labels(tipo=type, estado='no_activo').set(value['inactivo'])
+
+    top_resources = ResourceData.objects.filter(resource_id=4, used__isnull=False).order_by('-used')[:10]
+    for resourcedata in top_resources:
+        usuarios_top_size_metrica.labels(account=resourcedata.content_object_repr).set(resourcedata.used)
+
 
 def actualizar_metrica_websites():
     websites = Website.objects.all()
@@ -66,4 +79,43 @@ def actualizar_metrica_databases():
     top_resources = ResourceData.objects.filter(resource_id=5, used__isnull=False).order_by('-used')[:10]
     for resourcedata in top_resources:
         databases_top_size_metrica.labels(database=resourcedata.content_object_repr).set(resourcedata.used)
+
+
+def actualizar_metrica_mailboxes():
+    mailboxes = Mailbox.objects.all()
     
+    mailbox_activos = sum(1 for mailbox in mailboxes if mailbox.is_active)
+    mailbox_inactivos = len(mailboxes) - mailbox_activos
+
+    mailboxes_metrica.labels(estado='activo').set(mailbox_activos)
+    mailboxes_metrica.labels(estado='no_activo').set(mailbox_inactivos)
+
+    top_resources = ResourceData.objects.filter(resource_id=1, used__isnull=False).order_by('-used')[:10]
+    for resourcedata in top_resources:
+        mailboxes_top_size_metrica.labels(mailbox=resourcedata.content_object_repr).set(resourcedata.used)
+
+
+def actualizar_metrica_lists():
+    lists = List.objects.all()
+    lists_metrica.set(len(lists))
+
+def actualizar_metrica_saas():
+    saases = SaaS.objects.all()
+
+    saas_dict = {}
+    for saas in saases:
+        if saas.service not in saas_dict.keys():
+            saas_dict[saas.service] = {'activo':0, 'inactivo':0} 
+        
+        if saas.is_active:
+            saas_dict[saas.service]['activo'] += 1
+        else:
+            saas_dict[saas.service]['inactivo'] += 1
+
+    for servicio, value in saas_dict.items():
+        saas_metrica.labels(service=servicio, estado='activo').set(value['activo'])
+        saas_metrica.labels(service=servicio, estado='no_activo').set(value['inactivo'])
+
+    top_resources = ResourceData.objects.filter(resource_id=23, used__isnull=False).order_by('-used')[:10]
+    for resourcedata in top_resources:
+        saas_top_size_metrica.labels(saas=resourcedata.content_object_repr).set(resourcedata.used)
