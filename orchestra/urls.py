@@ -24,7 +24,8 @@ urlpatterns = [
     url(r'^media/(.+)/(.+)/(.+)/(.+)/(.+)$', serve_private_media, name='private-media'),
 #    url(r'search', 'orchestra.views.search', name='search'),
     # METRICS Prometheus
-    url(r'^metrics/', metrics_view, name='metrics'),
+    url(r'^metrics/', include('django_prometheus.urls')),
+    url(r'^custom_metrics/', metrics_view, name='metrics'),
 ]
 
 
