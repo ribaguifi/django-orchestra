@@ -37,7 +37,7 @@
       {% endif %}
       <td>{{ resource.address_name}}</td>
       <td>{{ resource.admin_email }}</td>
-      <td><a href="{{ resource.manager_url }}" target="_blank" rel="noopener noreferrer">Mailtrain <i class="fas fa-external-link-alt"></i></a></td>
+      <td><a href="{{ resource.get_absolute_url }}" target="_blank" rel="noopener noreferrer">Mailman <i class="fas fa-external-link-alt"></i></a></td>
     </tr>
     {% endfor %}
   </tbody>
