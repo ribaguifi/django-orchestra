@@ -1,10 +1,12 @@
 import logging
 import smtplib
+from typing import Any
 
 from django.conf import settings
 from django.contrib import messages
 from django.core.exceptions import ImproperlyConfigured
 from django.core.mail import mail_managers
+from django.db.models.query import QuerySet
 from django.http import (HttpResponse, HttpResponseNotFound,
                          HttpResponseRedirect)
 from django.shortcuts import get_object_or_404
@@ -290,6 +292,9 @@ class MailUpdateView(CustomContextMixin, UserTokenRequiredMixin, UpdateView):
     success_url = reverse_lazy("musician:address-list")
     extra_context = {'service': service_class}
 
+    def get_queryset(self) -> QuerySet[Any]:
+        return self.model.objects.filter(account=self.request.user)
+
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs["user"] = self.request.user
@@ -298,22 +303,11 @@ class MailUpdateView(CustomContextMixin, UserTokenRequiredMixin, UpdateView):
 
 class AddressDeleteView(CustomContextMixin, UserTokenRequiredMixin, DeleteView):
     template_name = "musician/address_check_delete.html"
+    model = Address
     success_url = reverse_lazy("musician:address-list")
 
-    def get_object(self, queryset=None):
-        obj = self.orchestra.retrieve_mail_address(self.kwargs['pk'])
-        return obj
-
-    def delete(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        try:
-            self.orchestra.delete_mail_address(self.object.id)
-            messages.success(self.request,  _('Address deleted!'))
-        except HTTPError as e:
-            messages.error(self.request, _('Cannot process your request, please try again later.'))
-            logger.error(e)
-
-        return HttpResponseRedirect(self.success_url)
+    def get_queryset(self) -> QuerySet[Any]:
+        return self.model.objects.filter(account=self.request.user)
 
 
 class MailingListsView(ServiceListView):

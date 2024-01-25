@@ -4,9 +4,9 @@
 {% block content %}
 <form method="post">
   {% csrf_token %}
-  <p>{% blocktrans with address_name=object.full_address_name %}Are you sure that you want remove the address: "{{ address_name }}"?{% endblocktrans %}</p>
+  <p>{% blocktrans with address_name=object.email %}Are you sure that you want remove the address: "{{ address_name }}"?{% endblocktrans %}</p>
   <p class="alert alert-warning"><strong>{% trans 'WARNING: This action cannot be undone.' %}</strong></p>
+  <a class="btn btn-light mr-2" href="{% url 'musician:address-update' object.pk %}">{% trans 'Cancel' %}</a>
   <input class="btn btn-danger" type="submit" value="{% trans 'Delete' %}">
-  <a class="btn btn-secondary" href="{% url 'musician:address-update' view.kwargs.pk %}">{% trans 'Cancel' %}</a>
 </form>
 {% endblock %}
