@@ -139,8 +139,9 @@ a:hover {
     background-position: right 5% top 10%;
     color: #343434;
     padding-left: 2rem;
-    margin-left: 280px;
     /** sidebar width **/
+    margin-left: 280px;
+    height: 100vh;
 }
 
 /** services **/
@@ -373,7 +374,7 @@ td:hover .roll-hover {
     #sidebar-toggle:checked ~ #sidebar-btn::before {
         content: "\f00d";
     }
-    
+
 }
 
 @media (min-width: 576px){
