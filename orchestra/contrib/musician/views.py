@@ -391,29 +391,21 @@ class MailboxUpdateView(CustomContextMixin, UserTokenRequiredMixin, UpdateView):
 
 
 class MailboxDeleteView(CustomContextMixin, UserTokenRequiredMixin, DeleteView):
+    model = Mailbox
     template_name = "musician/mailbox_check_delete.html"
     success_url = reverse_lazy("musician:mailbox-list")
 
-    def get_object(self, queryset=None):
-        obj = self.orchestra.retrieve_mailbox(self.kwargs['pk'])
-        return obj
+    def get_queryset(self) -> QuerySet[Any]:
+        return self.model.objects.filter(account=self.request.user)
 
     def delete(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        try:
-            self.orchestra.delete_mailbox(self.object.id)
-            messages.success(self.request,  _('Mailbox deleted!'))
-        except HTTPError as e:
-            messages.error(self.request, _('Cannot process your request, please try again later.'))
-            logger.error(e)
-
+        response = super().delete(request, *args, **kwargs)
         self.notify_managers(self.object)
-
-        return HttpResponseRedirect(self.success_url)
+        return response
 
     def notify_managers(self, mailbox):
-        user = self.get_context_data()['profile']
-        subject = 'Mailbox {} ({}) deleted | Musician'.format(mailbox.id, mailbox.name)
+        user = self.request.user
+        subject = f"Mailbox '{mailbox.name}' ({mailbox.id}) deleted | Musician"
         content = (
             "User {} ({}) has deleted its mailbox {} ({}) via musician.\n"
             "The mailbox has been marked as inactive but has not been removed."
