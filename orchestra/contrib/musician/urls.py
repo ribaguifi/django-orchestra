@@ -5,12 +5,15 @@ URL routes definition.
 Describe the paths where the views are accesible.
 """
 from django.urls import path
+from django.views.generic import RedirectView
 
 from . import views
 
 app_name = 'musician'
 
 urlpatterns = [
+    path('', RedirectView.as_view(pattern_name='musician:dashboard', permanent=False), name='index'),
+
     path('auth/login/', views.LoginView.as_view(), name='login'),
     path('auth/logout/', views.LogoutView.as_view(), name='logout'),
     path('dashboard/', views.DashboardView.as_view(), name='dashboard'),
