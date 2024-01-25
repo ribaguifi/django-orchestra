@@ -20,6 +20,6 @@ class MoodleWWWRootController(ServiceController):
     
     def get_context(self, content):
         return {
-            'url': content.get_absolute_url(),
+            'url': content.get_absolute_url()[:-1] if content.get_absolute_url()[-1] == '/' else content.get_absolute_url(),
             'app_path': content.webapp.get_path(),
         }

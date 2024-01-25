@@ -7,9 +7,18 @@ from orchestra.contrib.webapps.models import WebApp
 
 from .utils import normurlpath
 from .validators import validate_domain_protocol, validate_server_name
-
+from orchestra.settings import WEB_SERVERS
 
 class WebsiteAdminForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(WebsiteAdminForm, self).__init__(*args, **kwargs)
+        if self.instance.id is None:
+            qsServer = self.fields['target_server'].queryset.filter(name__in=WEB_SERVERS)
+        else:
+            qsServer = self.fields['target_server'].queryset.filter(id=self.instance.target_server_id)
+        self.fields['target_server'].queryset = qsServer
+
     def clean(self):
         """ Prevent multiples domains on the same protocol """
         super(WebsiteAdminForm, self).clean()

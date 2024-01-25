@@ -198,8 +198,10 @@ class ResourceData(models.Model):
             ('content_type', 'object_id'),
         )
 
+    # def __str__(self):
+    #     return "%s: %s" % (self.resource, self.content_object)
     def __str__(self):
-        return "%s: %s" % (self.resource, self.content_object)
+        return "%s" % (self.content_object)
 
     @property
     def unit(self):
