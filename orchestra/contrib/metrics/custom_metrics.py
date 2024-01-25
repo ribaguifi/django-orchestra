@@ -29,19 +29,25 @@ def get_size_resourcedata(id_resource, metrica):
     for resourcedata in top_resources:
         metrica.labels(object=resourcedata.content_object_repr).set(resourcedata.used)
 
+def get_data_objects_with_active(model, field_type):
+    objects = model.objects.all()
+    
+    object_dict = {}
+    for obj in objects:
+        key = getattr(obj, field_type)
+        if key not in object_dict:
+            object_dict[key] = {'activo':0, 'inactivo':0} 
+        if getattr(obj, 'is_active'):
+            object_dict[key]['activo'] += 1
+        else:
+            object_dict[key]['inactivo'] += 1
+    
+    return object_dict
+
+
 def actualizar_metrica_usuarios():
     get_size_resourcedata(4, usuarios_top_size_metrica)
-    usuarios = Account.objects.all()
-    
-    user_dict = {}
-    for user in usuarios:
-        if user.type not in user_dict.keys():
-            user_dict[user.type] = {'activo':0, 'inactivo':0} 
-        
-        if user.is_active:
-            user_dict[user.type]['activo'] += 1
-        else:
-            user_dict[user.type]['inactivo'] += 1
+    user_dict = get_data_objects_with_active(Account, 'type')
 
     # envia metrica por cada tipo de usuario num de activos y inactivos
     for type, value in user_dict.items():
@@ -50,18 +56,7 @@ def actualizar_metrica_usuarios():
 
 
 def actualizar_metrica_websites():
-    websites = Website.objects.all()
-
-    website_dict = {}
-    for website in websites:
-        if website.target_server.name not in website_dict.keys():
-            website_dict[website.target_server.name] = {'activo':0, 'inactivo':0} 
-        
-        if website.is_active:
-            website_dict[website.target_server.name]['activo'] += 1
-        else:
-            website_dict[website.target_server.name]['inactivo'] += 1
-
+    website_dict = get_data_objects_with_active(Website, 'target_server')
     for server, value in website_dict.items():
         websites_metrica.labels(target_server=server, estado='activo').set(value['activo'])
         websites_metrica.labels(target_server=server, estado='no_activo').set(value['inactivo'])
@@ -98,18 +93,7 @@ def actualizar_metrica_lists():
 
 def actualizar_metrica_saas():
     get_size_resourcedata(23, saas_top_size_metrica)
-    saases = SaaS.objects.all()
-
-    saas_dict = {}
-    for saas in saases:
-        if saas.service not in saas_dict.keys():
-            saas_dict[saas.service] = {'activo':0, 'inactivo':0} 
-        
-        if saas.is_active:
-            saas_dict[saas.service]['activo'] += 1
-        else:
-            saas_dict[saas.service]['inactivo'] += 1
-
+    saas_dict = get_data_objects_with_active(SaaS, 'service')
     for servicio, value in saas_dict.items():
         saas_metrica.labels(service=servicio, estado='activo').set(value['activo'])
         saas_metrica.labels(service=servicio, estado='no_activo').set(value['inactivo'])
