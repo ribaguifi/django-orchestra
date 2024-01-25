@@ -30,7 +30,7 @@
         <td>
           {% for addr in mailbox.addresses.all %}
             <a href="{% url 'musician:address-update' addr.pk %}">
-              {{ addr.full_address_name }}
+              {{ addr.email }}
             </a><br/>
           {% endfor %}
         </td>
