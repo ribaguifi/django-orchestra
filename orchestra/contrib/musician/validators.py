@@ -1,3 +1,6 @@
+from django.core.exceptions import ValidationError
+from django.utils.translation import gettext_lazy as _
+
 from orchestra.contrib.domains.helpers import domain_for_validation
 from orchestra.contrib.domains.models import Record
 from orchestra.contrib.domains.validators import validate_zone
