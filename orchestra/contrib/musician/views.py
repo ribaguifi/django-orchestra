@@ -243,7 +243,7 @@ class BillDownloadView(CustomContextMixin, UserTokenRequiredMixin, View):
 class AddressListView(ServiceListView):
     service_class = AddressService
     model = Address
-    template_name = "musician/addresses.html"
+    template_name = "musician/address_list.html"
     extra_context = {
         # Translators: This message appears on the page title
         'title': _('Mail addresses'),
@@ -317,7 +317,7 @@ class AddressDeleteView(CustomContextMixin, UserTokenRequiredMixin, DeleteView):
 class MailingListsView(ServiceListView):
     service_class = MailinglistService
     model = List
-    template_name = "musician/mailinglists.html"
+    template_name = "musician/mailinglist_list.html"
     extra_context = {
         # Translators: This message appears on the page title
         'title': _('Mailing lists'),
@@ -348,7 +348,7 @@ class MailingListsView(ServiceListView):
 class MailboxListView(ServiceListView):
     service_class = MailboxService
     model = Mailbox
-    template_name = "musician/mailboxes.html"
+    template_name = "musician/mailbox_list.html"
     extra_context = {
         # Translators: This message appears on the page title
         'title': _('Mailboxes'),
@@ -447,7 +447,7 @@ class DatabasesView(ServiceListView):
 class SaasListView(ServiceListView):
     service_class = SaasService
     model = SaaS
-    template_name = "musician/saas.html"
+    template_name = "musician/saas_list.html"
     extra_context = {
         # Translators: This message appears on the page title
         'title': _('Software as a Service'),
@@ -496,7 +496,7 @@ class DomainUpdateRecordView(CustomContextMixin, UserTokenRequiredMixin, UpdateV
 
 class DomainDeleteRecordView(CustomContextMixin, UserTokenRequiredMixin, DeleteView):
     model = Record
-    template_name = "musician/record_confirm_delete.html"
+    template_name = "musician/record_check_delete.html"
     pk_url_kwarg = "record_pk"
 
     def get_queryset(self):

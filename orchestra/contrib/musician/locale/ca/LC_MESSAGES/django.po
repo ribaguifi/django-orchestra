@@ -160,25 +160,25 @@ msgstr "Cancel·lar"
 msgid "Save"
 msgstr "Desar"
 
-#: templates/musician/addresses.html:15
+#: templates/musician/address_list.html:15
 msgid "Email"
 msgstr "Correu electrònic"
 
-#: templates/musician/addresses.html:16
+#: templates/musician/address_list.html:16
 msgid "Domain"
 msgstr "Domini"
 
 #. Translators: This message appears on the page title
-#: templates/musician/addresses.html:17 templates/musician/mail_base.html:22
+#: templates/musician/address_list.html:17 templates/musician/mail_base.html:22
 #: views.py:355
 msgid "Mailboxes"
 msgstr "Bústies de correu"
 
-#: templates/musician/addresses.html:18
+#: templates/musician/address_list.html:18
 msgid "Forward"
 msgstr "Redirecció"
 
-#: templates/musician/addresses.html:38
+#: templates/musician/address_list.html:38
 msgid "New mail address"
 msgstr "Nova adreça de correu"
 
@@ -350,7 +350,7 @@ msgstr "Obre el gestor de bases de dades"
 
 #. Translators: database page when there isn't any database.
 #. Translators: saas page when there isn't any saas.
-#: templates/musician/databases.html:58 templates/musician/saas.html:49
+#: templates/musician/databases.html:58 templates/musician/saas_list.html:49
 msgid "Ooops! Looks like there is nothing here!"
 msgstr "Mmmh, sembla que aquí no hi ha res!"
 
@@ -370,15 +370,15 @@ msgstr "Consulta aquí la teva configuració DNS."
 msgid "Value"
 msgstr "Valor"
 
-#: templates/musician/mail_base.html:6 templates/musician/mailinglists.html:6
+#: templates/musician/mail_base.html:6 templates/musician/mailinglist_list.html:6
 msgid "Go to global"
 msgstr "Totes les adreces"
 
-#: templates/musician/mail_base.html:10 templates/musician/mailinglists.html:9
+#: templates/musician/mail_base.html:10 templates/musician/mailinglist_list.html:9
 msgid "for"
 msgstr "per a"
 
-#: templates/musician/mail_base.html:18 templates/musician/mailboxes.html:16
+#: templates/musician/mail_base.html:18 templates/musician/mailbox_list.html:16
 msgid "Addresses"
 msgstr "Adreces de correu"
 
@@ -415,27 +415,27 @@ msgstr ""
 msgid "Close"
 msgstr "Tancar"
 
-#: templates/musician/mailboxes.html:14
+#: templates/musician/mailbox_list.html:14
 msgid "Name"
 msgstr "Nom"
 
-#: templates/musician/mailboxes.html:15
+#: templates/musician/mailbox_list.html:15
 msgid "Filtering"
 msgstr "Filtrat"
 
-#: templates/musician/mailboxes.html:27
+#: templates/musician/mailbox_list.html:27
 msgid "Update password"
 msgstr "Actualitza la contrasenya"
 
-#: templates/musician/mailboxes.html:43
+#: templates/musician/mailbox_list.html:43
 msgid "New mailbox"
 msgstr "Nova bústia de correu"
 
-#: templates/musician/mailinglists.html:34
+#: templates/musician/mailinglist_list.html:34
 msgid "Active"
 msgstr "Actiu"
 
-#: templates/musician/mailinglists.html:36
+#: templates/musician/mailinglist_list.html:36
 msgid "Inactive"
 msgstr "Inactiu"
 
@@ -463,19 +463,19 @@ msgstr "mètode de pagament:"
 msgid "Check your last bills"
 msgstr "Consulta les teves darreres factures"
 
-#: templates/musician/saas.html:18
+#: templates/musician/saas_list.html:18
 msgid "Installed on"
 msgstr "Instal·lat a"
 
-#: templates/musician/saas.html:29
+#: templates/musician/saas_list.html:29
 msgid "Service info"
 msgstr "Informació del servei"
 
-#: templates/musician/saas.html:30
+#: templates/musician/saas_list.html:30
 msgid "active"
 msgstr "actiu"
 
-#: templates/musician/saas.html:37
+#: templates/musician/saas_list.html:37
 msgid "Open service admin panel"
 msgstr "Obre el panell d’administració del servei"
 

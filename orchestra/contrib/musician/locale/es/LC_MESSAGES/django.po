@@ -162,25 +162,25 @@ msgstr "Cancelar"
 msgid "Save"
 msgstr "Guardar"
 
-#: templates/musician/addresses.html:15
+#: templates/musician/address_list.html:15
 msgid "Email"
 msgstr "Correo electrónico"
 
-#: templates/musician/addresses.html:16
+#: templates/musician/address_list.html:16
 msgid "Domain"
 msgstr "Dominio"
 
 #. Translators: This message appears on the page title
-#: templates/musician/addresses.html:17 templates/musician/mail_base.html:22
+#: templates/musician/address_list.html:17 templates/musician/mail_base.html:22
 #: views.py:355
 msgid "Mailboxes"
 msgstr "Buzones de correo"
 
-#: templates/musician/addresses.html:18
+#: templates/musician/address_list.html:18
 msgid "Forward"
 msgstr "Redirección"
 
-#: templates/musician/addresses.html:38
+#: templates/musician/address_list.html:38
 msgid "New mail address"
 msgstr "Nueva dirección de correo"
 
@@ -352,7 +352,7 @@ msgstr "Abre el gestor de bases de datos"
 
 #. Translators: database page when there isn't any database.
 #. Translators: saas page when there isn't any saas.
-#: templates/musician/databases.html:58 templates/musician/saas.html:49
+#: templates/musician/databases.html:58 templates/musician/saas_list.html:49
 msgid "Ooops! Looks like there is nothing here!"
 msgstr "Mmmh… ¡parece que aquí no hay nada!"
 
@@ -372,15 +372,15 @@ msgstr "Consulta aquí tu configuración DNS."
 msgid "Value"
 msgstr "Valor"
 
-#: templates/musician/mail_base.html:6 templates/musician/mailinglists.html:6
+#: templates/musician/mail_base.html:6 templates/musician/mailinglist_list.html:6
 msgid "Go to global"
 msgstr "Todas las direcciones"
 
-#: templates/musician/mail_base.html:10 templates/musician/mailinglists.html:9
+#: templates/musician/mail_base.html:10 templates/musician/mailinglist_list.html:9
 msgid "for"
 msgstr "para"
 
-#: templates/musician/mail_base.html:18 templates/musician/mailboxes.html:16
+#: templates/musician/mail_base.html:18 templates/musician/mailbox_list.html:16
 msgid "Addresses"
 msgstr "Direcciones de correo"
 
@@ -417,27 +417,27 @@ msgstr ""
 msgid "Close"
 msgstr "Cerrar"
 
-#: templates/musician/mailboxes.html:14
+#: templates/musician/mailbox_list.html:14
 msgid "Name"
 msgstr "Nombre"
 
-#: templates/musician/mailboxes.html:15
+#: templates/musician/mailbox_list.html:15
 msgid "Filtering"
 msgstr "Filtrado"
 
-#: templates/musician/mailboxes.html:27
+#: templates/musician/mailbox_list.html:27
 msgid "Update password"
 msgstr "Actualiza la contraseña"
 
-#: templates/musician/mailboxes.html:43
+#: templates/musician/mailbox_list.html:43
 msgid "New mailbox"
 msgstr "Nuevo buzón de correo"
 
-#: templates/musician/mailinglists.html:34
+#: templates/musician/mailinglist_list.html:34
 msgid "Active"
 msgstr "Activo"
 
-#: templates/musician/mailinglists.html:36
+#: templates/musician/mailinglist_list.html:36
 msgid "Inactive"
 msgstr "Inactivo"
 
@@ -465,19 +465,19 @@ msgstr "método de pago:"
 msgid "Check your last bills"
 msgstr "Consulta tus últimas facturas"
 
-#: templates/musician/saas.html:18
+#: templates/musician/saas_list.html:18
 msgid "Installed on"
 msgstr "Instalado en"
 
-#: templates/musician/saas.html:29
+#: templates/musician/saas_list.html:29
 msgid "Service info"
 msgstr "Información del servicio"
 
-#: templates/musician/saas.html:30
+#: templates/musician/saas_list.html:30
 msgid "active"
 msgstr "activo"
 
-#: templates/musician/saas.html:37
+#: templates/musician/saas_list.html:37
 msgid "Open service admin panel"
 msgstr "Abre el panel de administración del servicio"
 
