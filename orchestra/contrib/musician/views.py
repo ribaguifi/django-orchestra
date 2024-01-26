@@ -6,7 +6,6 @@ from django.conf import settings
 from django.contrib import messages
 from django.core.exceptions import ImproperlyConfigured
 from django.core.mail import mail_managers
-from django.db.models.query import QuerySet
 from django.http import (HttpResponse, HttpResponseNotFound,
                          HttpResponseRedirect)
 from django.shortcuts import get_object_or_404
@@ -292,7 +291,7 @@ class MailUpdateView(CustomContextMixin, UserTokenRequiredMixin, UpdateView):
     success_url = reverse_lazy("musician:address-list")
     extra_context = {'service': service_class}
 
-    def get_queryset(self) -> QuerySet[Any]:
+    def get_queryset(self):
         return self.model.objects.filter(account=self.request.user)
 
     def get_form_kwargs(self):
@@ -306,7 +305,7 @@ class AddressDeleteView(CustomContextMixin, UserTokenRequiredMixin, DeleteView):
     model = Address
     success_url = reverse_lazy("musician:address-list")
 
-    def get_queryset(self) -> QuerySet[Any]:
+    def get_queryset(self):
         return self.model.objects.filter(account=self.request.user)
 
 
@@ -395,7 +394,7 @@ class MailboxDeleteView(CustomContextMixin, UserTokenRequiredMixin, DeleteView):
     template_name = "musician/mailbox_check_delete.html"
     success_url = reverse_lazy("musician:mailbox-list")
 
-    def get_queryset(self) -> QuerySet[Any]:
+    def get_queryset(self):
         return self.model.objects.filter(account=self.request.user)
 
     def delete(self, request, *args, **kwargs):
