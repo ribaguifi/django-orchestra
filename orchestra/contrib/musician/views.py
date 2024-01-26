@@ -240,7 +240,7 @@ class BillDownloadView(CustomContextMixin, UserTokenRequiredMixin, View):
             return HttpResponse(bill.html or bill.render())
 
 
-class MailView(ServiceListView):
+class AddressListView(ServiceListView):
     service_class = AddressService
     model = Address
     template_name = "musician/addresses.html"
@@ -248,6 +248,11 @@ class MailView(ServiceListView):
         # Translators: This message appears on the page title
         'title': _('Mail addresses'),
     }
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        qs = qs.order_by("domain", "name")
+        return qs
 
     def get_queryfilter(self):
         """Retrieve query params (if any) to filter queryset"""
