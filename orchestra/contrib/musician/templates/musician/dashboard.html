@@ -70,7 +70,7 @@
           <h4>{% trans "Mail" %}</h4>
           <p class="card-text"><i class="fas fa-envelope fa-3x"></i></p>
           <p class="card-text text-dark">
-            {{ domain.addresses|length }} {% trans "mail addresses created" %}
+            {{ domain.addresses.count }} {% trans "mail addresses created" %}
           </p>
           <a class="stretched-link" href="{% url 'musician:address-list' %}?domain={{ domain.id }}"></a>
       </div>
