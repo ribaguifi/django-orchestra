@@ -12,7 +12,7 @@ from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.utils import translation
 from django.utils.html import format_html
-from django.utils.http import is_safe_url
+from django.utils.http import url_has_allowed_host_and_scheme
 from django.utils.translation import gettext_lazy as _
 from django.views import View
 from django.views.generic.base import RedirectView, TemplateView
@@ -153,7 +153,7 @@ def profile_set_language(request, code):
         translation.activate(user_language)
 
         redirect_to = request.GET.get('next', '')
-        url_is_safe = is_safe_url(
+        url_is_safe = url_has_allowed_host_and_scheme(
             url=redirect_to,
             allowed_hosts={request.get_host()},
             require_https=request.is_secure(),
@@ -232,7 +232,7 @@ class BillDownloadView(CustomContextMixin, UserTokenRequiredMixin, View):
         bill = self.get_object()
 
         # TODO(@slamora): implement download as PDF, now only HTML is reachable via link
-        content_type = request.META.get('HTTP_ACCEPT')
+        content_type = request.headers.get('accept')
         if content_type == 'application/pdf':
             pdf = html_to_pdf(bill.html or bill.render())
             return HttpResponse(pdf, content_type='application/pdf')
@@ -545,7 +545,7 @@ class LoginView(FormView):
             self.redirect_field_name,
             self.request.GET.get(self.redirect_field_name, '')
         )
-        url_is_safe = is_safe_url(
+        url_is_safe = url_has_allowed_host_and_scheme(
             url=redirect_to,
             allowed_hosts={self.request.get_host()},
             require_https=self.request.is_secure(),
