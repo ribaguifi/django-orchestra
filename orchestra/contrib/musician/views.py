@@ -340,7 +340,7 @@ class MailingListsView(ServiceListView):
         return {}
 
 
-class MailboxesView(ServiceListView):
+class MailboxListView(ServiceListView):
     service_class = MailboxService
     model = Mailbox
     template_name = "musician/mailboxes.html"
@@ -388,6 +388,9 @@ class MailboxUpdateView(CustomContextMixin, UserTokenRequiredMixin, UpdateView):
     success_url = reverse_lazy("musician:mailbox-list")
     extra_context = {'service': service_class}
 
+    def get_queryset(self):
+        return self.model.objects.filter(account=self.request.user)
+
 
 class MailboxDeleteView(CustomContextMixin, UserTokenRequiredMixin, DeleteView):
     model = Mailbox
@@ -422,6 +425,9 @@ class MailboxChangePasswordView(CustomContextMixin, UserTokenRequiredMixin, Upda
     form_class = MailboxChangePasswordForm
     success_url = reverse_lazy("musician:mailbox-list")
 
+    def get_queryset(self):
+        return self.model.objects.filter(account=self.request.user)
+
 
 class DatabasesView(ServiceListView):
     template_name = "musician/databases.html"
@@ -433,7 +439,7 @@ class DatabasesView(ServiceListView):
     }
 
 
-class SaasView(ServiceListView):
+class SaasListView(ServiceListView):
     service_class = SaasService
     model = SaaS
     template_name = "musician/saas.html"
