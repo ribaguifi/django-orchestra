@@ -237,15 +237,22 @@ class AddressListView(ServiceListView):
 
     def get_queryfilter(self):
         """Retrieve query params (if any) to filter queryset"""
-        domain_id = self.request.GET.get('domain')
-        if domain_id:
-            return {"domain": domain_id}
+        queryfilter = {}
 
-        return {}
+        domain_id = self.clean_domain_id()
+        if domain_id:
+            queryfilter.update({"domain": domain_id})
+
+        else:
+            domain_name = self.request.GET.get('domain__name')
+            if domain_name:
+                queryfilter.update({"domain__name__icontains": domain_name})
+
+        return queryfilter
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        domain_id = self.request.GET.get('domain')
+        domain_id = self.clean_domain_id()
         if domain_id:
             qs = Domain.objects.filter(account=self.request.user)
             context.update({
@@ -254,6 +261,11 @@ class AddressListView(ServiceListView):
         context['mailboxes'] = Mailbox.objects.filter(account=self.request.user)
         return context
 
+    def clean_domain_id(self):
+        try:
+            return int(self.request.GET.get('domain', ''))
+        except ValueError:
+            return None
 
 class MailCreateView(CustomContextMixin, UserTokenRequiredMixin, CreateView):
     service_class = AddressService

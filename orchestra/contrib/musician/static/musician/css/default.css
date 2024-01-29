@@ -141,7 +141,7 @@ a:hover {
     padding-left: 2rem;
     /** sidebar width **/
     margin-left: 280px;
-    height: 100vh;
+    min-height: 100vh;
 }
 
 /** services **/

@@ -2,6 +2,15 @@
 {% load i18n %}
 
 {% block tabcontent %}
+<form method="get" class="form-inline mt-4">
+  <div class="form-group mr-sm-2">
+    <input type="text" class="form-control" name="domain__name" placeholder="{% trans 'Filter by domain' %}" value="{{ request.GET.domain__name }}">
+  </div>
+
+  <button type="submit" class="btn btn-secondary">{% trans "Search" %}</button>
+</form>
+
+
 <div class="tab-pane fade show active" id="addresses" role="tabpanel" aria-labelledby="addresses-tab">
   <table class="table service-list">
     <colgroup>
