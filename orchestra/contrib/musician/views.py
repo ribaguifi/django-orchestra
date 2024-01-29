@@ -3,7 +3,6 @@ import smtplib
 from typing import Any
 
 from django.conf import settings
-from django.contrib import messages
 from django.core.exceptions import ImproperlyConfigured
 from django.core.mail import mail_managers
 from django.http import (HttpResponse, HttpResponseNotFound,
@@ -12,7 +11,7 @@ from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.utils import translation
 from django.utils.html import format_html
-from django.utils.http import url_has_allowed_host_and_scheme
+from django.utils.http import is_safe_url
 from django.utils.translation import gettext_lazy as _
 from django.views import View
 from django.views.generic.base import RedirectView, TemplateView
@@ -153,7 +152,7 @@ def profile_set_language(request, code):
         translation.activate(user_language)
 
         redirect_to = request.GET.get('next', '')
-        url_is_safe = url_has_allowed_host_and_scheme(
+        url_is_safe = is_safe_url(
             url=redirect_to,
             allowed_hosts={request.get_host()},
             require_https=request.is_secure(),
@@ -545,7 +544,7 @@ class LoginView(FormView):
             self.redirect_field_name,
             self.request.GET.get(self.redirect_field_name, '')
         )
-        url_is_safe = url_has_allowed_host_and_scheme(
+        url_is_safe = is_safe_url(
             url=redirect_to,
             allowed_hosts={self.request.get_host()},
             require_https=self.request.is_secure(),
