@@ -67,24 +67,6 @@ class DashboardView(CustomContextMixin, UserTokenRequiredMixin, TemplateView):
 
         # TODO(@slamora) update when backend provides resource usage data
         resource_usage = {
-            'disk': {
-                'verbose_name': _('Disk usage'),
-                'data': {
-                    # 'usage': 534,
-                    # 'total': 1024,
-                    # 'unit': 'MB',
-                    # 'percent': 50,
-                },
-            },
-            'traffic': {
-                'verbose_name': _('Traffic'),
-                'data': {
-                    # 'usage': 300,
-                    # 'total': 2048,
-                    # 'unit': 'MB/month',
-                    # 'percent': 25,
-                },
-            },
             'mailbox': self.get_mailbox_usage(profile_type),
         }
 
