@@ -99,7 +99,7 @@ class DashboardView(CustomContextMixin, UserTokenRequiredMixin, TemplateView):
         return {
             'verbose_name': _('Mailbox usage'),
             'data': {
-                'usage': total_mailboxes,
+                'used': total_mailboxes,
                 'total': allowed_mailboxes,
                 'alert': alert,
                 'unit': 'mailboxes',
@@ -423,6 +423,21 @@ class DatabasesView(ServiceListView):
         # Translators: This message appears on the page title
         'title': _('Databases'),
     }
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        # TODO(@slamora): optimize query
+        from django.contrib.contenttypes.models import ContentType
+
+        from orchestra.contrib.resources.models import Resource, ResourceData
+        ctype = ContentType.objects.get_for_model(self.model)
+        disk_resource = Resource.objects.get(name='disk', content_type=ctype)
+        for db in qs:
+            try:
+                db.usage = db.resource_set.get(resource=disk_resource)
+            except ResourceData.DoesNotExist:
+                db.usage = ResourceData(resource=disk_resource)
+        return qs
 
 
 class SaasListView(ServiceListView):

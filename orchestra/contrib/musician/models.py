@@ -8,7 +8,6 @@ from django.utils.translation import gettext_lazy as _
 from . import settings as musician_settings
 from .utils import get_bootstraped_percent
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -176,7 +175,7 @@ class DatabaseService(OrchestraModel):
                     break
 
             details = {
-                'usage': float(resource_disk['used']),
+                'used': float(resource_disk['used']),
                 'total': resource_disk['allocated'],
                 'unit': resource_disk['unit'],
             }
@@ -185,7 +184,7 @@ class DatabaseService(OrchestraModel):
 
 
         percent = get_bootstraped_percent(
-            details['usage'],
+            details['used'],
             details['total']
         )
         details['percent'] = percent
@@ -291,7 +290,7 @@ class Address(OrchestraModel):
                     break
 
             mailbox_details = {
-                'usage': float(resource_disk['used']),
+                'used': float(resource_disk['used']),
                 'total': resource_disk['allocated'],
                 'unit': resource_disk['unit'],
             }
