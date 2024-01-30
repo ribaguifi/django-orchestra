@@ -3,6 +3,7 @@ import smtplib
 from typing import Any
 
 from django.conf import settings
+from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ImproperlyConfigured
 from django.core.mail import mail_managers
 from django.db.models import Value
@@ -29,6 +30,7 @@ from orchestra.contrib.databases.models import Database
 from orchestra.contrib.domains.models import Domain, Record
 from orchestra.contrib.lists.models import List
 from orchestra.contrib.mailboxes.models import Address, Mailbox
+from orchestra.contrib.resources.models import Resource, ResourceData
 from orchestra.contrib.saas.models import SaaS
 from orchestra.utils.html import html_to_pdf
 
@@ -453,7 +455,7 @@ class MailboxChangePasswordView(CustomContextMixin, UserTokenRequiredMixin, Upda
         return self.model.objects.filter(account=self.request.user)
 
 
-class DatabasesView(ServiceListView):
+class DatabaseListView(ServiceListView):
     template_name = "musician/database_list.html"
     model = Database
     service_class = DatabaseService
@@ -463,11 +465,9 @@ class DatabasesView(ServiceListView):
     }
 
     def get_queryset(self):
-        qs = super().get_queryset()
-        # TODO(@slamora): optimize query
-        from django.contrib.contenttypes.models import ContentType
+        qs = super().get_queryset().order_by("name")
 
-        from orchestra.contrib.resources.models import Resource, ResourceData
+        # TODO(@slamora): optimize query
         ctype = ContentType.objects.get_for_model(self.model)
         disk_resource = Resource.objects.get(name='disk', content_type=ctype)
         for db in qs:

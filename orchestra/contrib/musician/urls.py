@@ -37,6 +37,6 @@ urlpatterns = [
     path('mailboxes/<int:pk>/delete/', views.MailboxDeleteView.as_view(), name='mailbox-delete'),
     path('mailboxes/<int:pk>/change-password/', views.MailboxChangePasswordView.as_view(), name='mailbox-password'),
     path('mailing-lists/', views.MailingListsView.as_view(), name='mailing-lists'),
-    path('databases/', views.DatabasesView.as_view(), name='database-list'),
+    path('databases/', views.DatabaseListView.as_view(), name='database-list'),
     path('saas/', views.SaasListView.as_view(), name='saas-list'),
 ]
