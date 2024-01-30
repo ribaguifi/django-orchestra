@@ -216,7 +216,7 @@ msgstr "Número"
 msgid "Bill date"
 msgstr "Data de la factura"
 
-#: templates/musician/billing.html:21 templates/musician/databases.html:17
+#: templates/musician/billing.html:21 templates/musician/database_list.html:17
 #: templates/musician/domain_detail.html:17
 msgid "Type"
 msgstr "Tipus"
@@ -336,21 +336,21 @@ msgstr "Tipus:"
 msgid "View DNS records"
 msgstr "Veure registres DNS"
 
-#: templates/musician/databases.html:21
+#: templates/musician/database_list.html:21
 msgid "associated to"
 msgstr "associada a"
 
-#: templates/musician/databases.html:34
+#: templates/musician/database_list.html:34
 msgid "No users for this database."
 msgstr "No hi ha persones usuàries d’aquesta base de dades."
 
-#: templates/musician/databases.html:45
+#: templates/musician/database_list.html:45
 msgid "Open database manager"
 msgstr "Obre el gestor de bases de dades"
 
 #. Translators: database page when there isn't any database.
 #. Translators: saas page when there isn't any saas.
-#: templates/musician/databases.html:58 templates/musician/saas_list.html:49
+#: templates/musician/database_list.html:58 templates/musician/saas_list.html:49
 msgid "Ooops! Looks like there is nothing here!"
 msgstr "Mmmh, sembla que aquí no hi ha res!"
 

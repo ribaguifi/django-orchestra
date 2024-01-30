@@ -454,7 +454,7 @@ class MailboxChangePasswordView(CustomContextMixin, UserTokenRequiredMixin, Upda
 
 
 class DatabasesView(ServiceListView):
-    template_name = "musician/databases.html"
+    template_name = "musician/database_list.html"
     model = Database
     service_class = DatabaseService
     extra_context = {
