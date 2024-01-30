@@ -138,6 +138,10 @@ class MailboxUpdateForm(forms.ModelForm):
         model = Mailbox
 
 
+class MailboxSearchForm(forms.Form):
+    name = forms.CharField(required=False)
+    address = forms.CharField(required=False)
+
 class RecordCreateForm(ValidateZoneMixin, forms.ModelForm):
 
     class Meta:

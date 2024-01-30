@@ -5,6 +5,8 @@ from typing import Any
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.core.mail import mail_managers
+from django.db.models import Value
+from django.db.models.functions import Concat
 from django.http import (HttpResponse, HttpResponseNotFound,
                          HttpResponseRedirect)
 from django.shortcuts import get_object_or_404
@@ -30,11 +32,10 @@ from orchestra.contrib.mailboxes.models import Address, Mailbox
 from orchestra.contrib.saas.models import SaaS
 from orchestra.utils.html import html_to_pdf
 
-# from .auth import login as auth_login
 from .auth import logout as auth_logout
 from .forms import (LoginForm, MailboxChangePasswordForm, MailboxCreateForm,
-                    MailboxUpdateForm, MailForm, RecordCreateForm,
-                    RecordUpdateForm)
+                    MailboxSearchForm, MailboxUpdateForm, MailForm,
+                    RecordCreateForm, RecordUpdateForm)
 from .mixins import (CustomContextMixin, ExtendedPaginationMixin,
                      UserTokenRequiredMixin)
 from .models import Address as AddressService
@@ -346,6 +347,31 @@ class MailboxListView(ServiceListView):
         # Translators: This message appears on the page title
         'title': _('Mailboxes'),
     }
+    search_form_class = MailboxSearchForm
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+
+        search_form = self.search_form_class(self.request.GET)
+        cleaned_data = search_form.cleaned_data if search_form.is_valid() else {}
+
+        if "address" in cleaned_data:
+            qs = qs.annotate(
+                    full_address=Concat("addresses__name", Value("@"), "addresses__domain__name")
+                ).filter(
+                    full_address__icontains=cleaned_data["address"]
+                )
+
+        if "name" in cleaned_data:
+            qs = qs.filter(name__icontains=cleaned_data["name"])
+
+        return qs
+
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = self.search_form_class()#self.request.GET)
+        return context
 
 
 class MailboxCreateView(CustomContextMixin, UserTokenRequiredMixin, CreateView):
