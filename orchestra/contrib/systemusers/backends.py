@@ -287,13 +287,31 @@ class UNIXUserDisk(ServiceMonitor):
         self.append(textwrap.dedent("""\
             function monitor () {
                 { SIZE=$(du -bs "$1") && echo $SIZE || echo 0; } | awk {'print $1'}
-            }"""
-        ))
+            }
+        list=()               
+        """))
     
     def monitor(self, user):
         context = self.get_context(user)
-        self.append("echo %(object_id)s $(monitor %(base_home)s)" % context)
+        # self.append("echo %(object_id)s $(monitor %(base_home)s)" % context)
+        self.append("list[${#list[@]}]=\'echo %(object_id)s $(monitor %(base_home)s)\'" % context)
     
+    def commit(self):
+        self.append(textwrap.dedent("""\
+            proces=0
+            for cmd in "${list[@]}"
+            do
+                eval $cmd & 
+                proces=$((proces+1))
+                if [ $proces -ge 5 ];then
+                    wait
+                    proces=0
+                fi
+            done
+            wait
+            exit $exit_code
+            """))
+
     def get_context(self, user):
         context = {
             'object_id': user.pk,
