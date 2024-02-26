@@ -53,7 +53,7 @@ def validate_zone_label(value):
     Labels may not be all numbers, but may have a leading digit (e.g., 3com.com).
     Labels must end and begin only with a letter or digit. See [RFC 1035] and [RFC 1123].
     """
-    if not re.match(r'^[a-z0-9][\.\-0-9a-z]*[\.0-9a-z]$', value):
+    if not re.match(r'^[a-z0-9][\.\-0-9a-z_]*[\.0-9a-z]$', value):
         msg = _("Labels must start and end with a letter or digit, "
                 "and have as interior characters only letters, digits, and hyphen.")
         raise ValidationError(msg)
