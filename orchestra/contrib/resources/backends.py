@@ -72,6 +72,7 @@ class ServiceMonitor(ServiceBackend):
         from .models import MonitorData
         name = self.get_name()
         app_label, model_name = self.model.split('.')
+        id_launch = log.id_launch
         ct = ContentType.objects.get_by_natural_key(app_label, model_name.lower())
         for line in log.stdout.splitlines():
             line = line.strip()
@@ -83,7 +84,7 @@ class ServiceMonitor(ServiceBackend):
             content_object = ct.get_object_for_this_type(pk=object_id)
             MonitorData.objects.create(
                 monitor=name, object_id=object_id, content_type=ct, value=value, state=state,
-                created_at=self.current_date, content_object_repr=str(content_object),
+                created_at=self.current_date, content_object_repr=str(content_object), launch_id=id_launch, 
             )
     
     def execute(self, *args, **kwargs):

@@ -280,6 +280,7 @@ class MonitorData(models.Model):
 
     content_object = GenericForeignKey()
     objects = MonitorDataQuerySet.as_manager()
+    launch_id = models.PositiveIntegerField(_("launch id"), blank=True, null=True)
 
     class Meta:
         get_latest_by = 'id'

@@ -2,6 +2,7 @@ import logging
 import threading
 import traceback
 from collections import OrderedDict
+import random
 
 from django.core.mail import mail_admins
 
@@ -111,6 +112,7 @@ def execute(scripts, serialize=False, run_async=None):
     executions = []
     threads_to_join = []
     logs = []
+    id_launch = random.randint(0, 2147483646)
     for key, value in scripts.items():
         route, __, async_action = key
         backend, operations = value
@@ -126,6 +128,7 @@ def execute(scripts, serialize=False, run_async=None):
         with db.clone(model=BackendLog) as handle:
             log = backend.create_log(*args, using=handle.target)
             log._state.db = handle.origin
+            log.id_launch = id_launch
         kwargs['log'] = log
         task = keep_log(backend.execute, log, operations)
         logger.debug('%s is going to be executed on %s.' % (backend, route.host))
