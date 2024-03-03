@@ -1,0 +1,63 @@
+{% extends "musician/base.html" %}
+{% load i18n %}
+
+{% block content %}
+
+<h1 class="service-name">{{ service.verbose_name }}</h1>
+<p class="service-description">{{ service.description }}</p>
+
+{% if object_list %}
+
+<table class="table service-list">
+  <colgroup>
+    <col span="1" style="width: 25%;">
+    <col span="1" style="width: 10%;">
+    <col span="1" style="width: 35%;">
+    <col span="1" style="width: 30%;">
+  </colgroup>
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">{% trans "Name" %}</th>
+      <th scope="col">{% trans "Type" %}</th>
+      <th scope="col">{% trans "Database users" %} <i class="fas fa-user-edit"></i></th>
+      <th scope="col">{% trans "Disk usage" %}</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for database in object_list %}
+    <tr>
+      <td><strong>{{ database.name }}</strong></td>
+      <td>
+        <span class="text-secondary">{{ database.type }}</span>
+        <a class="btn btn-sm btn-link" href="{{ database.manager_url }}" target="_blank" rel="noopener noreferrer" title="{% trans 'Open database manager' %}">
+          <i class="fas fa-external-link-alt"></i>
+          <span class="sr-only">{% trans "Open database manager" %}</span>
+        </a>
+      </td>
+      <td>{{ database.users.all|join:", " }}</td>
+      <td>
+        {% with detail=database.usage %}
+        {{ detail.used|floatformat }} {{ detail.unit }}
+        {% endwith %}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+  {% include "musician/components/table_paginator.html" %}
+</table>
+
+{% else  %}
+<div class="row">
+  <div class="col-md-4">
+    <div class="card service-card shadow p-3 mb-5 bg-white rounded">
+      <div class="card-body text-center">
+        <p class="mb-4"><i class="fas fa-database fa-5x"></i></p>
+        {# Translators: database page when there isn't any database. #}
+        <h5 class="card-title text-dark">{% trans "Ooops! Looks like there is nothing here!" %}</h5>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+{% endblock %}

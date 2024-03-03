@@ -33,10 +33,11 @@ class Last(Aggregation):
     
     def filter(self, dataset, date=None):
 
-        # dataset = dataset.order_by('object_id', '-id').distinct('monitor')
-        now = timezone.now()
-        epoch = now - datetime.timedelta(minutes=2)
-        dataset = dataset.filter( created_at__range=(epoch, now ))
+        lastdataset = dataset.order_by('-id').first()
+        dataset = dataset.filter( launch_id=lastdataset.launch_id)
+        # now = timezone.now()
+        # epoch = now - datetime.timedelta(minutes=2)
+        # dataset = dataset.filter( created_at__range=(epoch, now ))
 
         if date is not None:
             dataset = dataset.filter(created_at__lte=date)

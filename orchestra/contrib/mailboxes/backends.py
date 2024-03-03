@@ -452,12 +452,30 @@ class DovecotMaildirDisk(ServiceMonitor):
         self.append(textwrap.dedent("""\
             function monitor () {
                  SIZE=$(du -sb $1/Maildir/ 2> /dev/null || echo 0) && echo $SIZE | awk '{print $1}'
+            list=()
             }"""))
     
     def monitor(self, mailbox):
         context = self.get_context(mailbox)
         # self.append("echo %(object_id)s $(monitor %(maildir_path)s)" % context)
-        self.append("echo %(object_id)s $(monitor %(home)s)" % context)
+        # self.append("echo %(object_id)s $(monitor %(home)s)" % context)
+        self.append("list[${#list[@]}]=\'echo %(object_id)s $(monitor %(home)s)\'" % context)
+
+    def commit(self):
+        self.append(textwrap.dedent("""\
+            proces=0
+            for cmd in "${list[@]}"
+            do
+                eval $cmd & 
+                proces=$((proces+1))
+                if [ $proces -ge 10 ];then
+                    wait
+                    proces=0
+                fi
+            done
+            wait
+            exit $exit_code
+            """))
 
     def get_context(self, mailbox):
         context = {

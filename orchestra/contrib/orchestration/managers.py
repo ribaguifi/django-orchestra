@@ -1,14 +1,14 @@
 import sys
+from contextlib import ContextDecorator
 from threading import local
 
 from django.contrib.admin.models import LogEntry
-from django.db.models.signals import pre_delete, post_save, m2m_changed
+from django.db.models.signals import m2m_changed, post_save, pre_delete
 from django.dispatch import receiver
-from django.utils.decorators import ContextDecorator
 
 from orchestra.utils.python import OrderedSet
 
-from . import manager, Operation, helpers
+from . import Operation, helpers, manager
 from .middlewares import OperationsMiddleware
 from .models import BackendLog, BackendOperation
 
@@ -37,7 +37,7 @@ def m2m_collector(sender, *args, **kwargs):
 class orchestrate(ContextDecorator):
     """
     Context manager for triggering backend operations out of request-response cycle, e.g. shell
-    
+
     with orchestrate():
         user = SystemUser.objects.get(username='rata')
         user.shell = '/dev/null'
@@ -46,7 +46,7 @@ class orchestrate(ContextDecorator):
     thread_locals = local()
     thread_locals.pending_operations = None
     thread_locals.route_cache = None
-    
+
     @classmethod
     def collect(cls, action, **kwargs):
         """ Collects all pending operations derived from model signals """
@@ -57,14 +57,14 @@ class orchestrate(ContextDecorator):
         kwargs['route_cache'] = cls.thread_locals.route_cache
         instance = kwargs.pop('instance')
         manager.collect(instance, action, **kwargs)
-    
+
     def __enter__(self):
         cls = type(self)
         self.old_pending_operations = cls.thread_locals.pending_operations
         cls.thread_locals.pending_operations = OrderedSet()
         self.old_route_cache = cls.thread_locals.route_cache
         cls.thread_locals.route_cache = {}
-    
+
     def __exit__(self, exc_type, exc_value, traceback):
         cls = type(self)
         if not exc_type:

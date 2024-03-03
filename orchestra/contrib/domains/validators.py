@@ -53,7 +53,7 @@ def validate_zone_label(value):
     Labels may not be all numbers, but may have a leading digit (e.g., 3com.com).
     Labels must end and begin only with a letter or digit. See [RFC 1035] and [RFC 1123].
     """
-    if not re.match(r'^[a-z0-9][\.\-0-9a-z]*[\.0-9a-z]$', value):
+    if not re.match(r'^[a-z0-9][\.\-0-9a-z_]*[\.0-9a-z]$', value):
         msg = _("Labels must start and end with a letter or digit, "
                 "and have as interior characters only letters, digits, and hyphen.")
         raise ValidationError(msg)
@@ -104,6 +104,28 @@ def validate_soa_record(value):
         except ValueError:
             raise ValidationError(msg)
 
+
+def validate_caa_record(value):
+    # 0-255 issue|issuewild|iodef "domain|mailto:email"
+    # 0 issue "letsewncript.org"
+    msg = _("%s is not an appropiate CAA record value, sintax: 0-255 issue|issuewild|iodef \"domain|mailto:email\"") % value
+    values = value.split()
+    if len(values) != 3:
+        raise ValidationError(msg)
+
+    patron_flag = r'^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$'
+    patron_tag = r'^(issue|issuewild|iodef)$'
+    patron_value_domain = r'^"[a-zA-Z0-9-.]+\.[a-zA-Z]+\.?"$'
+    patron_value_mailto = r'^"mailto:[a-zA-Z0-9.]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}"$'
+    flag = re.match(patron_flag, values[0])
+    tag =  re.match(patron_tag, values[1])
+    if values[1] == 'iodef':
+        valor = re.match(patron_value_mailto, values[2])
+    else:
+        valor = re.match(patron_value_domain, values[2])
+    if not (flag and tag and valor):
+        raise ValidationError(msg)
+        
 
 def validate_quoted_record(value):
     value = value.strip()
