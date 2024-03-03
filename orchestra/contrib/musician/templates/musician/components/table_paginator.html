@@ -1,0 +1,31 @@
+{# <!-- table footer based paginator for ListView --> #}
+{% load i18n bootstrap4 %}
+
+<tfoot>
+    <tr>
+        <td colspan="100%">
+            <div class="d-flex justify-content-center">
+            {% bootstrap_pagination page_obj extra="per_page" %}
+            </div>
+        </td>
+    </tr>
+    {% comment %}
+    <!-- commented until django-bootstrap4 accepts changing pagination size -->
+    <tr>
+        <td colspan="100%" class="text-center">
+            <form method="get">
+                Showing
+                <select name="{{ per_page_param }}">
+                    {% for value in per_page_values %}
+                    {% with page_obj.paginator.per_page as per_page %}
+                    <option value="{{ value }}" {% if value == per_page  %}selected{% endif %}>{{ value }}</option>
+                    {% endwith %}
+                    {% endfor %}
+                </select>
+                per page
+                <input type="submit" value="apply" />
+            </form>
+        </td>
+    </tr>
+    {% endcomment %}
+</tfoot>

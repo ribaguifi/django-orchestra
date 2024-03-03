@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.conf.urls import include, url
+from django.urls import path
 from rest_framework.authtoken.views import obtain_auth_token
 
 from orchestra.views import serve_private_media
@@ -22,6 +23,8 @@ urlpatterns = [
     url(r'^api-token-auth/', obtain_auth_token, name='api-token-auth'),
     url(r'^media/(.+)/(.+)/(.+)/(.+)/(.+)$', serve_private_media, name='private-media'),
 #    url(r'search', 'orchestra.views.search', name='search'),
+    # MUSICIAN
+    path('panel/', include('orchestra.contrib.musician.urls')),
 ]
 
 
