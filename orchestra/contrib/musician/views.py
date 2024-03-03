@@ -100,7 +100,7 @@ class DashboardView(CustomContextMixin, UserTokenRequiredMixin, TemplateView):
             alert = format_html("<span class='text-warning'>{} mailbox left</span>", mailboxes_left)
 
         return {
-            'verbose_name': _('Mailbox usage'),
+            'verbose_name': _('Mailboxes'),
             'data': {
                 'used': total_mailboxes,
                 'total': allowed_mailboxes,
