@@ -101,7 +101,7 @@ class MailmanController(MailmanVirtualDomainController):
         for suffix in self.address_suffixes:
             context['suffix'] = suffix
             # Because mailman doesn't properly handle lists aliases we need virtual aliases
-            if context['address_name'] != context['name']:
+            if context['address_name'] != context['name'] or context['address_domain'] != settings.LISTS_DEFAULT_DOMAIN:
                 aliases.append("%(address_name)s%(suffix)s@%(domain)s\t%(name)s%(suffix)s@grups.pangea.org" % context)
         return '\n'.join(aliases)
     
