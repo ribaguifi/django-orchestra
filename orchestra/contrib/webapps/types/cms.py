@@ -21,7 +21,7 @@ class CMSAppForm(PHPAppForm):
     db_user = forms.CharField(label=_("Database user"),
             help_text=_("Database user exclusively used for this webapp."))
     password = forms.CharField(label=_("Password"),
-            help_text=_("Initial database and WordPress admin password.<br>"
+            help_text=_("Initial database and App admin password.<br>"
                         "Subsequent changes to the admin password will not be reflected."))
 
     def __init__(self, *args, **kwargs):
