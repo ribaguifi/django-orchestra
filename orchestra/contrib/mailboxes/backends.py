@@ -494,7 +494,7 @@ class PostfixMailscannerTraffic(ServiceMonitor):
     model = 'mailboxes.Mailbox'
     resource = ServiceMonitor.TRAFFIC
     verbose_name = _("Postfix-Mailscanner traffic")
-    script_executable = '/usr/bin/python'
+    script_executable = '/usr/bin/python3'
     monthly_sum_old_values = True
     doc_settings = (settings,
         ('MAILBOXES_MAIL_LOG_PATH',)
@@ -540,90 +540,68 @@ class PostfixMailscannerTraffic(ServiceMonitor):
                 return ini_date < int(date) < end_date
             
             users = {{}}
-            delivers = {{}}
-            reverse = {{}}
+            sends = {{}}
             
             def prepare(object_id, mailbox, ini_date):
                 global users
-                global delivers
-                global reverse
+                global sends
                 ini_date = to_local_timezone(ini_date)
                 ini_date = int(ini_date.strftime('%Y%m%d%H%M%S'))
                 users[mailbox] = (ini_date, object_id)
-                delivers[mailbox] = set()
-                reverse[mailbox] = set()
+                sends[mailbox] = {{}}
             
-            def monitor(users, delivers, reverse, maillogs):
-                targets = {{}}
-                counter = {{}}
-                user_regex = re.compile(r'\(Authenticated sender: ([^ ]+)\)')
+            def monitor(users, sends, maillogs):
+                grupos = []
+                sasl_username_pattern = re.compile(r'sasl_username=([a-zA-Z0-9\.\-_]+)')
+                size_pattern = re.compile(r'size=(\d+),')
+                
                 for maillog in maillogs:
                     try:
                         with open(maillog, 'r') as maillog:
                             for line in maillog.readlines():
                                 # Only search for Authenticated sendings
-                                if '(Authenticated sender: ' in line:
-                                    username = user_regex.search(line).groups()[0]
-                                    try:
-                                        sender = users[username]
-                                    except KeyError:
+                                if 'sasl_username=' in line:
+                                    # si el usuario es uno de los elegidos y el rango de tiempo es correcto
+                                    # recoge el id de grupo
+                                    match = sasl_username_pattern.search(line)
+                                    if not match:
                                         continue
-                                    else:
-                                        month, day, time, __, proc, id = line.split()[:6]
-                                        if inside_period(month, day, time, sender[0]):
-                                            # Add new email
-                                            delivers[id[:-1]] = username
-                                # Look for a MailScanner requeue ID
-                                elif ' Requeue: ' in line:
-                                    id, __, req_id = line.split()[6:9]
-                                    id = id.split('.')[0]
-                                    try:
-                                        username = delivers[id]
-                                    except KeyError:
-                                        pass
-                                    else:
-                                        targets[req_id] = (username, 0)
-                                        reverse[username].add(req_id)
-                                # Look for the mail size and count the number of recipients of each email
+
+                                    username = match.groups(1)[0]
+                                    if username not in users.keys():
+                                        continue
+                                    
+                                    month, day, time, __, __, req_id  = line.split()[:6]
+                                    if inside_period(month, day, time, users[username][0]):
+                                        group = req_id[:-1]
+                                        sends[username][group] = 0
+                                        grupos.append(group)
                                 else:
-                                    try:
-                                        month, day, time, __, proc, req_id, __, msize = line.split()[:8]
-                                    except ValueError:
-                                        # not interested in this line
-                                        continue
-                                    if proc.startswith('postfix/'):
-                                        req_id = req_id[:-1]
-                                        if msize.startswith('size='):
-                                            try:
-                                                target = targets[req_id]
-                                            except KeyError:
-                                                pass
-                                            else:
-                                                targets[req_id] = (target[0], int(msize[5:-1]))
-                                        elif proc.startswith('postfix/smtp'):
-                                            try:
-                                                target = targets[req_id]
-                                            except KeyError:
-                                                pass
-                                            else:
-                                                if inside_period(month, day, time, users[target[0]][0]):
-                                                    try:
-                                                        counter[req_id] += 1
-                                                    except KeyError:
-                                                        counter[req_id] = 1
+                                    # busca el size de envios donde se alla anadido el groupID anteriormente, 
+                                    # una vez encontrado borra el groupID
+                                    for id in grupos:
+                                        if id in line:
+                                            match = size_pattern.search(line)
+                                            if not match:
+                                                continue
+                                            for k, v in sends.items():
+                                                if id in sends[k].keys():
+                                                    sends[k][id] += int(match.groups(1)[0])
+                                            grupos.remove(id)
                     except IOError as e:
                         sys.stderr.write(str(e)+'\\n')
                     
-                for username, opts in users.iteritems():
-                    size = 0
-                    for req_id in reverse[username]:
-                        size += targets[req_id][1] * counter.get(req_id, 0)
-                    print opts[1], size
+                # devolver la sumatoria de valores a orchestra (id_user,  size)
+                for username, opts in users.items():
+                    total_size = 0
+                    for size in sends[username].values():
+                        total_size += size
+                    print(f"{{opts[1]}} {{total_size}}")
             """).format(**context)
         )
     
     def commit(self):
-        self.append('monitor(users, delivers, reverse, maillogs)')
+        self.append('monitor(users, sends, maillogs)')
     
     def monitor(self, mailbox):
         context = self.get_context(mailbox)
