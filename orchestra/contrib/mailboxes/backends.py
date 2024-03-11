@@ -524,6 +524,10 @@ class PostfixMailscannerTraffic(ServiceMonitor):
             end_date = int(end_datetime.strftime('%Y%m%d%H%M%S'))
             months = ('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec')
             months = dict((m, '%02d' % n) for n, m in enumerate(months, 1))
+            users = {{}}
+            sends = {{}}                        
+            register_imap_traffic = False
+            register_pop_traffic = False
             
             def inside_period(month, day, time, ini_date):
                 global months
@@ -538,9 +542,25 @@ class PostfixMailscannerTraffic(ServiceMonitor):
                 date = str(year) + month + day
                 date += time.replace(':', '')
                 return ini_date < int(date) < end_date
-            
-            users = {{}}
-            sends = {{}}
+                       
+            def search_username(pattern, users, line):
+                match = pattern.search(line)
+                if not match:
+                    return None
+                username = match.groups(1)[0]
+                if username not in users.keys():
+                    return None
+                return username
+
+            def search_size(line, users, username, pattern):
+                month, day, time, req_id  = line.split()[:4]
+                if inside_period(month, day, time, users[username][0]):
+                    group = req_id.split('<')[-1][:-2]
+                    matches = pattern.search(line)
+                    if not matches:
+                        return None, None
+                    return group, matches
+                return None, None
             
             def prepare(object_id, mailbox, ini_date):
                 global users
@@ -555,6 +575,12 @@ class PostfixMailscannerTraffic(ServiceMonitor):
                 sasl_username_pattern = re.compile(r'sasl_username=([a-zA-Z0-9\.\-_]+)')
                 size_pattern = re.compile(r'size=(\d+),')
                 
+                pop_username_pattern = re.compile(r' pop3\(([^)].*)\)')
+                pop_size_pattern = re.compile(r'size=(\d+)')
+
+                imap_username_pattern = re.compile(r' imap\(([^)].*)\)')
+                imap_size_pattern = re.compile(r"in=(\d+) out=(\d+)")
+                
                 for maillog in maillogs:
                     try:
                         with open(maillog, 'r') as maillog:
@@ -563,12 +589,8 @@ class PostfixMailscannerTraffic(ServiceMonitor):
                                 if 'sasl_username=' in line:
                                     # si el usuario es uno de los elegidos y el rango de tiempo es correcto
                                     # recoge el id de grupo
-                                    match = sasl_username_pattern.search(line)
-                                    if not match:
-                                        continue
-
-                                    username = match.groups(1)[0]
-                                    if username not in users.keys():
+                                    username = search_username(sasl_username_pattern, users, line)
+                                    if username is None:
                                         continue
                                     
                                     month, day, time, __, __, req_id  = line.split()[:6]
@@ -588,6 +610,28 @@ class PostfixMailscannerTraffic(ServiceMonitor):
                                                 if id in sends[k].keys():
                                                     sends[k][id] += int(match.groups(1)[0])
                                             grupos.remove(id)
+                                    
+                                # pop trafic
+                                if register_pop_traffic:
+                                    if 'pop3(' in line and 'size' in line:
+                                        username = search_username(pop_username_pattern, users, line)
+                                        if username is None:
+                                            continue
+                                        group, matches = search_size(line, users, username, pop_size_pattern)
+                                        if group is not None and matches is not None :
+                                            sends[username][group] = int(matches.groups(1)[0])
+                                
+                                # imap trafic
+                                if register_imap_traffic:
+                                    if 'imap(' in line and 'out=' in line:
+                                        username = search_username(imap_username_pattern, users, line)
+                                        if username is None:
+                                            continue
+                                        group, matches = search_size(line, users, username, imap_size_pattern)
+                                        if group is not None and matches is not None :
+                                            value = int(matches.group(1)) + int(matches.group(2)) 
+                                            sends[username][group] = value
+
                     except IOError as e:
                         sys.stderr.write(str(e)+'\\n')
                     
