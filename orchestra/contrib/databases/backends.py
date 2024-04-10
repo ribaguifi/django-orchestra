@@ -178,7 +178,7 @@ class MysqlDisk(ServiceMonitor):
     def get_context(self, db):
         context = {
             'db_name': db.name,
-            'db_dirname': db.name.replace('-', '@002d'),
+            'db_dirname': db.name.replace('-', '@002d').replace('.', '@002e'),
             'db_id': db.pk,
             'db_type': db.type,
         }
