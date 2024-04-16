@@ -1,0 +1,41 @@
+{% extends "musician/users_base.html" %}
+{% load bootstrap4 i18n %}
+
+{% block tabcontent %}
+<p></p>
+<p>{% trans "The main user is your system's main user on each server. You'll be able to view the logs of your websites at (/home/account/logs) and all web content, but you'll never be able to edit content on a website." %}</p>
+<p>{% trans "This user only has write permissions in their own directory." %}</p>
+
+
+<table class="table service-list">
+  <colgroup>
+    <col span="1" style="width: 15%;">
+    <col span="1" style="width: 25%;">
+    <col span="1" style="width: 60%;">
+  </colgroup>
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">{% trans "Username" %}</th>
+      <th scope="col">{% trans "Path" %}</th>
+      <th scope="col"></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for systemuser in object_list %}
+      {% if systemuser.is_main %}
+        <tr>
+          <td>{{ systemuser.username }}</td>
+          <td>{{ systemuser.home }}/{{ systemuser.username }}</td>
+          <td>
+            <div class="d-flex justify-content-end">
+              <a class="btn btn-outline-warning" href="{% url 'musician:systemuser-password' systemuser.id %}">
+                <i class="fas fa-key"></i> {% trans "Update password" %}</a>
+            </div>
+          </td>
+        </tr>
+      {% endif %}
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}

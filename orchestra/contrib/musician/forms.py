@@ -3,8 +3,11 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
+from django.contrib.auth.hashers import make_password
+
 from orchestra.contrib.domains.models import Domain, Record
 from orchestra.contrib.mailboxes.models import Address, Mailbox
+from orchestra.contrib.systemusers.models import WebappUsers, SystemUser
 from orchestra.contrib.musician.validators import ValidateZoneMixin
 
 from . import api
@@ -27,6 +30,42 @@ class LoginForm(AuthenticationForm):
 
         return self.cleaned_data
 
+class ChangePasswordForm(forms.ModelForm):
+    error_messages = {
+        'password_mismatch': _('The two password fields didn’t match.'),
+    }
+    password = forms.CharField(
+        label=_("Password"),
+        strip=False,
+        widget=forms.PasswordInput(attrs={'autocomplete': 'new-password'}),
+    )
+    password2 = forms.CharField(
+        label=_("Password confirmation"),
+        widget=forms.PasswordInput(attrs={'autocomplete': 'new-password'}),
+        strip=False,
+        help_text=_("Enter the same password as before, for verification."),
+    )
+
+    class Meta:
+        fields = ("password",)
+        model = WebappUsers
+
+    def clean_password2(self):
+        password = self.cleaned_data.get("password")
+        password2 = self.cleaned_data.get("password2")
+        if password and password2 and password != password2:
+            raise ValidationError(
+                self.error_messages['password_mismatch'],
+                code='password_mismatch',
+            )
+        return password2
+    
+    def clean(self):
+        cleaned_data = super().clean()
+        password = cleaned_data.get("password")
+        cleaned_data['password'] = make_password(password)
+        return cleaned_data
+    
 
 class MailForm(forms.ModelForm):
     class Meta:
@@ -53,37 +92,13 @@ class MailForm(forms.ModelForm):
         return instance
 
 
-class MailboxChangePasswordForm(forms.ModelForm):
-    error_messages = {
-        'password_mismatch': _('The two password fields didn’t match.'),
-    }
-    password = forms.CharField(
-        label=_("Password"),
-        strip=False,
-        widget=forms.PasswordInput(attrs={'autocomplete': 'new-password'}),
-    )
-    password2 = forms.CharField(
-        label=_("Password confirmation"),
-        widget=forms.PasswordInput(attrs={'autocomplete': 'new-password'}),
-        strip=False,
-        help_text=_("Enter the same password as before, for verification."),
-    )
-
+class MailboxChangePasswordForm(ChangePasswordForm):
+ 
     class Meta:
         fields = ("password",)
         model = Mailbox
 
-    def clean_password2(self):
-        password = self.cleaned_data.get("password")
-        password2 = self.cleaned_data.get("password2")
-        if password and password2 and password != password2:
-            raise ValidationError(
-                self.error_messages['password_mismatch'],
-                code='password_mismatch',
-            )
-        return password2
-
-
+ 
 class MailboxCreateForm(forms.ModelForm):
     error_messages = {
         'password_mismatch': _('The two password fields didn’t match.'),
@@ -120,7 +135,7 @@ class MailboxCreateForm(forms.ModelForm):
                 self.error_messages['password_mismatch'],
                 code='password_mismatch',
             )
-        return password2
+        return  password
 
     def save(self, commit=True):
         instance = super().save(commit=False)
@@ -169,3 +184,14 @@ class RecordUpdateForm(ValidateZoneMixin, forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.domain = self.instance.domain
+
+
+class WebappUsersChangePasswordForm(ChangePasswordForm):
+    class Meta:
+        fields = ("password",)
+        model = WebappUsers
+
+class SystemUsersChangePasswordForm(ChangePasswordForm):
+    class Meta:
+        fields = ("password",)
+        model = SystemUser

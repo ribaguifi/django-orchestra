@@ -32,12 +32,14 @@ from orchestra.contrib.lists.models import List
 from orchestra.contrib.mailboxes.models import Address, Mailbox
 from orchestra.contrib.resources.models import Resource, ResourceData
 from orchestra.contrib.saas.models import SaaS
+from orchestra.contrib.systemusers.models import WebappUsers, SystemUser
 from orchestra.utils.html import html_to_pdf
 
 from .auth import logout as auth_logout
 from .forms import (LoginForm, MailboxChangePasswordForm, MailboxCreateForm,
                     MailboxSearchForm, MailboxUpdateForm, MailForm,
-                    RecordCreateForm, RecordUpdateForm)
+                    RecordCreateForm, RecordUpdateForm, WebappUsersChangePasswordForm,
+                    SystemUsersChangePasswordForm)
 from .mixins import (CustomContextMixin, ExtendedPaginationMixin,
                      UserTokenRequiredMixin)
 from .models import Address as AddressService
@@ -612,3 +614,39 @@ class LogoutView(RedirectView):
     def post(self, request, *args, **kwargs):
         """Logout may be done via POST."""
         return self.get(request, *args, **kwargs)
+
+
+class WebappUserListView(ServiceListView):
+    model = WebappUsers
+    template_name = "musician/webappuser_list.html"
+    extra_context = {
+        # Translators: This message appears on the page title
+        'title': _('Webapp users'),
+    }
+
+class WebappUserChangePasswordView(CustomContextMixin, UserTokenRequiredMixin, UpdateView):
+    template_name = "musician/webappuser_change_password.html"
+    model = WebappUsers
+    form_class = WebappUsersChangePasswordForm
+    success_url = reverse_lazy("musician:webappuser-list")
+
+    def get_queryset(self):
+        return self.model.objects.filter(account=self.request.user)
+
+
+class SystemUserListView(ServiceListView):
+    model = SystemUser
+    template_name = "musician/systemuser_list.html"
+    extra_context = {
+        # Translators: This message appears on the page title
+        'title': _('Main users'),
+    }
+
+class SystemUserChangePasswordView(CustomContextMixin, UserTokenRequiredMixin, UpdateView):
+    template_name = "musician/systemuser_change_password.html"
+    model = SystemUser
+    form_class = SystemUsersChangePasswordForm
+    success_url = reverse_lazy("musician:systemuser-list")
+
+    def get_queryset(self):
+        return self.model.objects.filter(account=self.request.user)

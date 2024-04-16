@@ -1,0 +1,37 @@
+{% extends "musician/users_base.html" %}
+{% load bootstrap4 i18n %}
+
+{% block tabcontent %}
+
+<table class="table service-list">
+  <colgroup>
+    <col span="1" style="width: 15%;">
+    <col span="1" style="width: 25%;">
+    <col span="1" style="width: 40%;">
+    <col span="1" style="width: 20%;">
+  </colgroup>
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">{% trans "Username" %}</th>
+      <th scope="col">{% trans "Path" %}</th>
+      <th scope="col">{% trans "Server" %}</th>
+      <th scope="col"></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for webappuser in object_list %}
+    <tr>
+      <td>{{ webappuser.username }}</td>
+      <td>/home/{{ webappuser.account }}/webapps/{{ webappuser.home }}</td>
+      <td>{{ webappuser.target_server }}</td>
+      <td>
+        <a class="btn btn-outline-warning" href="{% url 'musician:webappuser-password' webappuser.id %}">
+          <i class="fas fa-key"></i> {% trans "Update password" %}</a>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+  {% include "musician/components/table_paginator.html" %}
+</table>
+
+{% endblock %}

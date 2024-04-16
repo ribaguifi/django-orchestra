@@ -39,4 +39,9 @@ urlpatterns = [
     path('mailing-lists/', views.MailingListsView.as_view(), name='mailing-lists'),
     path('databases/', views.DatabaseListView.as_view(), name='database-list'),
     path('saas/', views.SaasListView.as_view(), name='saas-list'),
+    
+    path('webappusers/', views.WebappUserListView.as_view(), name='webappuser-list'),
+    path('webappuser/<int:pk>/change-password/', views.WebappUserChangePasswordView.as_view(), name='webappuser-password'),
+    path('systemusers/', views.SystemUserListView.as_view(), name='systemuser-list'),
+    path('systemuser/<int:pk>/change-password/', views.SystemUserChangePasswordView.as_view(), name='systemuser-password'),
 ]
