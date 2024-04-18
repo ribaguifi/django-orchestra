@@ -136,6 +136,12 @@ class MailboxCreateForm(forms.ModelForm):
                 code='password_mismatch',
             )
         return  password
+    
+    def clean(self):
+        cleaned_data = super().clean()
+        password = cleaned_data.get("password")
+        cleaned_data['password'] = make_password(password)
+        return cleaned_data
 
     def save(self, commit=True):
         instance = super().save(commit=False)
