@@ -34,13 +34,14 @@ from orchestra.contrib.resources.models import Resource, ResourceData
 from orchestra.contrib.saas.models import SaaS
 from orchestra.contrib.systemusers.models import WebappUsers, SystemUser
 from orchestra.contrib.websites.models import Website
+from orchestra.contrib.webapps.models import WebApp, WebAppOption
 from orchestra.utils.html import html_to_pdf
 
 from .auth import logout as auth_logout
 from .forms import (LoginForm, MailboxChangePasswordForm, MailboxCreateForm,
                     MailboxSearchForm, MailboxUpdateForm, MailForm,
                     RecordCreateForm, RecordUpdateForm, WebappUsersChangePasswordForm,
-                    SystemUsersChangePasswordForm)
+                    SystemUsersChangePasswordForm, WebappOptionCreateForm)
 from .mixins import (CustomContextMixin, ExtendedPaginationMixin,
                      UserTokenRequiredMixin)
 from .models import Address as AddressService
@@ -659,3 +660,48 @@ class WebsiteListView(ServiceListView):
         # Translators: This message appears on the page title
         'title': _('Websites'),
     }
+
+class WebappListView(ServiceListView):
+    model = WebApp
+    template_name = "musician/webapp_list.html"
+    extra_context = {
+        # Translators: This message appears on the page title
+        'title': _('Webapps'),
+    }
+
+
+class WebappDetailView(CustomContextMixin, UserTokenRequiredMixin, DetailView):
+    template_name = "musician/webapp_detail.html"
+    extra_context = {
+        # Translators: This message appears on the page title
+        'title': _('webapp details'),
+    }
+
+    def get_queryset(self):
+        return WebApp.objects.filter(account=self.request.user)
+    
+class WebappAddOptionView(CustomContextMixin, UserTokenRequiredMixin, CreateView):
+    model = WebAppOption
+    form_class = WebappOptionCreateForm
+    template_name = "musician/webapp_option_form.html"
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        webapp = get_object_or_404(WebApp, account=self.request.user, pk=self.kwargs["pk"])
+        kwargs['webapp'] = webapp
+        return kwargs
+
+    def get_success_url(self):
+        return reverse_lazy("musician:webapp-detail", kwargs={"pk": self.kwargs["pk"]})
+
+class WebappDeleteOptionView(CustomContextMixin, UserTokenRequiredMixin, DeleteView):
+    model = WebAppOption
+    template_name = "musician/webappoption_check_delete.html"
+    pk_url_kwarg = "option_pk"
+
+    def get_queryset(self):
+        qs = WebAppOption.objects.filter(webapp__account=self.request.user, webapp=self.kwargs["pk"])
+        return qs
+
+    def get_success_url(self):
+        return reverse_lazy("musician:webapp-detail", kwargs={"pk": self.kwargs["pk"]})

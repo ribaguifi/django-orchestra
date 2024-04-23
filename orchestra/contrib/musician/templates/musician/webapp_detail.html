@@ -1,0 +1,42 @@
+{% extends "musician/base.html" %}
+{% load i18n %}
+
+{% block content %}
+<a class="btn-arrow-left" href="{% url 'musician:webapp-list' %}">{% trans "Go back" %}</a>
+
+<h1 class="service-name">
+  {% trans "PHP settings for" %} <span class="font-weight-light">{{ object.name }}</span>
+</h1>
+
+
+<p class="service-description">{% trans "PHP settings page description." %}</p>
+
+<table class="table service-list">
+    <colgroup>
+      <col span="1" style="width: 12%;">
+      <col span="1" style="width: 10%;">
+      <col span="1" style="width: 78%;">
+  </colgroup>
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">{% trans "Type" %}</th>
+      <th scope="col">{% trans "Value" %}</th>
+      <th scope="col"></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for option in object.options.all %}
+    <tr>
+      <td>{{ option.name }}</td>
+      <td>{{ option.value }}</td>
+      <td class="text-right">
+        <a href="{% url 'musician:webapp-delete-option' object.pk option.pk %}">
+          <i class="ml-3 text-danger fas fa-trash"></i></a>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<a class="btn btn-primary mt-4 mb-4" href="{% url 'musician:webapp-add-option' object.pk %}">{% trans "Add new option" %}</a></td>
+
+{% endblock %}

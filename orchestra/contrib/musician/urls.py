@@ -45,4 +45,9 @@ urlpatterns = [
     path('systemusers/', views.SystemUserListView.as_view(), name='systemuser-list'),
     path('systemuser/<int:pk>/change-password/', views.SystemUserChangePasswordView.as_view(), name='systemuser-password'),
     path('websites/', views.WebsiteListView.as_view(), name='website-list'),
+
+    path('webapps/', views.WebappListView.as_view(), name='webapp-list'),
+    path('webapps/<int:pk>/', views.WebappDetailView.as_view(), name='webapp-detail'),
+    path('webapps/<int:pk>/add-option/', views.WebappAddOptionView.as_view(), name='webapp-add-option'),
+    path('webapps/<int:pk>/option/<int:option_pk>/delete/', views.WebappDeleteOptionView.as_view(), name='webapp-delete-option'),
 ]

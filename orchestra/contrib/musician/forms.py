@@ -9,6 +9,7 @@ from orchestra.contrib.domains.models import Domain, Record
 from orchestra.contrib.mailboxes.models import Address, Mailbox
 from orchestra.contrib.systemusers.models import WebappUsers, SystemUser
 from orchestra.contrib.musician.validators import ValidateZoneMixin
+from orchestra.contrib.webapps.models import WebApp, WebAppOption
 
 from . import api
 
@@ -201,3 +202,20 @@ class SystemUsersChangePasswordForm(ChangePasswordForm):
     class Meta:
         fields = ("password",)
         model = SystemUser
+
+class WebappOptionCreateForm(forms.ModelForm):
+
+    class Meta:
+        model = WebAppOption
+        fields = ("name", "value")
+
+    def __init__(self, *args, **kwargs):
+        self.webapp = kwargs.pop('webapp')
+        super().__init__(*args, **kwargs)
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        instance.webapp = self.webapp
+        if commit:
+            super().save(commit=True)
+        return instance

@@ -1,0 +1,57 @@
+{% extends "musician/base.html" %}
+{% load bootstrap4 i18n %}
+
+{% block content %}
+
+<p>
+  Una Webapp es el diectorio donde se almacena su web, 
+  mediante SFTP podras acceder a este directorio y subir/editar/eliminar los archivos
+</p>
+<p>
+  Cada Webapp tiene su propio usuario SFTP, este se creara automaticamente al crear la Webapp
+</p>
+
+<table class="table service-list">
+  <colgroup>
+    <col span="1" style="width: 19%;">
+    <col span="1" style="width: 19%;">
+    <col span="1" style="width: 19%;">
+    <col span="1" style="width: 19%;">
+    <col span="1" style="width: 19%;">
+    <col span="1" style="width: 5%;">
+  </colgroup>
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">{% trans "Name" %}</th>
+      <th scope="col">{% trans "Type" %}</th>
+      <th scope="col">{% trans "Version" %}</th>
+      <th scope="col">{% trans "SFTP User" %}</th>
+      <th scope="col">{% trans "Server" %}</th>
+      <th scope="col"></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for webapp in object_list %}
+    <tr>
+      <td>{{ webapp.name }}</td>
+      <td>{{ webapp.type }}</td>
+      <td>{{ webapp.type_instance.get_detail }}</td>
+      <td>
+        {% if webapp.sftpuser %}
+          <a href="{% url 'musician:webappuser-list'%}">{{ webapp.sftpuser }}</a>
+        {% else %}
+          <a href="{% url 'musician:systemuser-list'%}">{{ webapp.account.main_systemuser }}</a>
+        {% endif %}
+      </td>
+      <td>{{ webapp.target_server }}</td>
+      <td>
+        <a class="btn btn-outline-warning" href="{% url 'musician:webapp-detail' webapp.id %}">
+          <i class="fas fa-tools"></i></a>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+  {% include "musician/components/table_paginator.html" %}
+</table>
+
+{% endblock %}

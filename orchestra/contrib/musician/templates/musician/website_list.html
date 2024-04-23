@@ -1,0 +1,103 @@
+{% extends "musician/base.html" %}
+{% load bootstrap4 i18n %}
+
+{% block content %}
+
+<table class="table service-list table-hover">
+  <colgroup>
+    <col span="1" style="width: 15%;">
+    <col span="1" style="width: 25%;">
+    <col span="1" style="width: 40%;">
+    <col span="1" style="width: 10%;">
+    <col span="1" style="width: 10%;">
+  </colgroup>
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">{% trans "Name" %}</th>
+      <th scope="col">{% trans "Url" %}</th>
+      <th scope="col">{% trans "Server" %}</th>
+      <th scope="col">{% trans "Is active?" %}</th>
+      <th scope="col"></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for website in object_list %}
+    <tr class="fila-principal" data-toggle="collapse" data-target=".detalles{{ website.id }}">
+      <td>{{ website.name }}</td>
+      <td>
+        {% for domain in website.domains.all %}
+          <a href="{{ website.get_protocol }}://{{ domain }}">{{ website.get_protocol }}://{{ domain }}</a><br>
+        {% endfor %}
+      </td>
+      <td>{{ website.target_server }}</td>
+      <td class="text-{{website.is_active|yesno:'success,danger'}}">
+        <i class="fa fa-{{ website.is_active|yesno:'check,times' }}"></i>
+        <span class="sr-only">{{ website.is_active|yesno }}</span>
+      </td>
+      <td>
+        <a class="btn btn-outline-warning" href="#">
+          <i class="fas fa-tools"></i></a>
+      </td>
+    </tr>
+    <!-- Fila oculta de webapp -->
+    <tr class="collapse detalles{{ website.id }}">
+      <td colspan="12"class="p-5">
+          <table class="table">
+              <tbody>
+                {% for content in website.content_set.all %}
+                  <tr class="table-active">
+                    <td>Webapp Dir</td>
+                    <td>/home/{{ content.webapp.account }}/webapps/{{ content.webapp }}</td>
+                    <td class="text-right">
+                      <a class="btn btn-outline-secondary" href="#">
+                        <i class="fas fa-tools"></i></a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Url</td>
+                    {% if website.domains.first %}
+                      <td><a href="{{ website.get_protocol }}://{{ website.domains.first }}{{ content.path }}">
+                        {{ website.get_protocol }}://{{ website.domains.first }}{{ content.path }}</a>
+                    </td>
+                    {% else %}
+                      <td></td>
+                    {% endif %}
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>Type</td>
+                    {% if content.webapp.type == "php" %}
+                      <td>PHP {{ content.webapp.type_instance.get_detail }}</td>
+                    {% else %}
+                      <td>{{ content.webapp.type }}</td>
+                    {% endif %}
+                    <td></td>
+                  </tr>
+                  <tr>
+                    {% if content.webapp.sftpuser %}
+                      <td>SFTP user</td>
+                      <td>{{ content.webapp.sftpuser }}</td>
+                      <td  class="text-right">
+                        <a class="btn btn-outline-warning" href="{% url 'musician:webappuser-password' content.webapp.sftpuser.id %}">
+                          <i class="fas fa-key"></i> {% trans "Update password" %}</a>
+                      </td>
+                    {% else %}
+                      <td>FTP user</td>
+                      <td>{{ content.webapp.account.main_systemuser }}</td>
+                      <td  class="text-right">
+                        <a class="btn btn-outline-warning" href="{% url 'musician:systemuser-password' content.webapp.account.main_systemuser.id %}">
+                          <i class="fas fa-key"></i> {% trans "Update password" %}</a>
+                      </td>
+                    {% endif %}
+                  </tr>
+                {% endfor %}
+              </tbody>
+          </table>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+  {% include "musician/components/table_paginator.html" %}
+</table>
+
+{% endblock %}
