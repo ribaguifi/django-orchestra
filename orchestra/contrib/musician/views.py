@@ -33,6 +33,7 @@ from orchestra.contrib.mailboxes.models import Address, Mailbox
 from orchestra.contrib.resources.models import Resource, ResourceData
 from orchestra.contrib.saas.models import SaaS
 from orchestra.contrib.systemusers.models import WebappUsers, SystemUser
+from orchestra.contrib.websites.models import Website
 from orchestra.utils.html import html_to_pdf
 
 from .auth import logout as auth_logout
@@ -650,3 +651,11 @@ class SystemUserChangePasswordView(CustomContextMixin, UserTokenRequiredMixin, U
 
     def get_queryset(self):
         return self.model.objects.filter(account=self.request.user)
+
+class WebsiteListView(ServiceListView):
+    model = Website
+    template_name = "musician/website_list.html"
+    extra_context = {
+        # Translators: This message appears on the page title
+        'title': _('Websites'),
+    }
