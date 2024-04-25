@@ -30,10 +30,12 @@
       <td>{{ option.name }}</td>
       <td>{{ option.value }}</td>
       <td class="text-right">
+          <a href="{% url 'musician:webapp-update-option' object.pk option.pk %}">
+          <i class="ml-3 fas fa-edit"></i></a>
         <a href="{% url 'musician:webapp-delete-option' object.pk option.pk %}">
           <i class="ml-3 text-danger fas fa-trash"></i></a>
       </td>
-    </tr>
+    </tr>     
     {% endfor %}
   </tbody>
 </table>

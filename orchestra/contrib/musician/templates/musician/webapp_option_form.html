@@ -5,7 +5,7 @@
 <a class="btn-arrow-left" href="{% url 'musician:webapp-detail' view.kwargs.pk %}">{% trans "Go back" %}</a>
 
 <h1 class="service-name">
-  {% if form.instance.pk %}{% trans "Update record of" %}{% else %}{% trans "Add record to" %}{% endif %}
+  {% if form.instance.pk %}{% trans "Update Option of" %}{% else %}{% trans "Add Option to" %}{% endif %}
   <span class="font-weight-light">{{ form.webapp.name }}</span>
 </h1>
 

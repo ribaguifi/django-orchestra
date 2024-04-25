@@ -2,6 +2,8 @@ from django import forms
 from django.contrib.auth.forms import AuthenticationForm
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
+from django.utils.encoding import force_str
+from orchestra.forms.widgets import DynamicHelpTextSelect
 
 from django.contrib.auth.hashers import make_password
 
@@ -10,6 +12,8 @@ from orchestra.contrib.mailboxes.models import Address, Mailbox
 from orchestra.contrib.systemusers.models import WebappUsers, SystemUser
 from orchestra.contrib.musician.validators import ValidateZoneMixin
 from orchestra.contrib.webapps.models import WebApp, WebAppOption
+from orchestra.contrib.webapps.options import AppOption
+from orchestra.contrib.webapps.types import AppType
 
 from . import api
 
@@ -203,7 +207,12 @@ class SystemUsersChangePasswordForm(ChangePasswordForm):
         fields = ("password",)
         model = SystemUser
 
+
 class WebappOptionCreateForm(forms.ModelForm):
+
+    OPTIONS_HELP_TEXT = {
+        op.name: force_str(op.help_text) for op in AppOption.get_plugins()
+    }
 
     class Meta:
         model = WebAppOption
@@ -213,9 +222,33 @@ class WebappOptionCreateForm(forms.ModelForm):
         self.webapp = kwargs.pop('webapp')
         super().__init__(*args, **kwargs)
 
+        target = 'this.id.replace("name", "value")'
+        self.fields['name'].widget.attrs = DynamicHelpTextSelect(target, self.OPTIONS_HELP_TEXT).attrs
+        plugin = AppType.get(self.webapp.type)
+        self.fields['name'].widget.choices = plugin.get_group_options_choices()
+
     def save(self, commit=True):
         instance = super().save(commit=False)
         instance.webapp = self.webapp
         if commit:
             super().save(commit=True)
         return instance
+    
+class WebappOptionUpdateForm(forms.ModelForm):
+
+    OPTIONS_HELP_TEXT = {
+        op.name: force_str(op.help_text) for op in AppOption.get_plugins()
+    }
+
+    class Meta:
+        model = WebAppOption
+        fields = ("name", "value")
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.webapp = self.instance.webapp
+        target = 'this.id.replace("name", "value")'
+        self.fields['name'].widget.attrs = DynamicHelpTextSelect(target, self.OPTIONS_HELP_TEXT).attrs
+        plugin = AppType.get(self.webapp.type)
+        self.fields['name'].widget.choices = plugin.get_group_options_choices()
+

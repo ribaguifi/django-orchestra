@@ -41,7 +41,7 @@ from .auth import logout as auth_logout
 from .forms import (LoginForm, MailboxChangePasswordForm, MailboxCreateForm,
                     MailboxSearchForm, MailboxUpdateForm, MailForm,
                     RecordCreateForm, RecordUpdateForm, WebappUsersChangePasswordForm,
-                    SystemUsersChangePasswordForm, WebappOptionCreateForm)
+                    SystemUsersChangePasswordForm, WebappOptionCreateForm, WebappOptionUpdateForm)
 from .mixins import (CustomContextMixin, ExtendedPaginationMixin,
                      UserTokenRequiredMixin)
 from .models import Address as AddressService
@@ -705,3 +705,38 @@ class WebappDeleteOptionView(CustomContextMixin, UserTokenRequiredMixin, DeleteV
 
     def get_success_url(self):
         return reverse_lazy("musician:webapp-detail", kwargs={"pk": self.kwargs["pk"]})
+    
+
+class WebappUpdateOptionView(CustomContextMixin, UserTokenRequiredMixin, UpdateView):
+    model = WebAppOption
+    form_class = WebappOptionUpdateForm
+    template_name = "musician/webapp_option_form.html"
+    pk_url_kwarg = "option_pk"
+
+    def get_queryset(self):
+        qs = WebAppOption.objects.filter(webapp__account=self.request.user, webapp=self.kwargs["pk"])
+        return qs
+
+    def get_success_url(self):
+        return reverse_lazy("musician:webapp-detail", kwargs={"pk": self.kwargs["pk"]})
+    
+# from django.forms import inlineformset_factory
+# class WebappUpdateOptionView(CustomContextMixin, UserTokenRequiredMixin, UpdateView):
+#     model = WebApp
+#     template_name = "musician/webapp_option_form.html"
+#     fields = '__all__'
+
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         webapp = self.object  # Obtener el objeto de libro
+        
+#         # Crear el inline formset para los autores
+#         OptionFormSet = inlineformset_factory(WebApp, WebAppOption, fields=('name','value'), extra=1)
+        
+#         # Obtener el formset prellenado con los autores del libro
+#         formset = OptionFormSet(instance=webapp)
+        
+#         # Agregar el formset al contexto
+#         context['option_formset'] = formset
+        
+#         return context
