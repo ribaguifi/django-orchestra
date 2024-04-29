@@ -46,7 +46,11 @@
       {# <!-- services menu --> #}
       <ul id="sidebar-services" class="nav flex-column">
         {% for item in services_menu %}
-          <li class="nav-item">
+          {% if item.indent %}
+            <li class="nav-item ml-3">
+          {% else %}
+            <li class="nav-item">
+          {% endif %}
             <a class="nav-link text-light active" href="{% url item.pattern_name %}">
               <i class="fas fa-{{ item.icon }}"></i>
               {{ item.title }}
