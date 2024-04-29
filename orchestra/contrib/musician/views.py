@@ -49,7 +49,7 @@ from .models import Bill as BillService
 from .models import DatabaseService
 from .models import Mailbox as MailboxService
 from .models import MailinglistService, SaasService
-from .settings import ALLOWED_RESOURCES
+from .settings import ALLOWED_RESOURCES, MUSICIAN_EDIT_ENABLE_PHP_OPTIONS
 from .utils import get_bootstraped_percent
 
 logger = logging.getLogger(__name__)
@@ -680,6 +680,13 @@ class WebappDetailView(CustomContextMixin, UserTokenRequiredMixin, DetailView):
     def get_queryset(self):
         return WebApp.objects.filter(account=self.request.user)
     
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({
+            'edit_allowed_PHP_options': MUSICIAN_EDIT_ENABLE_PHP_OPTIONS
+        })
+        return context
+    
 class WebappAddOptionView(CustomContextMixin, UserTokenRequiredMixin, CreateView):
     model = WebAppOption
     form_class = WebappOptionCreateForm
@@ -719,24 +726,3 @@ class WebappUpdateOptionView(CustomContextMixin, UserTokenRequiredMixin, UpdateV
 
     def get_success_url(self):
         return reverse_lazy("musician:webapp-detail", kwargs={"pk": self.kwargs["pk"]})
-    
-# from django.forms import inlineformset_factory
-# class WebappUpdateOptionView(CustomContextMixin, UserTokenRequiredMixin, UpdateView):
-#     model = WebApp
-#     template_name = "musician/webapp_option_form.html"
-#     fields = '__all__'
-
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         webapp = self.object  # Obtener el objeto de libro
-        
-#         # Crear el inline formset para los autores
-#         OptionFormSet = inlineformset_factory(WebApp, WebAppOption, fields=('name','value'), extra=1)
-        
-#         # Obtener el formset prellenado con los autores del libro
-#         formset = OptionFormSet(instance=webapp)
-        
-#         # Agregar el formset al contexto
-#         context['option_formset'] = formset
-        
-#         return context

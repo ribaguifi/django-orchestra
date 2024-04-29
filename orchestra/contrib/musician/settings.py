@@ -1,3 +1,4 @@
+from orchestra.contrib.settings import Setting
 from collections import defaultdict
 from django.conf import settings
 
@@ -46,3 +47,14 @@ URL_SAAS_GITLAB = getsetting("URL_SAAS_GITLAB")
 URL_SAAS_OWNCLOUD = getsetting("URL_SAAS_OWNCLOUD")
 
 URL_SAAS_WORDPRESS = getsetting("URL_SAAS_WORDPRESS")
+
+
+MUSICIAN_EDIT_ENABLE_PHP_OPTIONS = Setting('MUSICIAN_EDIT_ENABLE_PHP_OPTIONS', (
+    'public-root',
+    'timeout',
+    'max_input_time',
+    'max_input_vars',
+    'memory_limit',
+    'post_max_size',
+    'upload_max_filesize',
+))

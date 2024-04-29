@@ -77,12 +77,13 @@ class PublicRoot(AppOption):
     
     def validate(self):
         super().validate()
-        base_path = self.instance.webapp.get_base_path()
-        path = os.path.join(base_path, self.instance.value)
-        if not os.path.abspath(path).startswith(base_path):
-            raise ValidationError(
-                _("Public root path '%s' outside of webapp base path '%s'") % (path, base_path)
-            )
+        if self.instance.webapp_id is not None:
+            base_path = self.instance.webapp.get_base_path()
+            path = os.path.join(base_path, self.instance.value)
+            if not os.path.abspath(path).startswith(base_path):
+                raise ValidationError(
+                    _("Public root path '%s' outside of webapp base path '%s'") % (path, base_path)
+                )
 
 
 class Timeout(AppOption):

@@ -50,6 +50,7 @@
       <div class="col-md-8">
         {% with domain.websites.0 as website %}
         {% with website.contents.0 as content %}
+        <a href="#domain-detail" class="btn btn-primary">{% trans "View DNS records" %}</a>
         <button type="button" class="btn text-secondary" data-toggle="modal" data-target="#configDetailsModal"
           data-domain="{{ domain.name }}" data-website="{{ website|yesno:'true,false' }}" data-webapp-type="{{ content.webapp.type }}" data-root-path="{{ content.path }}"
           data-url="{% url 'musician:domain-detail' domain.id %}">
