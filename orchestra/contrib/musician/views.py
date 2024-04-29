@@ -653,7 +653,7 @@ class SystemUserChangePasswordView(CustomContextMixin, UserTokenRequiredMixin, U
     def get_queryset(self):
         return self.model.objects.filter(account=self.request.user)
 
-class WebsiteListView(ServiceListView):
+class WebsiteListView(CustomContextMixin, UserTokenRequiredMixin, ListView):
     model = Website
     template_name = "musician/website_list.html"
     extra_context = {
@@ -661,13 +661,34 @@ class WebsiteListView(ServiceListView):
         'title': _('Websites'),
     }
 
-class WebappListView(ServiceListView):
+    def get_queryset(self):
+        return self.model.objects.filter(account=self.request.user)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({
+            'description': _("A website is the place where a domain is associated with the directory where the web files are located. (WebApp)"),
+        })
+        return context
+
+class WebappListView(CustomContextMixin, UserTokenRequiredMixin, ListView):
     model = WebApp
     template_name = "musician/webapp_list.html"
     extra_context = {
         # Translators: This message appears on the page title
         'title': _('Webapps'),
     }
+
+    def get_queryset(self):
+        return self.model.objects.filter(account=self.request.user)
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({
+            'description': _("A web app is the directory where your website is stored. Through SFTP, you can access this directory and upload/edit/delete files."),
+            'description2': _("Each Webapp has its own SFTP user, which is created automatically when the Webapp is created.")
+        })
+        return context
 
 
 class WebappDetailView(CustomContextMixin, UserTokenRequiredMixin, DetailView):

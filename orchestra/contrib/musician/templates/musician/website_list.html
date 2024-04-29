@@ -2,6 +2,9 @@
 {% load bootstrap4 i18n %}
 
 {% block content %}
+<p>
+  {{ description }}
+</p>
 
 <table class="table service-list table-hover">
   <colgroup>
@@ -100,7 +103,6 @@
     </tr>
     {% endfor %}
   </tbody>
-  {% include "musician/components/table_paginator.html" %}
 </table>
 
 

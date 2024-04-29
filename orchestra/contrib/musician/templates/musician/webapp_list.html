@@ -4,11 +4,10 @@
 {% block content %}
 
 <p>
-  Una Webapp es el diectorio donde se almacena su web, 
-  mediante SFTP podras acceder a este directorio y subir/editar/eliminar los archivos
+  {{ description }}
 </p>
 <p>
-  Cada Webapp tiene su propio usuario SFTP, este se creara automaticamente al crear la Webapp
+  {{ description2 }}
 </p>
 
 <table class="table service-list">
@@ -51,7 +50,6 @@
     </tr>
     {% endfor %}
   </tbody>
-  {% include "musician/components/table_paginator.html" %}
 </table>
 
 {% endblock %}
