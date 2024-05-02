@@ -231,6 +231,11 @@ class WebappOptionForm(forms.ModelForm):
         target = 'this.id.replace("name", "value")'
         self.fields['name'].widget.attrs = DynamicHelpTextSelect(target, self.OPTIONS_HELP_TEXT).attrs
 
+
+class WebappOptionCreateForm(WebappOptionForm):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         plugin = AppType.get(self.webapp.type)
         choices = list(plugin.get_group_options_choices())
         for grupo, opciones in enumerate(choices):
@@ -239,17 +244,27 @@ class WebappOptionForm(forms.ModelForm):
                 choices[grupo] = (opciones[0], nueva_lista)
         self.fields['name'].widget.choices = choices
 
-
-class WebappOptionCreateForm(WebappOptionForm):
-
     def save(self, commit=True):
         instance = super().save(commit=False)
         instance.webapp = self.webapp
         if commit:
             super().save(commit=True)
         return instance
-    
+
+    def clean(self):
+        cleaned_data = super().clean()
+        name = self.cleaned_data.get("name")
+        if WebAppOption.objects.filter(webapp=self.webapp, name=name).exists():
+            raise ValidationError(_("This option already exist."))
+        return cleaned_data   
 
 class WebappOptionUpdateForm(WebappOptionForm):
-    pass
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['name'].widget.choices = [(self.initial['name'], self.initial['name'])]
+
+        
+
+    
 
