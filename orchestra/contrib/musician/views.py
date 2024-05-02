@@ -734,6 +734,12 @@ class WebappDeleteOptionView(CustomContextMixin, UserTokenRequiredMixin, DeleteV
     def get_success_url(self):
         return reverse_lazy("musician:webapp-detail", kwargs={"pk": self.kwargs["pk"]})
     
+    def delete(self, request, *args, **kwargs):
+        object = self.get_object()
+        response = super().delete(request, *args, **kwargs)
+        object.webapp.save()
+        return response
+
 
 class WebappUpdateOptionView(CustomContextMixin, UserTokenRequiredMixin, UpdateView):
     model = WebAppOption

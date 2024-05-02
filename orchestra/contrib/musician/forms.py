@@ -227,10 +227,17 @@ class WebappOptionForm(forms.ModelForm):
             super().__init__(*args, **kwargs)
             self.webapp = self.instance.webapp
     
-
         target = 'this.id.replace("name", "value")'
         self.fields['name'].widget.attrs = DynamicHelpTextSelect(target, self.OPTIONS_HELP_TEXT).attrs
-
+    
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        instance.webapp = self.webapp
+        if commit:
+            super().save(commit=True)
+            self.webapp.save()
+        return instance
+        
 
 class WebappOptionCreateForm(WebappOptionForm):
 
@@ -243,13 +250,6 @@ class WebappOptionCreateForm(WebappOptionForm):
                 nueva_lista = [opc for opc in opciones[1] if opc[0] in MUSICIAN_EDIT_ENABLE_PHP_OPTIONS]
                 choices[grupo] = (opciones[0], nueva_lista)
         self.fields['name'].widget.choices = choices
-
-    def save(self, commit=True):
-        instance = super().save(commit=False)
-        instance.webapp = self.webapp
-        if commit:
-            super().save(commit=True)
-        return instance
 
     def clean(self):
         cleaned_data = super().clean()

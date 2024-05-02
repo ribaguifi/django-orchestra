@@ -42,8 +42,8 @@ class WebAppServiceMixin(object):
             # cambios de permisos en servidores nuevos
             perms = Template(textwrap.dedent("""\
             {% if sftpuser %}
-                        chown -R {{ sftpuser }}:{{ sftpuser }} {{ app_path }}/* {% else %}
-                        chown -R {{ user }}:{{ group }} {{ app_path }}/*
+                        chown -R {{ sftpuser }}:{{ sftpuser }} {{ app_path }} {% else %}
+                        chown -R {{ user }}:{{ group }} {{ app_path }}
             {% endif %}
             """
             ))
