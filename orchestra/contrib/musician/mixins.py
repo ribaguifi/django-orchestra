@@ -21,6 +21,7 @@ class CustomContextMixin(ContextMixin):
             {'icon': 'fire', 'pattern_name': 'musician:saas-list', 'title': _('SaaS')},
             {'icon': 'globe', 'pattern_name': 'musician:website-list', 'title': _('Websites')},
             {'icon': 'folder', 'pattern_name': 'musician:webapp-list', 'title': _('Webapps'), 'indent': True},
+            {'icon': 'user', 'pattern_name': 'musician:systemuser-list', 'title': _('Users'), 'indent': True},
         ]
         context.update({
             'services_menu': services_menu,
