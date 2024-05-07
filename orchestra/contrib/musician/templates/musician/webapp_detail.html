@@ -4,43 +4,118 @@
 {% block content %}
 <a class="btn-arrow-left" href="{% url 'musician:webapp-list' %}">{% trans "Go back" %}</a>
 
-<h1 class="service-name">
-  {% trans "PHP settings for" %} <span class="font-weight-light">{{ object.name }}</span>
-</h1>
-
-
-<p class="service-description">{% trans "PHP settings page description." %}</p>
+<h1 class="service-name">{% trans "WebApp Options for" %} {{ object.name }}</h1>
+<hr>
 
 <table class="table service-list">
-    <colgroup>
-      <col span="1" style="width: 12%;">
-      <col span="1" style="width: 10%;">
-      <col span="1" style="width: 78%;">
-  </colgroup>
-  <thead class="thead-dark">
-    <tr>
-      <th scope="col">{% trans "Type" %}</th>
-      <th scope="col">{% trans "Value" %}</th>
-      <th scope="col"></th>
-    </tr>
-  </thead>
   <tbody>
-    {% for option in object.options.all %}
     <tr>
-      <td>{{ option.name }}</td>
-      <td>{{ option.value }}</td>
-      <td class="text-right">
-        {% if option.name in edit_allowed_PHP_options %}
-          <a href="{% url 'musician:webapp-update-option' object.pk option.pk %}">
-          <i class="ml-3 fas fa-edit"></i></a>
+      <th scope="row">Server:</th>
+      <td colspan="2">{{ object.target_server }}</td>
+    </tr>
+    <tr>
+      <th scope="row">Type:</th>
+      <td colspan="2">{{ object.type }}</td>
+    </tr>
+    {% if object.data.php_version %}
+      <tr>
+        <th scope="row">PHP:</th>
+        <td colspan="2">{{ object.data.php_version }}</td>
+      </tr>
+    {% endif %}
+      <tr>
+        <th scope="row">SFTP user:</th>
+        {% if object.sftpuser %}
+          <td>{{ object.sftpuser }}</td>
+          <td>
+            <div class="d-flex justify-content-end">
+              <a class="btn btn-outline-warning" href="{% url 'musician:webappuser-password' object.sftpuser.id %}">
+                <i class="fas fa-key"></i> {% trans "Update password" %}</a>
+              </div>
+          </td>
+        {% else %}
+          <td>{{ object.account.main_systemuser }}</td>
+          <td>
+            <div class="d-flex justify-content-end">
+              <a class="btn btn-outline-warning" href="{% url 'musician:systemuser-password' object.account.main_systemuser.id %}">
+                <i class="fas fa-key"></i> {% trans "Update password" %}</a>
+            </div>
+          </td>
         {% endif %}
-        <a href="{% url 'musician:webapp-delete-option' object.pk option.pk %}">
-          <i class="ml-3 text-danger fas fa-trash"></i></a>
-      </td>
-    </tr>     
-    {% endfor %}
+      </tr>
+    <tr>
+      <th scope="row">Path:</th>
+      <td colspan="2">{{ object.get_base_path }}</td>
+    </tr>
   </tbody>
 </table>
+
+<!-- Si es una aplicacion con bbdd tipo WP/moodle/lime mostrar bbdd -->
+{% if object.data.db_name %}
+  <table class="table service-list">
+    <tbody>
+      <tr>
+        <th scope="row">{% trans "Database:" %} </th>
+        <td>{{ object.data.db_name }}</td>
+      </tr>
+      <tr>
+        <th scope="row">{% trans "User Database:" %}</th>
+        <td> {{ object.data.db_user }}</td>
+      </tr>
+      <tr>
+        <th scope="row">{% trans "Password:" %} </th>
+        <td>{{ object.data.password }}</td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="alert alert-warning" role="alert">
+    Initial database and App admin password. <br>
+    Subsequent changes to the admin password will not be reflected.
+  </div>
+{% endif %}
+
+
+<!-- Opciones PHP -->
+
+<h3 class="service-name">{% trans "PHP settings" %}</h3>
+<hr>
+
+
+{% if object.options.all|length != 0 %}
+  <p class="service-description">{% trans "PHP settings page description." %}</p>
+  <table class="table service-list">
+      <colgroup>
+        <col span="1" style="width: 12%;">
+        <col span="1" style="width: 10%;">
+        <col span="1" style="width: 78%;">
+    </colgroup>
+    <thead class="thead-dark">
+      <tr>
+        <th scope="col">{% trans "Type" %}</th>
+        <th scope="col">{% trans "Value" %}</th>
+        <th scope="col"></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for option in object.options.all %}
+      <tr>
+        <td>{{ option.name }}</td>
+        <td>{{ option.value }}</td>
+        <td class="text-right">
+          {% if option.name in edit_allowed_PHP_options %}
+            <a href="{% url 'musician:webapp-update-option' object.pk option.pk %}">
+            <i class="ml-3 fas fa-edit"></i></a>
+          {% endif %}
+          <a href="{% url 'musician:webapp-delete-option' object.pk option.pk %}">
+            <i class="ml-3 text-danger fas fa-trash"></i></a>
+        </td>
+      </tr>     
+      {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <p>{% trans "This WebApp has PHP options by default, create one if you need it." %}</p>
+{% endif %}
 <a class="btn btn-primary mt-4 mb-4" href="{% url 'musician:webapp-add-option' object.pk %}">{% trans "Add new option" %}</a></td>
 
 {% endblock %}
