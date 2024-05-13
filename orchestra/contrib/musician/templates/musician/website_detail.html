@@ -1,0 +1,97 @@
+{% extends "musician/base.html" %}
+{% load i18n %}
+
+{% block content %}
+<a class="btn-arrow-left" href="{% url 'musician:website-list' %}">{% trans "Go back" %}</a>
+
+<h1 class="service-name">{% trans "WebSite Options for" %} {{ object.name }}</h1>
+<hr>
+
+<table class="table service-list">
+  <tbody>
+    <tr>
+      <th scope="row">Server:</th>
+      <td>{{ object.target_server }}</td>
+    </tr>
+    <tr>
+      <th scope="row">Domains:</th>
+      <td>
+        {% for domain in object.domains.all %}
+          {{ domain }} <br>
+        {% endfor %}
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">active:</th>
+      <td class="text-{{website.is_active|yesno:'success,danger'}}">
+        <i class="fa fa-{{ website.is_active|yesno:'check,times' }}"></i>
+        <span class="sr-only">{{ website.is_active|yesno }}</span>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Protocol:</th>
+      <td>{{ object.protocol }}</td>
+    </tr>
+  </tbody>
+</table>
+
+
+<!-- Contents -->
+<h3 class="service-name">{% trans "Contents" %}</h3>
+<hr>
+
+<p>{% trans "Webapps assigned to this website" %}</p>
+<table class="table service-list">
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">{% trans "Webapp" %}</th>
+      <th scope="col">{% trans "Type " %}</th>
+      <th scope="col">{% trans "Path" %}</th>
+      <th scope="col"></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for option in content %}
+    <tr>
+      <td>{{ option.webapp }}</td>
+      <td>{{ option.webapp.get_type_display }}</td>
+      <td>{{ option.path }}</td>
+      <td class="text-right">
+        <a href="{% url 'musician:website-delete-content' object.pk option.pk %}">
+          <i class="ml-3 text-danger fas fa-trash"></i></a>
+      </td>
+    </tr>     
+    {% endfor %}
+  </tbody>
+</table>
+<!-- <a class="btn btn-primary mt-4 mb-4" href="{% url 'musician:webapp-add-option' object.pk %}">{% trans "Add new option" %}</a></td> -->
+
+<!-- Directives -->
+<h3 class="service-name">{% trans "Directives" %}</h3>
+<hr>
+
+<p>{% trans "Options assigned to this Website" %} </p>
+<table class="table service-list">
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">{% trans "Name" %}</th>
+      <th scope="col">{% trans "Value" %}</th>
+      <th scope="col"></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for option in directives %}
+    <tr>
+      <td>{{ option.name }}</td>
+      <td>{{ option.value }}</td>
+      <td class="text-right">
+        <a href="{% url 'musician:website-delete-directive' object.pk option.pk %}">
+          <i class="ml-3 text-danger fas fa-trash"></i></a>
+      </td>
+    </tr>     
+    {% endfor %}
+  </tbody>
+</table>
+<!-- <a class="btn btn-primary mt-4 mb-4" href="{% url 'musician:webapp-add-option' object.pk %}">{% trans "Add new option" %}</a></td> -->
+
+{% endblock %}
