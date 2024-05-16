@@ -14,6 +14,7 @@ from orchestra.contrib.musician.validators import ValidateZoneMixin
 from orchestra.contrib.webapps.models import WebApp, WebAppOption
 from orchestra.contrib.webapps.options import AppOption
 from orchestra.contrib.webapps.types import AppType
+from orchestra.contrib.websites.models import Website
 
 from . import api
 from .settings import MUSICIAN_EDIT_ENABLE_PHP_OPTIONS
@@ -265,6 +266,25 @@ class WebappOptionUpdateForm(WebappOptionForm):
         self.fields['name'].widget.choices = [(self.initial['name'], self.initial['name'])]
 
         
+class WebsiteUpdateForm(forms.ModelForm):
+    class Meta:
+        model = Website
+        fields = ("is_active", "protocol", "domains")
+        help_texts = {
+            'domains': _('Hold down "Control", or "Command" on a Mac, to select more than one.')
+        }
 
-    
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user')
+        super().__init__(*args, **kwargs)
+        # Excluir dominios de otros websites
+        qs = Website.objects.filter(account=self.user).exclude(id=self.instance.id)
+        used_domains = []
+        for website in qs:
+            dominios = website.domains.all()
+            for dominio in dominios:
+                used_domains.append(dominio)
+        self.fields['domains'].queryset = Domain.objects.filter(account=self.user).exclude(name__in=used_domains)
+
+
 

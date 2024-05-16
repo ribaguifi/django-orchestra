@@ -41,7 +41,8 @@ from .auth import logout as auth_logout
 from .forms import (LoginForm, MailboxChangePasswordForm, MailboxCreateForm,
                     MailboxSearchForm, MailboxUpdateForm, MailForm,
                     RecordCreateForm, RecordUpdateForm, WebappUsersChangePasswordForm,
-                    SystemUsersChangePasswordForm, WebappOptionCreateForm, WebappOptionUpdateForm)
+                    SystemUsersChangePasswordForm, WebappOptionCreateForm, WebappOptionUpdateForm,
+                    WebsiteUpdateForm)
 from .mixins import (CustomContextMixin, ExtendedPaginationMixin,
                      UserTokenRequiredMixin)
 from .models import Address as AddressService
@@ -688,7 +689,25 @@ class WebsiteDetailView(CustomContextMixin, UserTokenRequiredMixin, DetailView):
         context['directives'] = WebsiteDirective.objects.filter(website=self.object)
         return context
     
+
+class WebsiteUpdateView(CustomContextMixin, UserTokenRequiredMixin, UpdateView):
+    model = Website
+    form_class = WebsiteUpdateForm
+    template_name = "musician/website_form.html"
+
+    def get_queryset(self):
+        qs = Website.objects.filter(account=self.request.user)
+        return qs
+
+    def get_success_url(self):
+        return reverse_lazy("musician:website-detail", kwargs={"pk": self.kwargs["pk"]})
     
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
+
+
 class WebsiteDeleteContentView(CustomContextMixin, UserTokenRequiredMixin, DeleteView):
     model = Content
     template_name = "musician/websiteoption_check_delete.html"
@@ -763,7 +782,8 @@ class WebappDetailView(CustomContextMixin, UserTokenRequiredMixin, DetailView):
             'edit_allowed_PHP_options': MUSICIAN_EDIT_ENABLE_PHP_OPTIONS
         })
         return context
-    
+
+
 class WebappAddOptionView(CustomContextMixin, UserTokenRequiredMixin, CreateView):
     model = WebAppOption
     form_class = WebappOptionCreateForm
