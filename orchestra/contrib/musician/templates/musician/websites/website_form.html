@@ -4,11 +4,19 @@
 
 {% block content %}
 
+<style>
+.form-check{
+  background-color: #fff;
+  padding: .375rem 2.0rem;
+  border: 1px solid #ced4da;
+  border-radius: 5px;
+}
+</style>
+
 <a class="btn-arrow-left" href="{% url 'musician:website-detail' view.kwargs.pk %}">{% trans "Go back" %}</a>
 
 <h1 class="service-name">
-  {% if form.instance.pk %}{% trans "Update Option of Website" %}{% else %}{% trans "Add Option to" %}{% endif %}
-  <span class="font-weight-light">{{ website.name }}</span>
+  {% trans "Update Option of Website" %} <span class="font-weight-light">{{ website.name }}</span>
 </h1>
 
 <form method="post">
