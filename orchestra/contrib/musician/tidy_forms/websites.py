@@ -3,11 +3,14 @@ from orchestra.forms.widgets import DynamicHelpTextSelect
 
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
+from django.utils.encoding import force_str
 
+from orchestra.contrib.websites.directives import SiteDirective
 from orchestra.contrib.websites.models import Website, Content, WebsiteDirective
 from orchestra.contrib.webapps.models import WebApp
 from orchestra.contrib.domains.models import Domain
 
+from orchestra.contrib.musician.settings import MUSICIAN_WEBSITES_ENABLE_GROUP_DIRECTIVE
 
         
 class WebsiteUpdateForm(forms.ModelForm):
@@ -47,10 +50,69 @@ class WesiteContentCreateForm(forms.ModelForm):
         cleaned_data = super().clean()
         path = self.cleaned_data.get("path")
         path = "/" if path == "" else path
-        print(f"mypath: {path}")
         if Content.objects.filter(website=self.website, path=path).exists():
             self.add_error('path',_("This Path already exists on this Website."))
         return cleaned_data   
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        instance.website = self.website
+        if commit:
+            super().save(commit=True)
+            self.website.save()
+        return instance
+
+from collections import defaultdict
+from orchestra.contrib.websites.utils import normurlpath
+
+class WesiteDirectiveCreateForm(forms.ModelForm):
+
+    DIRECTIVES_HELP_TEXT = {
+        op.name: force_str(op.help_text) for op in SiteDirective.get_plugins()
+    }
+
+    class Meta:
+        model = WebsiteDirective
+        fields = ("name", "value")
+
+    def __init__(self, *args, **kwargs):
+        self.website = kwargs.pop('website')
+        # self.user = kwargs.pop('user')
+        super().__init__(*args, **kwargs)
+        target = 'this.id.replace("name", "value")'
+        self.fields['name'].widget.attrs = DynamicHelpTextSelect(target, self.DIRECTIVES_HELP_TEXT).attrs
+        self.fields['name'].choices = self.get_allow_choices()
+
+    def get_allow_choices(self):
+        groups = MUSICIAN_WEBSITES_ENABLE_GROUP_DIRECTIVE
+        yield (None, '-------')
+        options = SiteDirective.get_option_groups()
+        for grp in groups:
+            if grp in options.keys():
+                yield (grp, [(op.name, op.verbose_name) for op in options[grp]])
+
+
+
+    # def clean(self):
+    # TODO: comprovar que la ruta no exista
+    #     locations = set()
+    #     for form in self.content_formset.forms:
+    #         location = form.cleaned_data.get('path')
+    #         delete = form.cleaned_data.get('DELETE')
+    #         if not delete and location is not None:
+    #             locations.add(normurlpath(location))
+        
+    #     values = defaultdict(list)
+    #     for form in self.forms:
+    #         wdirective = form.instance
+    #         directive = form.cleaned_data
+    #         if directive.get('name') is not None:
+    #             try:
+    #                 wdirective.directive_instance.validate_uniqueness(directive, values, locations)
+    #             except ValidationError as err:
+    #                 for k,v in err.error_dict.items():
+    #                     form.add_error(k, v)
+
 
     def save(self, commit=True):
         instance = super().save(commit=False)

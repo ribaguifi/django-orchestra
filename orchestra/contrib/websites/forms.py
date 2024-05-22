@@ -67,7 +67,7 @@ class WebsiteDirectiveInlineFormSet(forms.models.BaseInlineFormSet):
             delete = form.cleaned_data.get('DELETE')
             if not delete and location is not None:
                 locations.add(normurlpath(location))
-        
+
         values = defaultdict(list)
         for form in self.forms:
             wdirective = form.instance

@@ -58,3 +58,9 @@ MUSICIAN_EDIT_ENABLE_PHP_OPTIONS = Setting('MUSICIAN_EDIT_ENABLE_PHP_OPTIONS', (
     'post_max_size',
     'upload_max_filesize',
 ))
+
+MUSICIAN_WEBSITES_ENABLE_GROUP_DIRECTIVE = Setting('MUSICIAN_WEBSITES_ENABLE_GROUP_DIRECTIVE', (
+    'HTTPD',
+    ),
+    help_text="Valid groups: HTTPD, ModSecurity, SSL, SaaS"
+)

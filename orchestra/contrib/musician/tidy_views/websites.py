@@ -12,7 +12,8 @@ from orchestra.contrib.musician.mixins import (CustomContextMixin, ExtendedPagin
                      UserTokenRequiredMixin)
 
 from orchestra.contrib.websites.models import Website, Content, WebsiteDirective
-from orchestra.contrib.musician.tidy_forms.websites import WebsiteUpdateForm, WesiteContentCreateForm
+from orchestra.contrib.musician.tidy_forms.websites import ( WebsiteUpdateForm, WesiteContentCreateForm,
+                                                            WesiteDirectiveCreateForm)
 
 
 class WebsiteListView(CustomContextMixin, UserTokenRequiredMixin, ListView):
@@ -117,6 +118,22 @@ class WebsiteAddContentView(CustomContextMixin, UserTokenRequiredMixin, CreateVi
         website = get_object_or_404(Website, account=self.request.user, pk=self.kwargs["pk"])
         kwargs['website'] = website
         kwargs["user"] = self.request.user
+        return kwargs
+
+    def get_success_url(self):
+        return reverse_lazy("musician:website-detail", kwargs={"pk": self.kwargs["pk"]})
+
+
+class WebsiteAddDirectiveView(CustomContextMixin, UserTokenRequiredMixin, CreateView):
+    model = WebsiteDirective
+    form_class = WesiteDirectiveCreateForm
+    template_name = "musician/websites/website_create_option_form.html"
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        website = get_object_or_404(Website, account=self.request.user, pk=self.kwargs["pk"])
+        kwargs['website'] = website
+        # kwargs["user"] = self.request.user
         return kwargs
 
     def get_success_url(self):

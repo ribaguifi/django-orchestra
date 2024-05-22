@@ -55,7 +55,7 @@ class SiteDirective(plugins.Plugin, metaclass=plugins.PluginMount):
             yield (option.name, option.verbose_name)
         for group, options in options.items():
             yield (group, [(op.name, op.verbose_name) for op in options])
-    
+
     def validate_uniqueness(self, directive, values, locations):
         """ Validates uniqueness location, name and value """
         errors = defaultdict(list)

@@ -49,6 +49,7 @@ urlpatterns = [
     path('websites/<int:pk>/', views.WebsiteDetailView.as_view(), name='website-detail'),
     path('websites/<int:pk>/edit/', views.WebsiteUpdateView.as_view(), name='website-update'),
     path('websites/<int:pk>/add-content/', views.WebsiteAddContentView.as_view(), name='website-add-content'),
+    path('websites/<int:pk>/add-directive/', views.WebsiteAddDirectiveView.as_view(), name='website-add-directive'),
     path('websites/<int:pk>/content/<int:content_pk>/delete/', views.WebsiteDeleteContentView.as_view(), name='website-delete-content'),
     path('websites/<int:pk>/directive/<int:directive_pk>/delete/', views.WebsiteDeleteDirectiveView.as_view(), name='website-delete-directive'),
 
