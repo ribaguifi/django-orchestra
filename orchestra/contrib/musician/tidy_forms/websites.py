@@ -93,26 +93,24 @@ class WesiteDirectiveCreateForm(forms.ModelForm):
 
 
 
-    # def clean(self):
-    # TODO: comprovar que la ruta no exista
-    #     locations = set()
-    #     for form in self.content_formset.forms:
-    #         location = form.cleaned_data.get('path')
-    #         delete = form.cleaned_data.get('DELETE')
-    #         if not delete and location is not None:
-    #             locations.add(normurlpath(location))
-        
-    #     values = defaultdict(list)
-    #     for form in self.forms:
-    #         wdirective = form.instance
-    #         directive = form.cleaned_data
-    #         if directive.get('name') is not None:
-    #             try:
-    #                 wdirective.directive_instance.validate_uniqueness(directive, values, locations)
-    #             except ValidationError as err:
-    #                 for k,v in err.error_dict.items():
-    #                     form.add_error(k, v)
-
+    def clean(self):
+        # Recoge todos los paths de directive y contents
+        locations = set()
+        for content in Content.objects.filter(website=self.website):
+            location = content.path
+            if location is not None:
+                locations.add(location)
+        for directive_obj in WebsiteDirective.objects.filter(website=self.website):
+            location = directive_obj.value
+            if location is not None:
+                locations.add(normurlpath(location.split()[0]))
+        # Comprueva que no se repitan
+        directive = self.cleaned_data
+        value = normurlpath(directive.get('value'))
+        if value:
+            value = value.split()[0]
+        if value in locations:
+            self.add_error('value', f"Location '{value}' already in use by other content/directive.")
 
     def save(self, commit=True):
         instance = super().save(commit=False)

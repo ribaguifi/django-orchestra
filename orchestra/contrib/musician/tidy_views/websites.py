@@ -133,7 +133,6 @@ class WebsiteAddDirectiveView(CustomContextMixin, UserTokenRequiredMixin, Create
         kwargs = super().get_form_kwargs()
         website = get_object_or_404(Website, account=self.request.user, pk=self.kwargs["pk"])
         kwargs['website'] = website
-        # kwargs["user"] = self.request.user
         return kwargs
 
     def get_success_url(self):
