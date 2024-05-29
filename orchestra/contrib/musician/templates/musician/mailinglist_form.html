@@ -1,0 +1,31 @@
+{% extends "musician/base.html" %}
+{% load bootstrap4 i18n %}
+
+
+{% block content %}
+
+<style>
+.form-check{
+  background-color: #fff;
+  padding: .375rem 2.0rem;
+  border: 1px solid #ced4da;
+  border-radius: 5px;
+}
+</style>
+
+<a class="btn-arrow-left" href="{% url 'musician:mailing-lists' %}">{% trans "Go back" %}</a>
+
+<h1 class="service-name">
+  {% trans "Update Option of list" %} <span class="font-weight-light">{{ list.name }}</span>
+</h1>
+
+<form method="post">
+  {% csrf_token %}
+  {% bootstrap_form form %}
+  {% buttons %}
+  <a class="btn btn-light mr-2" href="{% url 'musician:mailing-lists' %}">{% trans "Cancel" %}</a>
+  <button type="submit" class="btn btn-secondary">{% trans "Save" %}</button>
+  {% endbuttons %}
+</form>
+{% endblock %}
+

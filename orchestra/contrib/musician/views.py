@@ -52,6 +52,7 @@ from .utils import get_bootstraped_percent
 
 from .webapps.views import *
 from .websites.views import *
+from .lists.views import *
 
 logger = logging.getLogger(__name__)
 
@@ -313,37 +314,6 @@ class AddressDeleteView(CustomContextMixin, UserTokenRequiredMixin, DeleteView):
 
     def get_queryset(self):
         return self.model.objects.filter(account=self.request.user)
-
-
-class MailingListsView(ServiceListView):
-    service_class = MailinglistService
-    model = List
-    template_name = "musician/mailinglist_list.html"
-    extra_context = {
-        # Translators: This message appears on the page title
-        'title': _('Mailing lists'),
-    }
-
-    def get_queryset(self):
-        return self.model.objects.filter(account=self.request.user).order_by("name")
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        domain_id = self.request.GET.get('domain')
-        if domain_id:
-            qs = Domain.objects.filter(account=self.request.user)
-            context.update({
-                'active_domain': get_object_or_404(qs, pk=domain_id)
-            })
-        return context
-
-    def get_queryfilter(self):
-        """Retrieve query params (if any) to filter queryset"""
-        domain_id = self.request.GET.get('domain')
-        if domain_id:
-            return {"address_domain_id": domain_id}
-
-        return {}
 
 
 class MailboxListView(ServiceListView):
