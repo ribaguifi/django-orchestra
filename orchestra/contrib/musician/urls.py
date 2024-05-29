@@ -25,19 +25,25 @@ urlpatterns = [
 
     path('billing/', views.BillingView.as_view(), name='billing'),
     path('bills/<int:pk>/download/', views.BillDownloadView.as_view(), name='bill-download'),
+    
     path('profile/', views.ProfileView.as_view(), name='profile'),
     path('profile/setLang/<code>', views.profile_set_language, name='profile-set-lang'),
+    
     path('address/', views.AddressListView.as_view(), name='address-list'),
     path('address/new/', views.MailCreateView.as_view(), name='address-create'),
     path('address/<int:pk>/', views.MailUpdateView.as_view(), name='address-update'),
     path('address/<int:pk>/delete/', views.AddressDeleteView.as_view(), name='address-delete'),
+    
     path('mailboxes/', views.MailboxListView.as_view(), name='mailbox-list'),
     path('mailboxes/new/', views.MailboxCreateView.as_view(), name='mailbox-create'),
     path('mailboxes/<int:pk>/', views.MailboxUpdateView.as_view(), name='mailbox-update'),
     path('mailboxes/<int:pk>/delete/', views.MailboxDeleteView.as_view(), name='mailbox-delete'),
     path('mailboxes/<int:pk>/change-password/', views.MailboxChangePasswordView.as_view(), name='mailbox-password'),
+    
     path('mailing-lists/', views.MailingListsView.as_view(), name='mailing-lists'),
+    
     path('databases/', views.DatabaseListView.as_view(), name='database-list'),
+    
     path('saas/', views.SaasListView.as_view(), name='saas-list'),
     
     path('webappusers/', views.WebappUserListView.as_view(), name='webappuser-list'),

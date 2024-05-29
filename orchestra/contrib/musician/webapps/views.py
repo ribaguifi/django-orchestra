@@ -10,7 +10,7 @@ from orchestra.contrib.musician.mixins import (CustomContextMixin, ExtendedPagin
                      UserTokenRequiredMixin)
 
 from orchestra.contrib.webapps.models import WebApp, WebAppOption
-from orchestra.contrib.musician.tidy_forms.webapps import WebappOptionCreateForm, WebappOptionUpdateForm
+from .forms import WebappOptionCreateForm, WebappOptionUpdateForm
 
 from orchestra.contrib.musician.settings import MUSICIAN_EDIT_ENABLE_PHP_OPTIONS
 

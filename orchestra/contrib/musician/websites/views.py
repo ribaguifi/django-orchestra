@@ -12,7 +12,7 @@ from orchestra.contrib.musician.mixins import (CustomContextMixin, ExtendedPagin
                      UserTokenRequiredMixin)
 
 from orchestra.contrib.websites.models import Website, Content, WebsiteDirective
-from orchestra.contrib.musician.tidy_forms.websites import ( WebsiteUpdateForm, WesiteContentCreateForm,
+from .forms import ( WebsiteUpdateForm, WesiteContentCreateForm,
                                                             WesiteDirectiveCreateForm)
 
 

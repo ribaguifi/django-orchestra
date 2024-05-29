@@ -50,8 +50,8 @@ from .models import MailinglistService, SaasService
 from .settings import ALLOWED_RESOURCES, MUSICIAN_EDIT_ENABLE_PHP_OPTIONS
 from .utils import get_bootstraped_percent
 
-from .tidy_views.webapps import *
-from .tidy_views.websites import *
+from .webapps.views import *
+from .websites.views import *
 
 logger = logging.getLogger(__name__)
 
