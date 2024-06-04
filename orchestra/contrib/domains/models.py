@@ -145,8 +145,9 @@ class Domain(models.Model):
             else:
                 zone += subdomain.render_records()
         ###darmengo 2021-03-25 add autoconfig
+        # TODO: que se asigne esta ip automaticamente
         if self.has_default_mx():
-            zone += 'autoconfig.{}.     30m IN A 109.69.8.133\n'.format(self.name)
+            zone += 'autoconfig.{}.     30m IN A 45.150.186.197\n'.format(self.name)
         ###END darmengo 2021-03-25 add autoconfig
         for subdomain in sorted(tail, key=lambda x: len(x.name), reverse=True):
             zone += subdomain.render_records()
