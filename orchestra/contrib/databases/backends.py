@@ -29,6 +29,9 @@ class MySQLController(ServiceController):
             # Create database and re-set permissions
             mysql -e 'CREATE DATABASE `%(database)s`;' || true
             mysql mysql -e 'DELETE FROM db WHERE db = "%(database)s";'\
+            
+            # wait to create user
+            sleep 1.5
             """) % context
         )
         for user in database.users.all():
