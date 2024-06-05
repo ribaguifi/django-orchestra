@@ -6,13 +6,14 @@
 <h1 class="service-name">{{ service.verbose_name }}</h1>
 <p class="service-description">{{ service.description }}</p>
 
+<div class="table-responsive">
 <table class="table service-list">
-  <colgroup>
+  <!-- <colgroup>
     <col span="1" style="width: 35%;">
     <col span="1" style="width: 10%;">
     <col span="1" style="width: 25%;">
     <col span="1" style="width: 30%;">
-  </colgroup>
+  </colgroup> -->
   <thead class="thead-dark">
     <tr>
       <th scope="col">{% trans "Name" %}</th>
@@ -57,5 +58,5 @@
   </tbody>
   {% include "musician/components/table_paginator.html" %}
 </table>
-
+</div>
 {% endblock %}

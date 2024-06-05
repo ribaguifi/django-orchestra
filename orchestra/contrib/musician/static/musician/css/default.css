@@ -157,7 +157,7 @@ h1.service-name {
 
 .table.service-list {
     margin-top: 2rem;
-    table-layout: fixed;
+    /* table-layout: fixed; */
 }
 
 /** TODO update theme instead of overriding **/

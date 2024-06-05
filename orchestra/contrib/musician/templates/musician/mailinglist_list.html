@@ -9,15 +9,16 @@
 <h1 class="service-name">{{ service.verbose_name }}{% if active_domain %} <span class="font-weight-light">{% trans "for" %} {{ active_domain.name }}</span>{% endif %}</h1>
 <p class="service-description">{{ service.description }}</p>
 
+<div class="table-responsive">
 <table class="table service-list">
-    <colgroup>
+    <!-- <colgroup>
       <col span="1" style="width: 13%;">
       <col span="1" style="width: 12%;">
       <col span="1" style="width: 40%;">
       <col span="1" style="width: 15%;">
       <col span="1" style="width: 10%;">
       <col span="1" style="width: 10%;">
-  </colgroup>
+  </colgroup> -->
   <thead class="thead-dark">
     <tr>
       <th scope="col">Name</th>
@@ -47,15 +48,16 @@
       <td>{{ resource.admin_email }}</td>
       <td><a href="{{ resource.get_absolute_url }}" target="_blank" rel="noopener noreferrer">Mailman <i class="fas fa-external-link-alt"></i></a></td>
       <td class="text-right">
-        <a class="btn btn-outline-warning" href="{% url 'musician:mailing-update' resource.id %}">
+        <a class="btn btn-outline-warning" role="button" href="{% url 'musician:mailing-update' resource.id %}">
           <i class="fas fa-tools"></i></a>
-        <a href="{% url 'musician:mailing-delete' resource.id %}">
-          <i class="ml-3 text-danger fas fa-trash"></i></a>
+        <a class="btn btn-outline-danger" role="button" href="{% url 'musician:mailing-delete' resource.id %}">
+          <i class="text-danger fas fa-trash"></i></a>
       </td>
     </tr>
     {% endfor %}
   </tbody>
 </table>
+</div>
 <a class="btn btn-primary mt-4 mb-4" href="{% url 'musician:mailing-create' %}">{% trans "New list" %}</a>
 
 {% endblock %}
