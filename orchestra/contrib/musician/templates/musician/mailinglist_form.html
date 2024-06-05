@@ -16,7 +16,11 @@
 <a class="btn-arrow-left" href="{% url 'musician:mailing-lists' %}">{% trans "Go back" %}</a>
 
 <h1 class="service-name">
-  {% trans "Update Option of list" %} <span class="font-weight-light">{{ list.name }}</span>
+  {% if form.instance.pk %}
+    {% trans "Update list" %} <span class="font-weight-light">{{ list.name }}</span>
+  {% else %}
+    {% trans "Create list" %}
+  {% endif %}
 </h1>
 
 <form method="post">
@@ -25,6 +29,11 @@
   {% buttons %}
   <a class="btn btn-light mr-2" href="{% url 'musician:mailing-lists' %}">{% trans "Cancel" %}</a>
   <button type="submit" class="btn btn-secondary">{% trans "Save" %}</button>
+  {% if form.instance.pk %}
+    <div class="float-right">
+      <a class="btn btn-danger" href="{% url 'musician:mailing-delete' view.kwargs.pk %}">{% trans "Delete" %}</a>
+    </div>
+  {% endif %}
   {% endbuttons %}
 </form>
 {% endblock %}

@@ -12,7 +12,7 @@ from orchestra.contrib.lists.models import List
 from orchestra.contrib.domains.models import Domain, Record
 from orchestra.contrib.lists.settings import LISTS_DEFAULT_DOMAIN
 
-from .forms import MailingUpdateForm
+from .forms import MailingUpdateForm, MailingCreateForm
 
 class MailingListsView(CustomContextMixin, UserTokenRequiredMixin, ListView):
     model = List
@@ -59,3 +59,22 @@ class MailingUpdateView(CustomContextMixin, UserTokenRequiredMixin, UpdateView):
         kwargs = super().get_form_kwargs()
         kwargs["user"] = self.request.user
         return kwargs
+
+class MailingCreateView(CustomContextMixin, UserTokenRequiredMixin, CreateView):
+    model = List
+    form_class = MailingCreateForm
+    template_name = "musician/mailinglist_form.html"
+    success_url = reverse_lazy("musician:mailing-lists")
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+
+class MailingDeleteView(CustomContextMixin, UserTokenRequiredMixin, DeleteView):
+    template_name = "musician/mailing_check_delete.html"
+    model = List
+    success_url = reverse_lazy("musician:mailing-lists")
+
+    def get_queryset(self):
+        return self.model.objects.filter(account=self.request.user)
