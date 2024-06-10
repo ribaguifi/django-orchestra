@@ -1,0 +1,40 @@
+{% extends "musician/base.html" %}
+{% load i18n %}
+
+{% block content %}
+
+<h2 style="margin-top: 10px;">{% trans "Welcome back" %} <strong>{{ profile.username }}</strong></h2>
+{% if profile.last_login %}
+<p>{% blocktrans with last_login=profile.last_login|date:"SHORT_DATE_FORMAT" %}Last time you logged in was: {{ last_login }}{% endblocktrans %}</p>
+{% else %}
+<p>{% trans "It's the first time you log into the system, welcome on board!" %}</p>
+{% endif %}
+
+<div class="card-deck">
+  {% for resource, usage in resource_usage.items %}
+  <div class="card resource-usage resource-{{ resource }}">
+    <div class="card-body">
+      <h5 class="card-title">{{ usage.verbose_name }}</h5>
+      {% include "musician/components/usage_progress_bar.html" with detail=usage.data %}
+      {% if usage.data.alert %}
+        <div class="text-center mt-4">
+          {{ usage.data.alert }}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+  {% endfor %}
+  <div class="card resource-usage resource-notifications">
+    <div class="card-body">
+      <h5 class="card-title">{% trans "Notifications" %}</h5>
+      {% for message in notifications %}
+      <p class="card-text">{{ message }}</p>
+      {% empty %}
+      <p class="card-text">{% trans "There is no notifications at this time." %}</p>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+
+{% endblock %}

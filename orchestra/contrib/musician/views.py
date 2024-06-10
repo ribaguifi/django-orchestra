@@ -57,6 +57,90 @@ from .lists.views import *
 logger = logging.getLogger(__name__)
 
 
+from django.db.models import Q
+class DashboardView2(CustomContextMixin, UserTokenRequiredMixin, TemplateView):
+    template_name = "musician/dashboard2.html"
+    extra_context = {
+        # Translators: This message appears on the page title
+        'title': _('Dashboard'),
+    }
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        related_resources = self.get_all_resources()
+        # print([ x.resource for x in related_resources.filter(resource_id__verbose_name='mailbox-disk')])
+
+
+
+        # TODO(@slamora) update when backend supports notifications
+        notifications = []
+
+        # show resource usage based on plan definition
+        profile_type = context['profile'].type
+
+        # TODO(@slamora) update when backend provides resource usage data
+        resource_usage = {
+            'mailbox': self.get_mailbox_usage(profile_type),
+        }
+
+        support_email = getattr(settings, "USER_SUPPORT_EMAIL", "suport@pangea.org")
+        support_email_anchor = format_html(
+            "<a href='mailto:{}'>{}</a>",
+            support_email,
+            support_email,
+        )
+        context.update({
+            # 'domains': domains,
+            'resource_usage': resource_usage,
+            'notifications': notifications,
+            "support_email_anchor": support_email_anchor,
+        })
+
+        return context
+
+
+    def get_all_resources(self):
+        user = self.request.user
+        resources = Resource.objects.select_related('content_type')
+        resource_models = {r.content_type.model_class(): r.content_type_id for r in resources}
+        ct_id = resource_models[user._meta.model]
+        qset = Q(content_type_id=ct_id, object_id=user.id, resource__is_active=True)
+        for field, rel in user._meta.fields_map.items():
+            try:
+                ct_id = resource_models[rel.related_model]
+            except KeyError:
+                pass
+            else:           
+                manager = getattr(user, field)
+                ids = manager.values_list('id', flat=True)
+                qset = Q(qset) | Q(content_type_id=ct_id, object_id__in=ids, resource__is_active=True)
+        return ResourceData.objects.filter(qset)
+
+
+    def get_mailbox_usage(self, profile_type):
+        allowed_mailboxes = ALLOWED_RESOURCES[profile_type]['mailbox']
+        total_mailboxes = len(self.orchestra.retrieve_mailbox_list())
+        mailboxes_left = allowed_mailboxes - total_mailboxes
+
+        alert = ''
+        if mailboxes_left < 0:
+            alert = format_html("<span class='text-danger'>{} extra mailboxes</span>", mailboxes_left * -1)
+        elif mailboxes_left <= 1:
+            alert = format_html("<span class='text-warning'>{} mailbox left</span>", mailboxes_left)
+
+        return {
+            'verbose_name': _('Mailboxes'),
+            'data': {
+                'used': total_mailboxes,
+                'total': allowed_mailboxes,
+                'alert': alert,
+                'unit': 'mailboxes',
+                'percent': get_bootstraped_percent(total_mailboxes, allowed_mailboxes),
+            },
+        }
+
+
 class DashboardView(CustomContextMixin, UserTokenRequiredMixin, TemplateView):
     template_name = "musician/dashboard.html"
     extra_context = {
