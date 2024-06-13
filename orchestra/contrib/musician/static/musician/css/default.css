@@ -276,10 +276,31 @@ h1.service-name {
     font-weight: 900;
 }
 
+.card.resource-usage.resource-database h5.card-title:after {
+    content: "\f1c0";
+    font-weight: 900;
+}
+
 .card.resource-usage.resource-notifications h5.card-title:after {
     content: "\f0f3";
     font-weight: 900;
 }
+
+.card.resource-usage.resource-domains h5.card-title:after {
+    content: "\f7a2";
+    font-weight: 900;
+}
+
+.card.resource-usage.resource-nextcloud h5.card-title:after {
+    content: "\f0c2";
+    font-weight: 900;
+}
+
+.card.resource-usage.resource-list h5.card-title:after {
+    content: "\f674";
+    font-weight: 900;
+}
+
 
 .card.card-profile .card-header {
     background: white;

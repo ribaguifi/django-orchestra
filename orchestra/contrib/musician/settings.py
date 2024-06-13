@@ -9,7 +9,7 @@ def getsetting(name):
 
 # provide a default value allowing to overwrite it for each type of account
 def allowed_resources_default_factory():
-    return {'mailbox': 2}
+    return {'mailbox': 2, 'database': 1, 'account': 2, 'nextcloud': 2,}
 
 DEFAULTS = {
     # allowed resources limit hardcoded because cannot be retrieved from the API.
@@ -21,11 +21,17 @@ DEFAULTS = {
                 # 'disk': 1024,
                 # 'traffic': 2048,
                 'mailbox': 2,
+                'database': 1,
+                'account': 2,
+                'nextcloud': 2,
             },
             'ASSOCIATION': {
                 # 'disk': 5 * 1024,
                 # 'traffic': 20 * 1024,
                 'mailbox': 10,
+                'database': 1,
+                'account': 8,
+                'nextcloud': 10,
             }
         }
     ),

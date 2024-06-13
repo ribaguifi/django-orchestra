@@ -69,9 +69,24 @@ class DashboardView2(CustomContextMixin, UserTokenRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
 
         related_resources = self.get_all_resources()
-        # print([ x.resource for x in related_resources.filter(resource_id__verbose_name='mailbox-disk')])
-
-
+        
+        # TODO: que mostrar en el panel
+        # account
+        account = related_resources.filter(resource_id__verbose_name='account-disk')
+        # account_trafic = related_resources.filter(resource_id__verbose_name='account-traffic')
+        # print(account_trafic.first())
+        # /admin/resources/resourcedata/17000
+        # mailbox
+        mailboxes = related_resources.filter(resource_id__verbose_name='mailbox-disk')
+        # lists
+        lists = related_resources.filter(resource_id__verbose_name='list-traffic')
+        # Database
+        databases = related_resources.filter(resource_id__verbose_name='database-disk')
+        # nextcloud
+        nextcloud = related_resources.filter(resource_id__verbose_name='nextcloud-disk')
+        # domains
+        domains = Domain.objects.filter(account_id=self.request.user)
+  
 
         # TODO(@slamora) update when backend supports notifications
         notifications = []
@@ -81,7 +96,11 @@ class DashboardView2(CustomContextMixin, UserTokenRequiredMixin, TemplateView):
 
         # TODO(@slamora) update when backend provides resource usage data
         resource_usage = {
-            'mailbox': self.get_mailbox_usage(profile_type),
+            'account': self.get_account_usage(profile_type, account),
+            'mailbox': self.get_resource_usage(profile_type, mailboxes, 'mailbox'),
+            'database': self.get_resource_usage(profile_type, databases, 'database'),
+            'nextcloud': self.get_resource_usage(profile_type, nextcloud, 'nextcloud'),
+            'list': self.get_resource_usage(profile_type, lists, 'Mailman list Traffic'),
         }
 
         support_email = getattr(settings, "USER_SUPPORT_EMAIL", "suport@pangea.org")
@@ -91,14 +110,13 @@ class DashboardView2(CustomContextMixin, UserTokenRequiredMixin, TemplateView):
             support_email,
         )
         context.update({
-            # 'domains': domains,
+            'domains': domains,
             'resource_usage': resource_usage,
             'notifications': notifications,
             "support_email_anchor": support_email_anchor,
         })
 
         return context
-
 
     def get_all_resources(self):
         user = self.request.user
@@ -117,27 +135,58 @@ class DashboardView2(CustomContextMixin, UserTokenRequiredMixin, TemplateView):
                 qset = Q(qset) | Q(content_type_id=ct_id, object_id__in=ids, resource__is_active=True)
         return ResourceData.objects.filter(qset)
 
-
-    def get_mailbox_usage(self, profile_type):
-        allowed_mailboxes = ALLOWED_RESOURCES[profile_type]['mailbox']
-        total_mailboxes = len(self.orchestra.retrieve_mailbox_list())
-        mailboxes_left = allowed_mailboxes - total_mailboxes
-
+    def get_resource_usage(self, profile_type, resource_data, name_resource):
+        limit_rs = 0
+        total_rs = len(resource_data)
+        rs_left = 0
         alert = ''
-        if mailboxes_left < 0:
-            alert = format_html("<span class='text-danger'>{} extra mailboxes</span>", mailboxes_left * -1)
-        elif mailboxes_left <= 1:
-            alert = format_html("<span class='text-warning'>{} mailbox left</span>", mailboxes_left)
+        progres_bar = False
+
+        if ALLOWED_RESOURCES[profile_type].get(name_resource):
+            progres_bar = True
+            limit_rs = ALLOWED_RESOURCES[profile_type][name_resource]
+            rs_left = limit_rs - total_rs
+
+            alert = ''
+            if rs_left < 0:
+                alert = format_html(f"<span class='text-danger'>{rs_left * -1} extra {name_resource}</span>")
+            elif rs_left <= 1:
+                alert = format_html(f"<span class='text-warning'>{rs_left} {name_resource} left</span>")
 
         return {
-            'verbose_name': _('Mailboxes'),
+            'verbose_name': _(name_resource.capitalize()),
             'data': {
-                'used': total_mailboxes,
-                'total': allowed_mailboxes,
+                'progres_bar': progres_bar,
+                'used': total_rs,
+                'total': limit_rs,
                 'alert': alert,
-                'unit': 'mailboxes',
-                'percent': get_bootstraped_percent(total_mailboxes, allowed_mailboxes),
+                'unit': name_resource.capitalize(),
+                'percent': get_bootstraped_percent(total_rs, limit_rs),
             },
+            'objects': resource_data,
+        }
+    
+    def get_account_usage(self, profile_type, account):
+        allowed_size = ALLOWED_RESOURCES[profile_type]['account']
+        total_size = account.first().used
+        size_left = allowed_size - total_size
+
+        alert = ''
+        if size_left < 0:
+            alert = format_html(f"<span class='text-danger'>{size_left * -1} extra size</span>")
+        elif size_left <= 1:
+            alert = format_html(f"<span class='text-warning'>{size_left} size left</span>")
+        return {
+            'verbose_name': _('Account'),
+            'data': {
+                'progres_bar': True,
+                'used': total_size,
+                'total': allowed_size,
+                'alert': alert,
+                'unit': 'GiB Size',
+                'percent': get_bootstraped_percent(total_size, allowed_size),
+            },
+            'objects': account,
         }
 
 

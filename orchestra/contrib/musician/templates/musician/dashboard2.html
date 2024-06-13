@@ -11,30 +11,60 @@
 {% endif %}
 
 <div class="card-deck">
+
   {% for resource, usage in resource_usage.items %}
   <div class="card resource-usage resource-{{ resource }}">
-    <div class="card-body">
+    <div class="card-body" data-toggle="collapse" data-target="#collapse-{{ resource }}">
       <h5 class="card-title">{{ usage.verbose_name }}</h5>
-      {% include "musician/components/usage_progress_bar.html" with detail=usage.data %}
+      <div class="text-center">
+        {% if usage.data and usage.data.used %}
+          {{ usage.data.used|floatformat }} {{ usage.data.unit }}
+        {% endif %}
+      </div>      
+      {% if usage.data.progres_bar %}
+        <div class="progress">
+          <div class="progress-bar bg-secondary w-{{ usage.data.percent }}" role="progressbar" aria-valuenow="{{ usage.data.used }}"
+              aria-valuemin="0" aria-valuemax="{{ usage.data.total }}"></div>
+        </div>
+      {% endif %}
       {% if usage.data.alert %}
         <div class="text-center mt-4">
           {{ usage.data.alert }}
         </div>
       {% endif %}
     </div>
-  </div>
-  {% endfor %}
-  <div class="card resource-usage resource-notifications">
-    <div class="card-body">
-      <h5 class="card-title">{% trans "Notifications" %}</h5>
-      {% for message in notifications %}
-      <p class="card-text">{{ message }}</p>
-      {% empty %}
-      <p class="card-text">{% trans "There is no notifications at this time." %}</p>
-      {% endfor %}
+
+    <div id="collapse-{{ resource }}" class="collapse">
+      <ul class="list-group">
+        {% for obj_data in usage.objects %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          {{ obj_data }}
+          <span class="badge badge-primary badge-pill">{{ obj_data.used }} {{ obj_data.resource.unit }}</span>
+        </li>
+        {% endfor %}
+      </ul> 
     </div>
   </div>
+  {% endfor %}
+
+  <div class="card resource-usage resource-domains">
+    <div class="card-body" data-toggle="collapse" data-target="#collapse-domains">
+      <h5 class="card-title">{% trans "Domains" %}</h5>
+      <div class="text-center">{{ domains|length }} {% trans "Domains" %}</div>
+    </div>
+    <div id="collapse-domains" class="collapse">
+      <ul class="list-group">
+        {% for domain in domains %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          {{ domain }}
+          <a href="{% url 'musician:dashboard'%}"  rel="noopener noreferrer"><i class="fas fa-external-link-alt"></i></a>
+        </li>
+        {% endfor %}
+      </ul> 
+    </div>
+  </div>
+
 </div>
 
-
 {% endblock %}
+
