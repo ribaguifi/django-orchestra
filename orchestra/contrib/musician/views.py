@@ -48,7 +48,7 @@ from .models import DatabaseService
 from .models import Mailbox as MailboxService
 from .models import MailinglistService, SaasService
 from .settings import ALLOWED_RESOURCES, MUSICIAN_EDIT_ENABLE_PHP_OPTIONS
-from .utils import get_bootstraped_percent
+from .utils import get_bootstraped_percent, get_bootstraped_percent_exact
 
 from .webapps.views import *
 from .websites.views import *
@@ -57,6 +57,7 @@ from .lists.views import *
 logger = logging.getLogger(__name__)
 
 
+from django.urls import reverse
 from django.db.models import Q
 class DashboardView2(CustomContextMixin, UserTokenRequiredMixin, TemplateView):
     template_name = "musician/dashboard2.html"
@@ -74,17 +75,13 @@ class DashboardView2(CustomContextMixin, UserTokenRequiredMixin, TemplateView):
         # account
         account = related_resources.filter(resource_id__verbose_name='account-disk')
         # account_trafic = related_resources.filter(resource_id__verbose_name='account-traffic')
-        # print(account_trafic.first())
-        # /admin/resources/resourcedata/17000
-        # mailbox
+        # history_disk = reverse('admin:resources_resourcedata_show_history', args=(account.first().pk,))
+        # history_traffic = reverse('admin:resources_resourcedata_show_history', args=(account_trafic.first().pk,))
+
         mailboxes = related_resources.filter(resource_id__verbose_name='mailbox-disk')
-        # lists
         lists = related_resources.filter(resource_id__verbose_name='list-traffic')
-        # Database
         databases = related_resources.filter(resource_id__verbose_name='database-disk')
-        # nextcloud
         nextcloud = related_resources.filter(resource_id__verbose_name='nextcloud-disk')
-        # domains
         domains = Domain.objects.filter(account_id=self.request.user)
   
 
@@ -114,6 +111,8 @@ class DashboardView2(CustomContextMixin, UserTokenRequiredMixin, TemplateView):
             'resource_usage': resource_usage,
             'notifications': notifications,
             "support_email_anchor": support_email_anchor,
+            # 'history_disk': history_disk,
+            # 'history_traffic': history_traffic,
         })
 
         return context
@@ -161,7 +160,7 @@ class DashboardView2(CustomContextMixin, UserTokenRequiredMixin, TemplateView):
                 'total': limit_rs,
                 'alert': alert,
                 'unit': name_resource.capitalize(),
-                'percent': get_bootstraped_percent(total_rs, limit_rs),
+                'percent': get_bootstraped_percent_exact(total_rs, limit_rs),
             },
             'objects': resource_data,
         }
@@ -176,6 +175,7 @@ class DashboardView2(CustomContextMixin, UserTokenRequiredMixin, TemplateView):
             alert = format_html(f"<span class='text-danger'>{size_left * -1} extra size</span>")
         elif size_left <= 1:
             alert = format_html(f"<span class='text-warning'>{size_left} size left</span>")
+        print(f"get: {get_bootstraped_percent_exact(total_size, allowed_size)}, total: {total_size}, limit: {allowed_size}")
         return {
             'verbose_name': _('Account'),
             'data': {
@@ -184,7 +184,7 @@ class DashboardView2(CustomContextMixin, UserTokenRequiredMixin, TemplateView):
                 'total': allowed_size,
                 'alert': alert,
                 'unit': 'GiB Size',
-                'percent': get_bootstraped_percent(total_size, allowed_size),
+                'percent': get_bootstraped_percent_exact(total_size, allowed_size),
             },
             'objects': account,
         }

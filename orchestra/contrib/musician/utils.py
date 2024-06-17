@@ -16,3 +16,10 @@ def get_bootstraped_percent(value, total):
     bootstraped = min(100, bootstraped)
 
     return bootstraped
+
+def get_bootstraped_percent_exact(value, total):
+    try:
+        percent = 100 * float(value)/float(total)
+    except (TypeError, ZeroDivisionError):
+        return 0
+    return percent

@@ -23,8 +23,7 @@
       </div>      
       {% if usage.data.progres_bar %}
         <div class="progress">
-          <div class="progress-bar bg-secondary w-{{ usage.data.percent }}" role="progressbar" aria-valuenow="{{ usage.data.used }}"
-              aria-valuemin="0" aria-valuemax="{{ usage.data.total }}"></div>
+            <div class="progress-bar bg-secondary" style="width:{{ usage.data.percent }}%"></div>
         </div>
       {% endif %}
       {% if usage.data.alert %}
@@ -66,5 +65,13 @@
 
 </div>
 
+
+<!-- <div class="embed-responsive embed-responsive-16by9">
+  <iframe class="embed-responsive-item" src="{{ history_disk }}" allowfullscreen></iframe>
+</div>
+
+<div class="embed-responsive embed-responsive-16by9">
+  <iframe class="embed-responsive-item" src="{{ history_traffic }}" allowfullscreen></iframe>
+</div> -->
 {% endblock %}
 
