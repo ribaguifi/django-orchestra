@@ -71,12 +71,12 @@ class DashboardView2(CustomContextMixin, UserTokenRequiredMixin, TemplateView):
 
         related_resources = self.get_all_resources()
         
-        # TODO: que mostrar en el panel
-        # account
-        account = related_resources.filter(resource_id__verbose_name='account-disk')
-        # account_trafic = related_resources.filter(resource_id__verbose_name='account-traffic')
-        # history_disk = reverse('admin:resources_resourcedata_show_history', args=(account.first().pk,))
-        # history_traffic = reverse('admin:resources_resourcedata_show_history', args=(account_trafic.first().pk,))
+        account = related_resources.filter(resource_id__verbose_name='account-disk').first()
+        account_trafic = related_resources.filter(resource_id__verbose_name='account-traffic').first()
+
+        # TODO: sacar los graficos de alguna manera
+        # url_history_disk = reverse('admin:resources_resourcedata_show_history', args=(account.pk,))
+        # url_history_traffic = reverse('admin:resources_resourcedata_show_history', args=(account_trafic.pk,))
 
         mailboxes = related_resources.filter(resource_id__verbose_name='mailbox-disk')
         lists = related_resources.filter(resource_id__verbose_name='list-traffic')
@@ -93,7 +93,7 @@ class DashboardView2(CustomContextMixin, UserTokenRequiredMixin, TemplateView):
 
         # TODO(@slamora) update when backend provides resource usage data
         resource_usage = {
-            'account': self.get_account_usage(profile_type, account),
+            # 'account': self.get_account_usage(profile_type, account),
             'mailbox': self.get_resource_usage(profile_type, mailboxes, 'mailbox'),
             'database': self.get_resource_usage(profile_type, databases, 'database'),
             'nextcloud': self.get_resource_usage(profile_type, nextcloud, 'nextcloud'),
@@ -111,8 +111,7 @@ class DashboardView2(CustomContextMixin, UserTokenRequiredMixin, TemplateView):
             'resource_usage': resource_usage,
             'notifications': notifications,
             "support_email_anchor": support_email_anchor,
-            # 'history_disk': history_disk,
-            # 'history_traffic': history_traffic,
+            'account': self.get_account_usage(profile_type, account, account_trafic),
         })
 
         return context
@@ -140,7 +139,7 @@ class DashboardView2(CustomContextMixin, UserTokenRequiredMixin, TemplateView):
         rs_left = 0
         alert = ''
         progres_bar = False
-
+        
         if ALLOWED_RESOURCES[profile_type].get(name_resource):
             progres_bar = True
             limit_rs = ALLOWED_RESOURCES[profile_type][name_resource]
@@ -150,8 +149,9 @@ class DashboardView2(CustomContextMixin, UserTokenRequiredMixin, TemplateView):
             if rs_left < 0:
                 alert = format_html(f"<span class='text-danger'>{rs_left * -1} extra {name_resource}</span>")
             elif rs_left <= 1:
-                alert = format_html(f"<span class='text-warning'>{rs_left} {name_resource} left</span>")
-
+                alert = format_html(f"<span class='text-warning'>{rs_left} {name_resource} available</span>")
+            elif rs_left > 1:
+                alert = format_html(f"<span class='text-secondary'>{rs_left} {name_resource} available</span>")
         return {
             'verbose_name': _(name_resource.capitalize()),
             'data': {
@@ -165,17 +165,17 @@ class DashboardView2(CustomContextMixin, UserTokenRequiredMixin, TemplateView):
             'objects': resource_data,
         }
     
-    def get_account_usage(self, profile_type, account):
+    def get_account_usage(self, profile_type, account, account_trafic):
         allowed_size = ALLOWED_RESOURCES[profile_type]['account']
-        total_size = account.first().used
+        total_size = account.used
         size_left = allowed_size - total_size
 
         alert = ''
         if size_left < 0:
-            alert = format_html(f"<span class='text-danger'>{size_left * -1} extra size</span>")
+            alert = format_html(f"<span class='text-danger'>{size_left * -1} {account.unit} extra</span>")
         elif size_left <= 1:
-            alert = format_html(f"<span class='text-warning'>{size_left} size left</span>")
-        print(f"get: {get_bootstraped_percent_exact(total_size, allowed_size)}, total: {total_size}, limit: {allowed_size}")
+            alert = format_html(f"<span class='text-warning'>{size_left} {account.unit} available</span>")
+
         return {
             'verbose_name': _('Account'),
             'data': {
@@ -186,7 +186,10 @@ class DashboardView2(CustomContextMixin, UserTokenRequiredMixin, TemplateView):
                 'unit': 'GiB Size',
                 'percent': get_bootstraped_percent_exact(total_size, allowed_size),
             },
-            'objects': account,
+            'objects': {
+                'size': {'ac': account},
+                'traffic': {'ac': account_trafic}
+            },
         }
 
 

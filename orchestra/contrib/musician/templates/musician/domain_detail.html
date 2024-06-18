@@ -8,13 +8,14 @@
   {% trans "DNS settings for" %} <span class="font-weight-light">{{ object.name }}</span>
 
 </h1>
-
+<!-- TODO: muestra solo si tiene permisos para verlo -->
+<!-- 
 {% if object.top %}
 <div class="mb-4">
   <a class="btn btn-sm btn-secondary" href="{% url 'musician:domain-detail' object.top.pk %}">
     {% trans "Go to top level domain" %} <span class="font-weight-bold">{{ object.top.name }}</span></a>
 </div>
-{% endif %}
+{% endif %} -->
 
 <p class="service-description">{% trans "DNS settings page description." %}</p>
 

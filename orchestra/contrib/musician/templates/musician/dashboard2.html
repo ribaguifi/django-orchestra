@@ -10,6 +10,39 @@
 <p>{% trans "It's the first time you log into the system, welcome on board!" %}</p>
 {% endif %}
 
+<!-- Deck account -->
+<div class="card-deck">
+  <div class="card resource-usage resource-account">
+    <div class="card-body">
+      <h5 class="card-title">{{ account.verbose_name }}</h5>
+      <div class="text-center">
+        {% if account.data and account.data.used %}
+          {{ account.data.used|floatformat }} {{ account.data.unit }}
+        {% endif %}
+      </div>      
+      {% if account.data.progres_bar %}
+        <div class="progress">
+            <div class="progress-bar bg-secondary" style="width:{{ account.data.percent }}%"></div>
+        </div>
+      {% endif %}
+      {% if account.data.alert %}
+        <div class="text-center mt-4">
+          {{ account.data.alert }}
+        </div>
+      {% endif %}
+    </div>
+    <ul class="list-group">
+      {% for name, obj_data in account.objects.items %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          {{ name }}
+          <span class="badge badge-primary badge-pill">{{ obj_data.ac.used }} {{ obj_data.ac.unit }}</span>
+        </li>
+      {% endfor %}
+    </ul> 
+  </div>
+</div>
+
+<!-- Deck resources -->
 <div class="card-deck">
 
   {% for resource, usage in resource_usage.items %}
@@ -23,7 +56,7 @@
       </div>      
       {% if usage.data.progres_bar %}
         <div class="progress">
-            <div class="progress-bar bg-secondary" style="width:{{ usage.data.percent }}%"></div>
+            <div class="progress-bar bg-secondary" style="width: {{ usage.data.percent }}%"></div>
         </div>
       {% endif %}
       {% if usage.data.alert %}
@@ -46,6 +79,7 @@
   </div>
   {% endfor %}
 
+  <!-- card domains -->
   <div class="card resource-usage resource-domains">
     <div class="card-body" data-toggle="collapse" data-target="#collapse-domains">
       <h5 class="card-title">{% trans "Domains" %}</h5>
