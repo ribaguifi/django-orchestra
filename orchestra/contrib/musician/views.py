@@ -24,6 +24,9 @@ from django.views.generic.edit import (CreateView, DeleteView, FormView,
 from django.views.generic.list import ListView
 from requests.exceptions import HTTPError
 
+from django.urls import reverse
+from django.db.models import Q
+
 from orchestra import get_version
 from orchestra.contrib.bills.models import Bill
 from orchestra.contrib.databases.models import Database
@@ -57,10 +60,9 @@ from .lists.views import *
 logger = logging.getLogger(__name__)
 
 
-from django.urls import reverse
-from django.db.models import Q
-class DashboardView2(CustomContextMixin, UserTokenRequiredMixin, TemplateView):
-    template_name = "musician/dashboard2.html"
+
+class DashboardView(CustomContextMixin, UserTokenRequiredMixin, TemplateView):
+    template_name = "musician/dashboard.html"
     extra_context = {
         # Translators: This message appears on the page title
         'title': _('Dashboard'),
@@ -193,27 +195,16 @@ class DashboardView2(CustomContextMixin, UserTokenRequiredMixin, TemplateView):
         }
 
 
-class DashboardView(CustomContextMixin, UserTokenRequiredMixin, TemplateView):
-    template_name = "musician/dashboard.html"
+class DomainListView(CustomContextMixin, UserTokenRequiredMixin, TemplateView):
+    template_name = "musician/domain_list.html"
     extra_context = {
         # Translators: This message appears on the page title
-        'title': _('Dashboard'),
+        'title': _('Domains'),
     }
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         domains = self.orchestra.retrieve_domain_list()
-
-        # TODO(@slamora) update when backend supports notifications
-        notifications = []
-
-        # show resource usage based on plan definition
-        profile_type = context['profile'].type
-
-        # TODO(@slamora) update when backend provides resource usage data
-        resource_usage = {
-            'mailbox': self.get_mailbox_usage(profile_type),
-        }
 
         support_email = getattr(settings, "USER_SUPPORT_EMAIL", "suport@pangea.org")
         support_email_anchor = format_html(
@@ -223,34 +214,10 @@ class DashboardView(CustomContextMixin, UserTokenRequiredMixin, TemplateView):
         )
         context.update({
             'domains': domains,
-            'resource_usage': resource_usage,
-            'notifications': notifications,
             "support_email_anchor": support_email_anchor,
         })
 
         return context
-
-    def get_mailbox_usage(self, profile_type):
-        allowed_mailboxes = ALLOWED_RESOURCES[profile_type]['mailbox']
-        total_mailboxes = len(self.orchestra.retrieve_mailbox_list())
-        mailboxes_left = allowed_mailboxes - total_mailboxes
-
-        alert = ''
-        if mailboxes_left < 0:
-            alert = format_html("<span class='text-danger'>{} extra mailboxes</span>", mailboxes_left * -1)
-        elif mailboxes_left <= 1:
-            alert = format_html("<span class='text-warning'>{} mailbox left</span>", mailboxes_left)
-
-        return {
-            'verbose_name': _('Mailboxes'),
-            'data': {
-                'used': total_mailboxes,
-                'total': allowed_mailboxes,
-                'alert': alert,
-                'unit': 'mailboxes',
-                'percent': get_bootstraped_percent(total_mailboxes, allowed_mailboxes),
-            },
-        }
 
 
 class ProfileView(CustomContextMixin, UserTokenRequiredMixin, TemplateView):

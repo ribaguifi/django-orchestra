@@ -2,7 +2,7 @@
 {% load i18n %}
 
 {% block content %}
-<a class="btn-arrow-left" href="{% url 'musician:dashboard' %}">{% trans "Go back" %}</a>
+<a class="btn-arrow-left" href="{% url 'musician:domain-list' %}">{% trans "Go back" %}</a>
 
 <h1 class="service-name">
   {% trans "DNS settings for" %} <span class="font-weight-light">{{ object.name }}</span>

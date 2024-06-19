@@ -17,8 +17,8 @@ urlpatterns = [
     path('auth/login/', views.LoginView.as_view(), name='login'),
     path('auth/logout/', views.LogoutView.as_view(), name='logout'),
     path('dashboard/', views.DashboardView.as_view(), name='dashboard'),
-    path('dashboard2/', views.DashboardView2.as_view(), name='dashboard2'),
 
+    path('domains/', views.DomainListView.as_view(), name='domain-list'),
     path('domains/<int:pk>/', views.DomainDetailView.as_view(), name='domain-detail'),
     path('domains/<int:pk>/add-record/', views.DomainAddRecordView.as_view(), name='domain-add-record'),
     path('domains/<int:pk>/records/<int:record_pk>/update/', views.DomainUpdateRecordView.as_view(), name='domain-update-record'),

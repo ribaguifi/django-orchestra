@@ -22,4 +22,4 @@ def get_bootstraped_percent_exact(value, total):
         percent = 100 * float(value)/float(total)
     except (TypeError, ZeroDivisionError):
         return 0
-    return percent
+    return int(percent)
