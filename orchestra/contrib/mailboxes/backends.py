@@ -666,3 +666,42 @@ class RoundcubeIdentityController(ServiceController):
     verbose_name = _("Roundcube Identity Controller")
     model = 'mailboxes.Mailbox'
 
+
+
+class RSpamdRatelimitController(ServiceController):
+    """
+    rspamd ratelimit to user
+    """
+    
+    verbose_name = _("rspamd ratelimit user")
+    model = 'mailboxes.Mailbox'
+    
+    def save(self, mailbox):
+        context = self.get_context(mailbox)
+        self.append(textwrap.dedent("""
+            if ! grep -qx '%(user)s' /etc/rspamd/local.d/maps/usuariosbase.map; then
+                echo '%(user)s' >> /etc/rspamd/local.d/maps/usuariosbase.map
+                RELOAD_RSPAMD=1
+            fi 
+            """) % context
+        )
+    
+    def delete(self, mailbox):
+        context = self.get_context(mailbox)
+        self.append(textwrap.dedent("""
+            if grep -qx '%(user)s' /etc/rspamd/local.d/maps/usuariosbase.map; then
+                sed -i '/^%(user)s$/d' /etc/rspamd/local.d/maps/usuariosbase.map
+                RELOAD_RSPAMD=1
+            fi
+            """) % context
+        )
+    
+    def commit(self):
+        self.append('[[ $RELOAD_RSPAMD -eq 1 ]] && systemctl reload rspamd.service')
+        super().commit()
+    
+    def get_context(self, mailbox):
+        context = {
+            'user': mailbox.name,
+        }
+        return context
