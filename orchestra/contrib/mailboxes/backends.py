@@ -679,6 +679,8 @@ class RSpamdRatelimitController(ServiceController):
     def save(self, mailbox):
         context = self.get_context(mailbox)
         self.append(textwrap.dedent("""
+            # sed -i '/^%(user)s$/d'   %(maps)s
+            # echo '%(user)s' >> %(path_maps)s%(ratelimit)s.map
             if ! grep -qx '%(user)s' /etc/rspamd/local.d/maps/usuariosbase.map; then
                 echo '%(user)s' >> /etc/rspamd/local.d/maps/usuariosbase.map
                 RELOAD_RSPAMD=1
@@ -689,6 +691,7 @@ class RSpamdRatelimitController(ServiceController):
     def delete(self, mailbox):
         context = self.get_context(mailbox)
         self.append(textwrap.dedent("""
+            # sed -i '/^%(user)s$/d'   %(maps)s
             if grep -qx '%(user)s' /etc/rspamd/local.d/maps/usuariosbase.map; then
                 sed -i '/^%(user)s$/d' /etc/rspamd/local.d/maps/usuariosbase.map
                 RELOAD_RSPAMD=1
@@ -697,11 +700,29 @@ class RSpamdRatelimitController(ServiceController):
         )
     
     def commit(self):
-        self.append('[[ $RELOAD_RSPAMD -eq 1 ]] && systemctl reload rspamd.service')
+        self.append('# [[ $RELOAD_RSPAMD -eq 1 ]] && systemctl reload rspamd.service')
         super().commit()
-    
+        
     def get_context(self, mailbox):
+        maps = self.extract_group_maps()
         context = {
             'user': mailbox.name,
+            'ratelimit': mailbox.ratelimit,
+            'maps': maps,
+            'path_maps': settings.MAILBOXES_RATELIMIT_PATH_MAPS,
         }
         return context
+    
+    def extract_group_maps(self):
+        """
+        debulve string de todos los ficheros de maps assignados en settings para ratelimit 
+        return string
+        """
+        choice_groups = settings.MAILBOXES_RATELIMIT_GROUP
+        path = settings.MAILBOXES_RATELIMIT_PATH_MAPS
+        group_maps = ''
+        if len(choice_groups) > 0:
+            for choice in choice_groups:
+                group_maps += f"{path}{choice[0]}.map "
+
+        return group_maps

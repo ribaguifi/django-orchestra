@@ -33,6 +33,11 @@ class Mailbox(models.Model):
                     "<a href='https://tty1.net/blog/2011/sieve-tutorial_en.html'>sieve language</a>. "
                     "This overrides any automatic junk email filtering"))
     is_active = models.BooleanField(_("active"), default=True)
+    ratelimit = models.CharField(_("ratelimit"),
+        max_length=100, null=True, blank=True,
+        choices=settings.MAILBOXES_RATELIMIT_GROUP,
+        default=settings.MAILBOXES_RATELIMIT_GROUP_DEFAULT,)
+    
 
     class Meta:
         verbose_name_plural = _("mailboxes")

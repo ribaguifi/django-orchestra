@@ -203,3 +203,21 @@ MAILBOXES_MOVE_ON_DELETE_PATH = Setting('MAILBOXES_MOVE_ON_DELETE_PATH',
     help_text="Available fromat names: <tt>%s</tt>" % ', '.join(_backend_names),
     validators=[Setting.string_format_validator(_backend_names)],
 )
+
+MAILBOXES_RATELIMIT_GROUP = Setting('MAILBOXES_RATELIMIT_GROUP', (
+        ('userbase', 'base'),
+        ('user100', '100'),
+        ('user200', '200'),
+        ('user500', '500'),
+    ),
+    help_text="Available messages per second"
+)
+
+MAILBOXES_RATELIMIT_GROUP_DEFAULT = Setting('MAILBOXES_RATELIMIT_GROUP_DEFAULT',
+    'userbase',
+    choices=MAILBOXES_RATELIMIT_GROUP
+)
+
+MAILBOXES_RATELIMIT_PATH_MAPS = Setting('MAILBOXES_RATELIMIT_PATH_MAPS',
+    '/etc/rspamd/local.d/maps/',
+)

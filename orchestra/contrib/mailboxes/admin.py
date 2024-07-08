@@ -47,7 +47,7 @@ class MailboxAdmin(ChangePasswordAdminMixin, SelectAccountAdminMixin, ExtendedMo
     )
     add_fieldsets = (
         (None, {
-            'fields': ('account_link', 'name', 'password1', 'password2', 'filtering'),
+            'fields': ('account_link', 'name', 'password1', 'password2', 'filtering', 'ratelimit'),
         }),
         (_("Custom filtering"), {
             'classes': ('collapse',),
@@ -61,7 +61,7 @@ class MailboxAdmin(ChangePasswordAdminMixin, SelectAccountAdminMixin, ExtendedMo
     )
     fieldsets = (
         (None, {
-            'fields': ('name', 'password', 'is_active', 'account_link', 'filtering'),
+            'fields': ('name', 'password', 'is_active', 'account_link', 'filtering', 'ratelimit'),
         }),
         (_("Custom filtering"), {
             'classes': ('collapse',),

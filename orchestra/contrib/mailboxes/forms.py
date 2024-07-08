@@ -54,6 +54,11 @@ class MailboxForm(forms.ModelForm):
             raise ValidationError("Name length should be less than %i." % max_length)
         return name
 
+    def clean_ratelimit(self):
+        ratelimit = self.cleaned_data['ratelimit']
+        if ratelimit is None:
+            ratelimit = settings.MAILBOXES_RATELIMIT_GROUP_DEFAULT
+        return ratelimit
 
 class MailboxChangeForm(UserChangeForm, MailboxForm):
     pass
