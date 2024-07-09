@@ -679,29 +679,23 @@ class RSpamdRatelimitController(ServiceController):
     def save(self, mailbox):
         context = self.get_context(mailbox)
         self.append(textwrap.dedent("""
-            # sed -i '/^%(user)s$/d'   %(maps)s
-            # echo '%(user)s' >> %(path_maps)s%(ratelimit)s.map
-            if ! grep -qx '%(user)s' /etc/rspamd/local.d/maps/usuariosbase.map; then
-                echo '%(user)s' >> /etc/rspamd/local.d/maps/usuariosbase.map
-                RELOAD_RSPAMD=1
-            fi 
+            sed -i '/^%(user)s$/d'   %(maps)s
+            echo '%(user)s' >> %(path_maps)s%(ratelimit)s.map
+            systemctl reload rspamd.service
             """) % context
         )
     
     def delete(self, mailbox):
         context = self.get_context(mailbox)
         self.append(textwrap.dedent("""
-            # sed -i '/^%(user)s$/d'   %(maps)s
-            if grep -qx '%(user)s' /etc/rspamd/local.d/maps/usuariosbase.map; then
-                sed -i '/^%(user)s$/d' /etc/rspamd/local.d/maps/usuariosbase.map
-                RELOAD_RSPAMD=1
-            fi
+            sed -i '/^%(user)s$/d'   %(maps)s
+            systemctl reload rspamd.service
             """) % context
         )
     
-    def commit(self):
-        self.append('# [[ $RELOAD_RSPAMD -eq 1 ]] && systemctl reload rspamd.service')
-        super().commit()
+    # def commit(self):
+    #     self.append('[[ $RELOAD_RSPAMD -eq 1 ]] && systemctl reload rspamd.service')
+    #     super().commit()
         
     def get_context(self, mailbox):
         maps = self.extract_group_maps()
