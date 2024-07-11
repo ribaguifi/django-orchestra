@@ -255,8 +255,13 @@ class MailmanTraffic(ServiceMonitor):
                 for postlog in postlogs:
                     try:
                         with open(postlog, 'r') as postlog:
+                            recps_dict = {{}}
                             for line in postlog.readlines():
                                 line = line.split()
+                                if 'recips,' in line:
+                                    __, __, __, __, __, id, __, __, list_name, __, recps = line[:11]
+                                    recps_dict[id] = recps
+                                    continue
                                 if not 'bytes' in line:
                                     continue
                                 month, day, time, year, __, __, __, __, list_name, __, addr, size = line[:12]
@@ -268,22 +273,14 @@ class MailmanTraffic(ServiceMonitor):
                                 else:
                                     date = year + months[month] + day + time.replace(':', '')
                                     if list[0] < int(date) < end_date:
-                                        list[2] += int(size)
+                                        if id in recps_dict:
+                                            list[2] += int(size) * int(recps_dict[id])
                                         
                     except IOError as e:
                         sys.stderr.write(str(e)+'\\n')
                 
                 for list_name, opts in lists.items():
                     __, object_id, size = opts
-                    if size:
-                        cmd = f'runuser -u mailman3 -- /opt/mailman/venv/bin/mailman members {{list_name}}@{default_domain} | wc -l'
-                        try:
-                            ps = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                            subscribers = ps.communicate()[0].strip()
-                            size *= int(subscribers)
-                            sys.stderr.write("%s %s*%s traffic*subscribers\\n" % (object_id, size, int(subscribers)))
-                        except:
-                            pass
                     print(object_id, size)
             """).format(**context)
         )
