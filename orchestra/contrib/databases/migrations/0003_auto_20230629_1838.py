@@ -7,8 +7,8 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('orchestration', '__first__'),
-        ('databases', '0002_databaseuser_target_server'),
+       ('orchestration', '__first__'),
+       ('databases', '0002_databaseuser_target_server'),
     ]
 
     operations = [

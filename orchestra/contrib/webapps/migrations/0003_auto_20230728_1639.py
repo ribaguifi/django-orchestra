@@ -8,7 +8,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('orchestration', '__first__'),
+       ('orchestration', '__first__'),
         ('webapps', '0002_webapp_sftpuser'),
     ]
 
