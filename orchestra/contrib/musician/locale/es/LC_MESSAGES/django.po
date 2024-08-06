@@ -398,24 +398,18 @@ msgid "Value"
 msgstr "Valor"
 
 #: templates/musician/domain_detail.html:57
-#, fuzzy
-#| msgid "View DNS records"
 msgid "Add new record"
-msgstr "Ver registros DNS"
+msgstr "Añadir registros DNS"
 
 #: templates/musician/domain_detail.html:60
-#, fuzzy
-#| msgid "Domain"
 msgid "Subdomains"
-msgstr "Dominio"
+msgstr "SubDominios"
 
 #: templates/musician/domain_detail.html:65
 msgid "Any related subdomain."
 msgstr "Cualquier subdominio relacionado."
 
 #: templates/musician/domain_list.html:7
-#, fuzzy
-#| msgid "Your domains and websites"
 msgid "Your domains"
 msgstr "Tus dominios y sitios web"
 
@@ -684,6 +678,19 @@ msgstr "Usuario Principal"
 msgid "SFTP Users"
 msgstr "Usuarios SFTP"
 
+#: templates/musician/webapps/webapp_detail.html:72
+msgid ""
+"\n"
+"      Initial database and App admin password. <br>\n"
+"      Subsequent changes to the admin password will not be reflected.\n"
+"    "
+msgstr ""
+"\n"
+"Contraseña inicial de la base de datos y del administrador de la aplicación. <br>"
+"Los cambios posteriores en la contraseña del administrador no se reflejarán.\n"
+"   "
+
+
 #: templates/musician/webapps/webapp_detail.html:7
 msgid "WebApp Options for"
 msgstr "Opciones de WebApp para"
@@ -695,26 +702,18 @@ msgid "Database:"
 msgstr "Bases de datos"
 
 #: templates/musician/webapps/webapp_detail.html:62
-#, fuzzy
-#| msgid "Databases"
 msgid "User Database:"
 msgstr "Bases de datos"
 
 #: templates/musician/webapps/webapp_detail.html:66
-#, fuzzy
-#| msgid "Password"
 msgid "Password:"
 msgstr "Contraseña"
 
 #: templates/musician/webapps/webapp_detail.html:80
-#, fuzzy
-#| msgid "Settings"
 msgid "PHP settings"
-msgstr "Configuración"
+msgstr "Configuración PHP"
 
 #: templates/musician/webapps/webapp_detail.html:85
-#, fuzzy
-#| msgid "DNS settings page description."
 msgid "PHP settings page description."
 msgstr "Consulta aquí tu configuración DNS."
 
