@@ -84,6 +84,11 @@ class UNIXUserMaildirController(SieveFilteringMixin, ServiceController):
                     --home %(home)s \\
                     --password '%(password)s'
             fi
+            if [[ "%(is_active)s" == "True" ]]; then
+                usermod --unlock %(user)s
+            else
+                usermod --lock %(user)s
+            fi
             mkdir -p %(home)s
             chmod 751 %(home)s
             chown %(user)s:%(group)s %(home)s""") % context
@@ -146,12 +151,13 @@ class UNIXUserMaildirController(SieveFilteringMixin, ServiceController):
             'user': mailbox.name,
             'group': mailbox.name,
             'name': mailbox.name,
-            'password': mailbox.password if mailbox.active else '*%s' % mailbox.password,
+            'password': mailbox.password,
             'home': mailbox.get_home(),
             'maildir': os.path.join(mailbox.get_home(), 'Maildir'),
             'initial_shell': self.SHELL,
             'banner': self.get_banner(),
             'changepass': changepass,
+            'is_active': mailbox.active,
         }
         context['deleted_home'] = settings.MAILBOXES_MOVE_ON_DELETE_PATH % context
         return context
