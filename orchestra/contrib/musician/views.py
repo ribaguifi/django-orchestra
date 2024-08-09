@@ -10,7 +10,7 @@ from django.db.models import Value
 from django.db.models.functions import Concat
 from django.http import (HttpResponse, HttpResponseNotFound,
                          HttpResponseRedirect)
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
 from django.urls import reverse_lazy
 from django.utils import translation
 from django.utils.html import format_html
@@ -59,6 +59,26 @@ from .lists.views import *
 
 logger = logging.getLogger(__name__)
 
+import json
+from urllib.parse import parse_qs
+from orchestra.contrib.resources.helpers import get_history_data
+
+
+class HistoryView(View):
+    def get(self, request, pk, *args, **kwargs):
+        context = {
+            'ids': pk
+        }
+        return render(request, "musician/history.html", context)
+
+
+class HistoryDataView(View):
+    def get(self, request, pk, *args, **kwargs):
+        ids = [pk]
+        queryset = ResourceData.objects.filter(id__in=ids)
+        history = get_history_data(queryset)
+        response = json.dumps(history, indent=4)
+        return HttpResponse(response, content_type="application/json")
 
 
 class DashboardView(CustomContextMixin, UserTokenRequiredMixin, TemplateView):
@@ -75,10 +95,6 @@ class DashboardView(CustomContextMixin, UserTokenRequiredMixin, TemplateView):
         
         account = related_resources.filter(resource_id__verbose_name='account-disk').first()
         account_trafic = related_resources.filter(resource_id__verbose_name='account-traffic').first()
-
-        # TODO: sacar los graficos de alguna manera
-        # url_history_disk = reverse('admin:resources_resourcedata_show_history', args=(account.pk,))
-        # url_history_traffic = reverse('admin:resources_resourcedata_show_history', args=(account_trafic.pk,))
 
         mailboxes = related_resources.filter(resource_id__verbose_name='mailbox-disk')
         lists = related_resources.filter(resource_id__verbose_name='list-traffic')
