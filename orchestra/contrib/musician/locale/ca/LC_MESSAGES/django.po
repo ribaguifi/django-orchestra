@@ -318,6 +318,10 @@ msgstr "És el primer cop que accedeixes, et donem la benvinguda!"
 msgid " The disk space of resources is updated weekly "
 msgstr "L'espai en disc dels recursos es va actualitzant setmanalment."
 
+#: templates/musician/dashboard.html:47
+msgid "Show history"
+msgstr "Mostrar historial"
+
 #: templates/musician/database_list.html:21
 #: templates/musician/mailbox_list.html:30 templates/musician/saas_list.html:19
 #: templates/musician/webapps/webapp_list.html:25

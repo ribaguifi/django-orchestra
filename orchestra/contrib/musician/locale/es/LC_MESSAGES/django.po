@@ -320,6 +320,10 @@ msgstr "Es la primera vez que accedes: ¡te damos la bienvenida!"
 msgid " The disk space of resources is updated weekly "
 msgstr "El espacio en disco de los recursos se actualiza semanalmente"
 
+#: templates/musician/dashboard.html:47
+msgid "Show history"
+msgstr "Mostrar historial"
+
 #: templates/musician/database_list.html:21
 #: templates/musician/mailbox_list.html:30 templates/musician/saas_list.html:19
 #: templates/musician/webapps/webapp_list.html:25

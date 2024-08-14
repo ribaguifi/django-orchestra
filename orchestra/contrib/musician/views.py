@@ -62,17 +62,48 @@ logger = logging.getLogger(__name__)
 import json
 from urllib.parse import parse_qs
 from orchestra.contrib.resources.helpers import get_history_data
+from django.http import HttpResponseNotFound, Http404
+
+class HistoryView(CustomContextMixin, UserTokenRequiredMixin, View):
+
+    def get_object(self, pk):
+        related_resources = self.get_all_resources()
+        
+        account = related_resources.filter(resource_id__verbose_name='account-disk').first()
+        account_trafic = related_resources.filter(resource_id__verbose_name='account-traffic').first()
+        account = getattr(account, "id", False) == pk
+        account_trafic = getattr(account_trafic, "id", False) == pk
+        if account == False and account_trafic == False:
+            raise Http404(f"Resource with id {pk} does not exist")
 
 
-class HistoryView(View):
     def get(self, request, pk, *args, **kwargs):
         context = {
             'ids': pk
         }
+        self.get_object(pk)
         return render(request, "musician/history.html", context)
 
+    # TODO: funcion de dashborad, mirar como no repetir esta funcion 
+    def get_all_resources(self):
+        user = self.request.user
+        resources = Resource.objects.select_related('content_type')
+        resource_models = {r.content_type.model_class(): r.content_type_id for r in resources}
+        ct_id = resource_models[user._meta.model]
+        qset = Q(content_type_id=ct_id, object_id=user.id, resource__is_active=True)
+        for field, rel in user._meta.fields_map.items():
+            try:
+                ct_id = resource_models[rel.related_model]
+            except KeyError:
+                pass
+            else:           
+                manager = getattr(user, field)
+                ids = manager.values_list('id', flat=True)
+                qset = Q(qset) | Q(content_type_id=ct_id, object_id__in=ids, resource__is_active=True)
+        return ResourceData.objects.filter(qset)
 
-class HistoryDataView(View):
+
+class HistoryDataView(CustomContextMixin, UserTokenRequiredMixin, View):
     def get(self, request, pk, *args, **kwargs):
         ids = [pk]
         queryset = ResourceData.objects.filter(id__in=ids)
@@ -111,7 +142,6 @@ class DashboardView(CustomContextMixin, UserTokenRequiredMixin, TemplateView):
 
         # TODO(@slamora) update when backend provides resource usage data
         resource_usage = {
-            # 'account': self.get_account_usage(profile_type, account),
             'mailbox': self.get_resource_usage(profile_type, mailboxes, 'mailbox'),
             'database': self.get_resource_usage(profile_type, databases, 'database'),
             'nextcloud': self.get_resource_usage(profile_type, nextcloud, 'nextcloud'),
@@ -157,7 +187,7 @@ class DashboardView(CustomContextMixin, UserTokenRequiredMixin, TemplateView):
         rs_left = 0
         alert = ''
         progres_bar = False
-        
+
         if ALLOWED_RESOURCES[profile_type].get(name_resource):
             progres_bar = True
             limit_rs = ALLOWED_RESOURCES[profile_type][name_resource]
@@ -184,15 +214,19 @@ class DashboardView(CustomContextMixin, UserTokenRequiredMixin, TemplateView):
         }
     
     def get_account_usage(self, profile_type, account, account_trafic):
+        total_size = 0
+        if account != None and getattr(account, "used") != None:
+            total_size = account.used
+
         allowed_size = ALLOWED_RESOURCES[profile_type]['account']
-        total_size = account.used
         size_left = allowed_size - total_size
+        unit = account.unit if account != None else "GiB"
 
         alert = ''
         if size_left < 0:
-            alert = format_html(f"<span class='text-danger'>{size_left * -1} {account.unit} extra</span>")
+            alert = format_html(f"<span class='text-danger'>{size_left * -1} {unit} extra</span>")
         elif size_left <= 1:
-            alert = format_html(f"<span class='text-warning'>{size_left} {account.unit} available</span>")
+            alert = format_html(f"<span class='text-warning'>{size_left} {unit} available</span>")
 
         return {
             'verbose_name': _('Account'),
