@@ -66,7 +66,7 @@ from django.http import HttpResponseNotFound, Http404
 
 class HistoryView(CustomContextMixin, UserTokenRequiredMixin, View):
 
-    def get_object(self, pk):
+    def check_resource(self, pk):
         related_resources = self.get_all_resources()
         
         account = related_resources.filter(resource_id__verbose_name='account-disk').first()
@@ -81,7 +81,7 @@ class HistoryView(CustomContextMixin, UserTokenRequiredMixin, View):
         context = {
             'ids': pk
         }
-        self.get_object(pk)
+        self.check_resource(pk)
         return render(request, "musician/history.html", context)
 
     # TODO: funcion de dashborad, mirar como no repetir esta funcion 
