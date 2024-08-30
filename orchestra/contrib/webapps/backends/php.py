@@ -74,6 +74,7 @@ class PHPController(WebAppServiceMixin, ServiceController):
             self.append("# No old config files to delete")
 
     def save_fpm(self, webapp, context):
+        context['reload_pool'] = settings.WEBAPPS_PHPFPM_RELOAD_POOL
         self.append(textwrap.dedent("""
             # Generate FPM configuration
             read -r -d '' fpm_config << 'EOF' || true
@@ -85,6 +86,15 @@ class PHPController(WebAppServiceMixin, ServiceController):
                 echo -e "${fpm_config}" > %(fpm_path)s
                 UPDATED_FPM=1
             }
+                                    
+            # Apply changes if needed
+            if [[ $UPDATED_FPM -eq 1 ]]; then
+                %(reload_pool)s
+                # Check that the socket was created
+                if [[ ! -e %(fpm_listen)s ]]; then
+                    %(reload_pool)s
+                fi
+            fi
             """) % context
         )
 
@@ -210,16 +220,10 @@ class PHPController(WebAppServiceMixin, ServiceController):
         )
 
     def commit(self):
-        context = {
-            'reload_pool': settings.WEBAPPS_PHPFPM_RELOAD_POOL,
-        }
         self.append(textwrap.dedent("""
-            # Apply changes if needed
-            if [[ $UPDATED_FPM -eq 1 ]]; then
-                %(reload_pool)s
-            fi
+            # reload apache
             coordinate_apache_reload
-            """) % context
+            """)
         )
         super(PHPController, self).commit()
 
