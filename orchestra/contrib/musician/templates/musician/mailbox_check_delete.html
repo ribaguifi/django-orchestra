@@ -4,7 +4,7 @@
 {% block content %}
 <form method="post">
   {% csrf_token %}
-  <p>{% blocktrans with name=object.name %}Are you sure that you want remove the mailbox: "{{ name }}"?{% endblocktrans %}</p>
+  <p>{% blocktrans with name=object.name %}Are you sure that you want remove the mailbox:{% endblocktrans %} {{ name }} ?</p>
   <div class="alert alert-danger" role="alert">
     {% trans "All mailbox's messages will be <strong>deleted and cannot be recovered</strong>." %}
   </div>

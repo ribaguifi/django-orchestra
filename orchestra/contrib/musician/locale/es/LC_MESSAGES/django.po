@@ -63,10 +63,9 @@ msgstr "Panel de gestión"
 #. Translators: This message appears on the page title
 #: mixins.py:18 templates/musician/dashboard.html:89
 #: templates/musician/dashboard.html:90 views.py:202
-#, fuzzy
-#| msgid "Domain"
+#: templates/musician/websites/website_detail.html:17
 msgid "Domains"
-msgstr "Dominio"
+msgstr "Dominios"
 
 #: mixins.py:19
 msgid "Mails"
@@ -75,6 +74,9 @@ msgstr "Correos"
 #. Translators: This message appears on the page title
 #: mixins.py:21 models.py:146 views.py:542
 msgid "Databases"
+msgstr "Bases de datos"
+
+msgid "Database"
 msgstr "Bases de datos"
 
 #: mixins.py:22
@@ -92,10 +94,8 @@ msgid "Webapps"
 msgstr ""
 
 #: mixins.py:25
-#, fuzzy
-#| msgid "Username"
 msgid "Users"
-msgstr "Nombre de usuario/a"
+msgstr "Usuarios"
 
 #: models.py:147
 msgid "Description details for databases page."
@@ -329,14 +329,13 @@ msgstr "Mostrar historial"
 #: templates/musician/webapps/webapp_list.html:25
 #: templates/musician/websites/website_detail.html:77
 #: templates/musician/websites/website_list.html:20
+#: templates/musician/mailinglist_list.html:24
 msgid "Name"
 msgstr "Nombre"
 
 #: templates/musician/database_list.html:23
-#, fuzzy
-#| msgid "Databases"
 msgid "Database users"
-msgstr "Bases de datos"
+msgstr "Usuarios Base de datos"
 
 #: templates/musician/database_list.html:24
 #: templates/musician/domain_list.html:59
@@ -504,9 +503,8 @@ msgid "Change password"
 msgstr "Cambia la contraseña"
 
 #: templates/musician/mailbox_check_delete.html:7
-#, python-format
-msgid "Are you sure that you want remove the mailbox: \"%(name)s\"?"
-msgstr "¿Estás seguro/a de que quieres borrar el buzón de correo \"%(name)s\"?"
+msgid "Are you sure that you want remove the mailbox:"
+msgstr "¿Estás seguro/a de que quieres borrar el buzón de correo:"
 
 #: templates/musician/mailbox_check_delete.html:9
 msgid ""
@@ -550,22 +548,37 @@ msgid "New mailbox"
 msgstr "Nuevo buzón de correo"
 
 #: templates/musician/mailing_check_delete.html:7
-#, fuzzy, python-format
-#| msgid "Are you sure that you want remove the mailbox: \"%(name)s\"?"
-msgid "Are you sure that you want remove the list: \"%(list)s\"?"
-msgstr "¿Estás seguro/a de que quieres borrar el buzón de correo \"%(name)s\"?"
+msgid "Are you sure that you want remove the list:"
+msgstr "¿Estás seguro/a de que quieres borrar la siguiente lista:"
 
 #: templates/musician/mailinglist_form.html:20
 msgid "Update list"
 msgstr "Actualizar lista"
 
 #: templates/musician/mailinglist_form.html:22
-#, fuzzy
-#| msgid "Mail list"
 msgid "Create list"
-msgstr "Lista de correo"
+msgstr "Crear lista"
+
+#: templates/musician/websites/website_list.html:23
+#: templates/musician/saas_list.html:20
+#: templates/musician/mailinglist_list.html:25
+msgid "Status"
+msgstr "Estado"
+
+#: templates/musician/mailinglist_list.html:26
+msgid "Address"
+msgstr "Dirección de correo"
+
+#: templates/musician/mailinglist_list.html:27
+msgid "Admin email"
+msgstr "Administrador"
+
+#: templates/musician/mailinglist_list.html:28
+msgid "Configure"
+msgstr "Configura"
 
 #: templates/musician/mailinglist_list.html:37
+#: templates/musician/websites/website_detail.html:25
 msgid "Active"
 msgstr "Activo"
 
@@ -602,10 +615,8 @@ msgid "Check your last bills"
 msgstr "Consulta tus últimas facturas"
 
 #: templates/musician/record_check_delete.html:7
-#, fuzzy
-#| msgid "Are you sure that you want remove the mailbox: \"%(name)s\"?"
-msgid "Are you sure that you want remove the following record\"?"
-msgstr "¿Estás seguro/a de que quieres borrar el buzón de correo \"%(name)s\"?"
+msgid "Are you sure that you want remove the following record?"
+msgstr "¿Estás seguro/a de que quieres borrar el siguiente registro ?"
 
 #: templates/musician/record_form.html:8
 #, fuzzy
@@ -617,18 +628,10 @@ msgstr "Actualiza la contraseña"
 msgid "Add record to"
 msgstr "Agregar registro a"
 
-#: templates/musician/saas_list.html:20
-#: templates/musician/websites/website_list.html:23
-#, fuzzy
-#| msgid "Inactive"
-msgid "Is active?"
-msgstr "Inactivo"
 
 #: templates/musician/saas_list.html:21
-#, fuzzy
-#| msgid "Service info"
 msgid "Service"
-msgstr "Información del servicio"
+msgstr "Servicio"
 
 #: templates/musician/saas_list.html:22
 msgid "Service info"
@@ -740,6 +743,7 @@ msgstr "Usuario SFTP"
 #: templates/musician/webapps/webapp_list.html:29
 #: templates/musician/webapps/webappuser_list.html:17
 #: templates/musician/websites/website_list.html:22
+#: templates/musician/websites/website_detail.html:13
 msgid "Server"
 msgstr "Servidor"
 
@@ -754,14 +758,17 @@ msgstr "Añadir Opción a"
 
 #: templates/musician/webapps/webappoption_check_delete.html:7
 #: templates/musician/websites/websiteoption_check_delete.html:7
-#, fuzzy
-#| msgid "Are you sure that you want remove the mailbox: \"%(name)s\"?"
-msgid "Are you sure that you want remove the following option\"?"
-msgstr "¿Estás seguro/a de que quieres borrar el buzón de correo \"%(name)s\"?"
+msgid "Are you sure that you want remove the following option?"
+msgstr "¿Estás seguro/a de que quieres borrar la siguiente opción?"
 
 #: templates/musician/websites/website_detail.html:7
 msgid "WebSite Options for"
 msgstr "Opciones de Website para"
+
+
+#: templates/musician/websites/website_detail.html:32
+msgid "Protocol"
+msgstr "Protocolo"
 
 #: templates/musician/websites/website_detail.html:37
 msgid "Edit options"
@@ -780,20 +787,12 @@ msgid "Webapp"
 msgstr ""
 
 #: templates/musician/websites/website_detail.html:48
-#, fuzzy
-#| msgid "Type"
 msgid "Type "
 msgstr "Tipo"
 
 #: templates/musician/websites/website_detail.html:67
 msgid "Assigned new Webapp"
 msgstr "Añadir nueva Webapp"
-
-#: templates/musician/websites/website_detail.html:70
-#, fuzzy
-#| msgid "Active"
-msgid "Directives"
-msgstr "Activo"
 
 #: templates/musician/websites/website_detail.html:73
 msgid "Options assigned to this Website"
@@ -822,7 +821,7 @@ msgstr ""
 
 #: views.py:182
 msgid "Account"
-msgstr ""
+msgstr "Cuenta"
 
 #. Translators: This message appears on the page title
 #: views.py:227
@@ -900,8 +899,6 @@ msgstr ""
 
 #. Translators: This message appears on the page title
 #: websites/views.py:42
-#, fuzzy
-#| msgid "Type details"
 msgid "website details"
 msgstr "Detalles de cada tipo"
 

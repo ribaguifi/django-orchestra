@@ -10,11 +10,11 @@
 <table class="table service-list">
   <tbody>
     <tr>
-      <th scope="row">Server:</th>
+      <th scope="row">{% trans "Server" %}:</th>
       <td>{{ object.target_server }}</td>
     </tr>
     <tr>
-      <th scope="row">Domains:</th>
+      <th scope="row">{% trans "Domains" %}:</th>
       <td>
         {% for domain in object.domains.all %}
           {{ domain }} <br>
@@ -22,14 +22,14 @@
       </td>
     </tr>
     <tr>
-      <th scope="row">active:</th>
+      <th scope="row">{% trans "active" %}:</th>
       <td class="text-{{website.is_active|yesno:'success,danger'}}">
         <i class="fa fa-{{ website.is_active|yesno:'check,times' }}"></i>
         <span class="sr-only">{{ website.is_active|yesno }}</span>
       </td>
     </tr>
     <tr>
-      <th scope="row">Protocol:</th>
+      <th scope="row">{% trans "Protocol" %}:</th>
       <td>{{ object.protocol }}</td>
     </tr>
   </tbody>

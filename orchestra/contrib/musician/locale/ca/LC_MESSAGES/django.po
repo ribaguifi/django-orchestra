@@ -63,10 +63,8 @@ msgstr "Panell de gestió"
 #. Translators: This message appears on the page title
 #: mixins.py:18 templates/musician/dashboard.html:89
 #: templates/musician/dashboard.html:90 views.py:202
-#, fuzzy
-#| msgid "Domain"
 msgid "Domains"
-msgstr "Domini"
+msgstr "Dominis"
 
 #: mixins.py:19
 msgid "Mails"
@@ -75,6 +73,9 @@ msgstr "Correus"
 #. Translators: This message appears on the page title
 #: mixins.py:21 models.py:146 views.py:542
 msgid "Databases"
+msgstr "Bases de dades"
+
+msgid "Database"
 msgstr "Bases de dades"
 
 #: mixins.py:22
@@ -92,10 +93,8 @@ msgid "Webapps"
 msgstr ""
 
 #: mixins.py:25
-#, fuzzy
-#| msgid "Username"
 msgid "Users"
-msgstr "Nom d’usuari/a"
+msgstr "Usuaris"
 
 #: models.py:147
 msgid "Description details for databases page."
@@ -327,14 +326,13 @@ msgstr "Mostrar historial"
 #: templates/musician/webapps/webapp_list.html:25
 #: templates/musician/websites/website_detail.html:77
 #: templates/musician/websites/website_list.html:20
+#: templates/musician/mailinglist_list.html:24
 msgid "Name"
 msgstr "Nom"
 
 #: templates/musician/database_list.html:23
-#, fuzzy
-#| msgid "Databases"
 msgid "Database users"
-msgstr "Bases de dades"
+msgstr "Usuaris Base de dades"
 
 #: templates/musician/database_list.html:24
 #: templates/musician/domain_list.html:59
@@ -505,9 +503,8 @@ msgid "Change password"
 msgstr "Canvia la contrasenya"
 
 #: templates/musician/mailbox_check_delete.html:7
-#, python-format
-msgid "Are you sure that you want remove the mailbox: \"%(name)s\"?"
-msgstr "Estàs segur/a que vols esborrar la bústia de correu: \"%(name)s\"?"
+msgid "Are you sure that you want remove the mailbox:"
+msgstr "Estàs segur/a que vols esborrar la bústia de correu:"
 
 #: templates/musician/mailbox_check_delete.html:9
 msgid ""
@@ -551,20 +548,34 @@ msgid "New mailbox"
 msgstr "Nova bústia de correu"
 
 #: templates/musician/mailing_check_delete.html:7
-#, fuzzy, python-format
-#| msgid "Are you sure that you want remove the mailbox: \"%(name)s\"?"
-msgid "Are you sure that you want remove the list: \"%(list)s\"?"
-msgstr "Estàs segur/a que vols esborrar la bústia de correu: \"%(name)s\"?"
+msgid "Are you sure that you want remove the list:"
+msgstr "Estàs segur/a que vols esborrar la següent llista:"
 
 #: templates/musician/mailinglist_form.html:20
 msgid "Update list"
 msgstr "Actualitzar llista"
 
 #: templates/musician/mailinglist_form.html:22
-#, fuzzy
-#| msgid "Mail list"
 msgid "Create list"
-msgstr "Llista de correu"
+msgstr "Crear llista"
+
+#: templates/musician/websites/website_list.html:23
+#: templates/musician/saas_list.html:20
+#: templates/musician/mailinglist_list.html:25
+msgid "Status"
+msgstr "Estat"
+
+#: templates/musician/mailinglist_list.html:26
+msgid "Address"
+msgstr "Direcció de correu"
+
+#: templates/musician/mailinglist_list.html:27
+msgid "Admin email"
+msgstr "Administrador"
+
+#: templates/musician/mailinglist_list.html:28
+msgid "Configure"
+msgstr "Configura"
 
 #: templates/musician/mailinglist_list.html:37
 msgid "Active"
@@ -603,10 +614,8 @@ msgid "Check your last bills"
 msgstr "Consulta les teves darreres factures"
 
 #: templates/musician/record_check_delete.html:7
-#, fuzzy
-#| msgid "Are you sure that you want remove the mailbox: \"%(name)s\"?"
-msgid "Are you sure that you want remove the following record\"?"
-msgstr "Estàs segur/a que vols esborrar la bústia de correu: \"%(name)s\"?"
+msgid "Are you sure that you want remove the following record?"
+msgstr "Estàs segur/a que vols esborrar el següent registre?"
 
 #: templates/musician/record_form.html:8
 msgid "Update record of"
@@ -616,18 +625,9 @@ msgstr "Actualitza la contrasenya a"
 msgid "Add record to"
 msgstr "Afegir registre a"
 
-#: templates/musician/saas_list.html:20
-#: templates/musician/websites/website_list.html:23
-#, fuzzy
-#| msgid "Inactive"
-msgid "Is active?"
-msgstr "Inactiu"
-
 #: templates/musician/saas_list.html:21
-#, fuzzy
-#| msgid "Service info"
 msgid "Service"
-msgstr "Informació del servei"
+msgstr "Servei"
 
 #: templates/musician/saas_list.html:22
 msgid "Service info"
@@ -744,10 +744,8 @@ msgstr "Afegir Opcio a"
 
 #: templates/musician/webapps/webappoption_check_delete.html:7
 #: templates/musician/websites/websiteoption_check_delete.html:7
-#, fuzzy
-#| msgid "Are you sure that you want remove the mailbox: \"%(name)s\"?"
-msgid "Are you sure that you want remove the following option\"?"
-msgstr "Estàs segur/a que vols esborrar la bústia de correu: \"%(name)s\"?"
+msgid "Are you sure that you want remove the following option?"
+msgstr "Estàs segur/a que vols esborrar la següent opció?"
 
 #: templates/musician/websites/website_detail.html:7
 msgid "WebSite Options for"
@@ -759,7 +757,7 @@ msgstr "Editar opcions"
 
 #: templates/musician/websites/website_detail.html:40
 msgid "Contents"
-msgstr ""
+msgstr "Contingut"
 
 #: templates/musician/websites/website_detail.html:43
 msgid "Webapps assigned to this website"
@@ -770,8 +768,6 @@ msgid "Webapp"
 msgstr ""
 
 #: templates/musician/websites/website_detail.html:48
-#, fuzzy
-#| msgid "Type"
 msgid "Type "
 msgstr "Tipus"
 
@@ -795,7 +791,7 @@ msgstr "Afegir nova directiva"
 
 #: templates/musician/websites/website_form.html:19
 msgid "Update Option of Website"
-msgstr ""
+msgstr "Actualitzar Opció de WebSite"
 
 #: templates/musician/websites/website_list.html:21
 msgid "Url"
@@ -811,7 +807,7 @@ msgstr ""
 
 #: views.py:182
 msgid "Account"
-msgstr ""
+msgstr "Compte"
 
 #. Translators: This message appears on the page title
 #: views.py:227

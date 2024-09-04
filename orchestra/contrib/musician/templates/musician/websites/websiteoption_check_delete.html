@@ -4,7 +4,7 @@
 {% block content %}
 <form method="post">
   {% csrf_token %}
-  <p>{% blocktrans %}Are you sure that you want remove the following option"?{% endblocktrans %}</p>
+  <p>{% blocktrans %}Are you sure that you want remove the following option?{% endblocktrans %}</p>
   {% if object.name %}
     <pre>{{ object.name }} {{ object.value }}</pre>
   {% else %}
