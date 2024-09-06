@@ -719,6 +719,10 @@ msgstr "Aquesta WebApp té les opcions PHP per defecte; crea'n una nova si la ne
 msgid "Add new option"
 msgstr "Afegir nova Opcio"
 
+#: templates/musician/webapps/webapp_detail.html:27
+msgid "SFTP user"
+msgstr "Usuari SFTP"
+
 #: templates/musician/webapps/webapp_list.html:27
 msgid "Version"
 msgstr ""

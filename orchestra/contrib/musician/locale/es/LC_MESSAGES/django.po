@@ -674,6 +674,7 @@ msgstr "Nombre de usuario/a"
 #: templates/musician/systemuser_list.html:19
 #: templates/musician/webapps/webappuser_list.html:16
 #: templates/musician/websites/website_detail.html:49
+#: templates/musician/webapps/webapp_detail.html:47
 msgid "Path"
 msgstr "Ruta"
 
@@ -732,6 +733,10 @@ msgstr "Esta WebApp tiene las opciones por defecto, crea una nueva opción si la
 msgid "Add new option"
 msgstr "Añadir nueva opción"
 
+#: templates/musician/webapps/webapp_detail.html:27
+msgid "SFTP user"
+msgstr "Usuario SFTP"
+
 #: templates/musician/webapps/webapp_list.html:27
 msgid "Version"
 msgstr ""
@@ -740,6 +745,7 @@ msgstr ""
 msgid "SFTP User"
 msgstr "Usuario SFTP"
 
+#: templates/musician/webapps/webapp_detail.html:13
 #: templates/musician/webapps/webapp_list.html:29
 #: templates/musician/webapps/webappuser_list.html:17
 #: templates/musician/websites/website_list.html:22
@@ -786,6 +792,7 @@ msgstr "WebApps asignadas a este WebSite"
 msgid "Webapp"
 msgstr ""
 
+#: templates/musician/webapps/webapp_detail.html:17
 #: templates/musician/websites/website_detail.html:48
 msgid "Type "
 msgstr "Tipo"

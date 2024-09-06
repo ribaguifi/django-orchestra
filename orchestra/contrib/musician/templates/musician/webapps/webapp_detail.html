@@ -10,11 +10,11 @@
 <table class="table service-list">
   <tbody>
     <tr>
-      <th scope="row">Server:</th>
+      <th scope="row">{% trans  "Server" %}:</th>
       <td colspan="2">{{ object.target_server }}</td>
     </tr>
     <tr>
-      <th scope="row">Type:</th>
+      <th scope="row">{% trans "Type" %}:</th>
       <td colspan="2">{{ object.type }}</td>
     </tr>
     {% if object.data.php_version %}
@@ -24,7 +24,7 @@
       </tr>
     {% endif %}
       <tr>
-        <th scope="row">SFTP user:</th>
+        <th scope="row">{% trans "SFTP user" %}:</th>
         {% if object.sftpuser %}
           <td>{{ object.sftpuser }}</td>
           <td>
@@ -44,7 +44,7 @@
         {% endif %}
       </tr>
     <tr>
-      <th scope="row">Path:</th>
+      <th scope="row">{% trans "Path" %}:</th>
       <td colspan="2">{{ object.get_base_path }}</td>
     </tr>
   </tbody>
