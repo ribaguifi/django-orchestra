@@ -1,0 +1,461 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-09-05 10:11+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: actions.py:25
+#, python-format
+msgid "%s zone content"
+msgstr "%s contenido de zona"
+
+#: actions.py:29 templates/admin/domains/domain/change_form.html:7
+#: templates/admin/domains/domain/view_zone.html:12
+msgid "View zone"
+msgstr "Ver zona"
+
+#: actions.py:53
+msgid ""
+"This subdomain was not explicitly selected but has been automatically added "
+"to this list."
+msgstr ""
+"Este subdominio no fue seleccionado explícitamente, pero se ha agregado automáticamente"
+"A esta lista"
+
+#: actions.py:88
+msgid "Records for one selected domain have been updated."
+msgstr "Se han actualizado los registros del dominio seleccionado"
+
+#: actions.py:89
+#, python-format
+msgid "Records for %i selected domains have been updated."
+msgstr "Se han actualizado los registros para los %i dominios seleccionados"
+
+#: actions.py:96 actions.py:97
+msgid "Edit records"
+msgstr "Editar Registros"
+
+#: actions.py:112
+msgid "Set SOA on subdomains is not possible."
+msgstr "No es posible añadir el registro SOA en los subdominios"
+
+#: actions.py:120
+#, python-format
+msgid "SOA set %s"
+msgstr "Añadir SOA %s"
+
+#: actions.py:131
+msgid "SOA record for one domain has been updated."
+msgstr "Se ha actualizado el registro SOA del dominio"
+
+#: actions.py:132
+#, python-format
+msgid "SOA record for %s domains has been updated."
+msgstr "Se actualizo el registro SOA para los dominios %s"
+
+#: actions.py:139 actions.py:152
+msgid "Set SOA for selected domains"
+msgstr "Añadir SOA en los dominios seleccionados"
+
+#: actions.py:141
+msgid "Set SOA"
+msgstr "Añadir SOA"
+
+#: admin.py:28
+msgid "Extra records"
+msgstr "Registros extra"
+
+#: admin.py:36
+msgid "Subdomains"
+msgstr "Subdominios"
+
+#: admin.py:39
+msgid "Name"
+msgstr "Nombre"
+
+#: admin.py:44
+msgid "Declared records"
+msgstr "Registros declarados"
+
+#: admin.py:78 models.py:27
+msgid "name"
+msgstr "Nombre"
+
+#: admin.py:83
+msgid "Is top"
+msgstr "Es top level"
+
+#: admin.py:96
+msgid "Edit website"
+msgstr "Editar WebSite"
+
+#: admin.py:105
+msgid "Add website"
+msgstr "Añadir WebSite"
+
+#: admin.py:107
+#, python-format
+msgid "No website %s"
+msgstr ""
+
+#: admin.py:110
+msgid "Websites"
+msgstr ""
+
+#: admin.py:119
+msgid "Add address"
+msgstr "Añadir dirección"
+
+#: admin.py:127
+#, python-format
+msgid "No address %s"
+msgstr ""
+
+#: admin.py:129
+msgid "Addresses"
+msgstr "Direcciones"
+
+#: admin.py:151 admin.py:158
+msgid "Implicit records"
+msgstr "Registros implicitos"
+
+#: admin.py:165
+msgid "SOA"
+msgstr ""
+
+#: admin.py:168
+msgid ""
+"SOA (Start of Authority) records are used to determine how the zone "
+"propagates to the secondary nameservers."
+msgstr ""
+"Los registros SOA (inicio de la autoridad) se utilizan para determinar cómo la zona"
+"Se propaga a los servidores de nombres secundarios"
+
+#: backends.py:22
+msgid "Bind9 master domain"
+msgstr ""
+
+#: backends.py:184
+msgid "Bind9 slave domain"
+msgstr ""
+
+#: filters.py:7
+msgid "top domains"
+msgstr ""
+
+#: filters.py:12
+msgid "Top domains"
+msgstr ""
+
+#: filters.py:22
+msgid "has websites"
+msgstr ""
+
+#: filters.py:27
+msgid "True"
+msgstr ""
+
+#: filters.py:28
+msgid "False"
+msgstr ""
+
+#: filters.py:41
+msgid "has addresses"
+msgstr ""
+
+#: forms.py:14
+msgid "Names"
+msgstr "Nombres"
+
+#: forms.py:15
+msgid ""
+"Fully qualified domain name per line. All domains will have the provided "
+"account and records."
+msgstr ""
+"Nombre de dominio totalmente calificado por línea. Todos los dominios tendrán los proporcionados"
+"Cuenta y registros"
+
+#: forms.py:29
+#, python-format
+msgid "%s domain name provided multiple times."
+msgstr "%s Nombre de dominio proporcionado varias veces."
+
+#: forms.py:65
+msgid "An account should be provided for top domain names."
+msgstr ""
+
+#: forms.py:72
+msgid "Provided domain names belong to different accounts."
+msgstr "Los nombres de dominio proporcionados pertenecen a diferentes cuentas"
+
+#: forms.py:118
+#, python-format
+msgid ""
+"%s: Hosts can not have underscore character '_', consider providing a SRV, "
+"CNAME or TXT record."
+msgstr ""
+"%s: los hosts no pueden tener un carácter subrayado '_', considere proporcionar un SRV, "
+"Registro CNAME o TXT."
+
+#: forms.py:142
+msgid "Clear refresh"
+msgstr ""
+
+#: forms.py:143
+msgid "Remove custom refresh value for all selected domains."
+msgstr ""
+
+#: forms.py:145
+msgid "Clear retry"
+msgstr ""
+
+#: forms.py:146
+msgid "Remove custom retry value for all selected domains."
+msgstr ""
+
+#: forms.py:148
+msgid "Clear expire"
+msgstr ""
+
+#: forms.py:149
+msgid "Remove custom expire value for all selected domains."
+msgstr ""
+
+#: forms.py:151
+msgid "Clear min TTL"
+msgstr ""
+
+#: forms.py:152
+msgid "Remove custom min TTL value for all selected domains."
+msgstr ""
+
+#: models.py:28
+msgid "Domain or subdomain name."
+msgstr "Dominio o Subdominio"
+
+#: models.py:33
+msgid "Account"
+msgstr "Cuenta"
+
+#: models.py:34
+msgid "Automatically selected for subdomains."
+msgstr "Seleccionado automáticamente para subdominios"
+
+#: models.py:36
+msgid "top domain"
+msgstr ""
+
+#: models.py:37
+msgid "serial"
+msgstr ""
+
+#: models.py:38
+msgid "A revision number that changes whenever this domain is updated."
+msgstr "Un número de revisión que cambia cada vez que se actualiza este dominio"
+
+#: models.py:39
+msgid "refresh"
+msgstr "actualizar"
+
+#: models.py:41
+#, python-format
+msgid ""
+"The time a secondary DNS server waits before querying the primary DNS "
+"server's SOA record to check for changes. When the refresh time expires, the "
+"secondary DNS server requests a copy of the current SOA record from the "
+"primary. The primary DNS server complies with this request. The secondary "
+"DNS server compares the serial number of the primary DNS server's current "
+"SOA record and the serial number in it's own SOA record. If they are "
+"different, the secondary DNS server will request a zone transfer from the "
+"primary DNS server. The default value is <tt>%s</tt>."
+msgstr ""
+"La hora en que un servidor DNS secundario espera antes de consultar el DNS primario"
+"El registro SOA del servidor para verificar los cambios. Cuando la tiempo de actualización expira,"
+"El servidor DNS secundario solicita una copia del registro SOA actual del"
+"Primario. El servidor DNS principal cumple con esta solicitud. El secundario"
+"El servidor DNS compara el número de serie del servidor DNS principal actual"
+"SOA Record y el número de serie en su propio registro SOA. Si lo son"
+"Diferente, el servidor DNS secundario solicitará una transferencia de zona del"
+"Servidor DNS primario. El valor predeterminado es <tt>%s</tt>"
+
+#: models.py:50
+msgid "retry"
+msgstr ""
+
+#: models.py:52
+#, python-format
+msgid ""
+"The time a secondary server waits before retrying a failed zone transfer. "
+"Normally, the retry time is less than the refresh time. The default value is "
+"<tt>%s</tt>."
+msgstr ""
+"El tiempo en que un servidor secundario espera antes de volver a intentar una transferencia de zona fallida"
+"Normalmente, el tiempo de reintento es menor que el tiempo de actualización. El valor predeterminado es"
+"<Tt>%s</tt>"
+
+#: models.py:55
+msgid "expire"
+msgstr ""
+
+#: models.py:57
+#, python-format
+msgid ""
+"The time that a secondary server will keep trying to complete a zone "
+"transfer. If this time expires prior to a successful zone transfer, the "
+"secondary server will expire its zone file. This means the secondary will "
+"stop answering queries. The default value is <tt>%s</tt>."
+msgstr ""
+"El momento en que un servidor secundario seguirá intentando completar una zona"
+"Transferencia. Si este tiempo expira antes de una transferencia de zona exitosa,"
+"El servidor secundario caducará su archivo de zona. Esto significa que el secundario lo hará"
+"Deje de responder consultas. El valor predeterminado es <tt>%s</tt>"
+
+#: models.py:62
+msgid "min TTL"
+msgstr ""
+
+#: models.py:64
+#, python-format
+msgid ""
+"The minimum time-to-live value applies to all resource records in the zone "
+"file. This value is supplied in query responses to inform other servers how "
+"long they should keep the data in cache. The default value is <tt>%s</tt>."
+msgstr ""
+"El valor mínimo de tiempo de vida se aplica a todos los registros de recursos en la zona"
+"Archivo. Este valor se suministra en las respuestas de consulta para informar a otros servidores cómo"
+"Durante mucho tiempo deberían mantener los datos en caché. El valor predeterminado es <tt>%s </tt>"
+
+#: models.py:118
+msgid "top domain with one subdomain"
+msgstr ""
+
+#: models.py:119
+#, python-format
+msgid "top domain with %d subdomains"
+msgstr ""
+
+#: models.py:121
+msgid "subdomain"
+msgstr "Subdominio"
+
+#: models.py:308
+msgid "A (IPv4 address)"
+msgstr ""
+
+#: models.py:309
+msgid "AAAA (IPv6 address)"
+msgstr ""
+
+#: models.py:329
+msgid "domain"
+msgstr "dominio"
+
+#: models.py:330
+msgid "TTL"
+msgstr ""
+
+#: models.py:331
+#, python-format
+msgid "Record TTL, defaults to %s"
+msgstr "Registro TTL, por defecto %s"
+
+#: models.py:333
+msgid "type"
+msgstr "tipo"
+
+#: models.py:335
+msgid "value"
+msgstr "valor"
+
+#: models.py:336
+msgid "MX, NS and CNAME records sould end with a dot."
+msgstr "Los registros MX, NS and CNAME han de acabar con punto"
+
+#: serializers.py:36
+msgid "Can not create subdomains of other users domains"
+msgstr "No puede crear subdominios de los dominios de otros usuarios"
+
+#: templates/admin/domains/domain/change_form.html:11
+msgid "History"
+msgstr "Historial"
+
+#: templates/admin/domains/domain/change_form.html:13
+msgid "View on site"
+msgstr "Ver en el sitio"
+
+#: templates/admin/domains/domain/view_zone.html:8
+msgid "Home"
+msgstr ""
+
+#: validators.py:28
+msgid "This domain name is not allowed"
+msgstr "Este nombre de dominio no esta permitido"
+
+#: validators.py:37
+msgid "Not a valid domain name."
+msgstr "No es nombre de dominio valido"
+
+#: validators.py:46
+#, python-format
+msgid "%s is not an appropiate zone interval value"
+msgstr "%s no es un valor de intervalo de zona apropiado"
+
+#: validators.py:57
+msgid ""
+"Labels must start and end with a letter or digit, and have as interior "
+"characters only letters, digits, and hyphen."
+msgstr ""
+"Las etiquetas deben comenzar y terminar con una letra o dígito, y tener en su interior"
+"Caracteres solo letras, dígitos y guiones"
+
+#: validators.py:61
+msgid "Use a fully expanded domain name ending with a dot."
+msgstr "Use un nombre de dominio completo que termine con un punto"
+
+#: validators.py:64
+msgid "Labels must be 63 characters or less."
+msgstr "Las etiquetas deben ser de 63 caracteres o menos"
+
+#: validators.py:68
+msgid ""
+"MX record format is 'priority domain.' tuple, with priority being a number."
+msgstr ""
+"El formato de registro MX es 'dominio prioritario'. Tuple, con la prioridad siendo un número "
+
+#: validators.py:83 validators.py:95
+#, python-format
+msgid "%s is not an appropiate SRV record value"
+msgstr "%s no es un valor de SRV apropiado"
+
+#: validators.py:111
+#, python-format
+msgid ""
+"%s is not an appropiate CAA record value, sintax: 0-255 issue|issuewild|"
+"iodef \"domain|mailto:email\""
+msgstr ""
+"%s no es un valor de registro de CAA apropiado, sintaxis: 0-255 issue|issuewild|"
+"iodef \"domain|mailto:email\""
+
+#: validators.py:134
+msgid ""
+"This record value contains spaces, you must enclose the string in double "
+"quotes; otherwise, individual words will be separately quoted and break up "
+"the record into multiple parts."
+msgstr ""
+"Este valor de registro contiene espacios, debe encerrar la cadena en el doble"
+"Comillas; de lo contrario, las palabras individuales serán citadas por separado y se romperán"
+"El registro en múltiples partes"

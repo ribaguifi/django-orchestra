@@ -1,0 +1,305 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-09-06 09:35+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: admin.py:31
+msgid "autoresponse"
+msgstr "autorespuesta"
+
+#: admin.py:52 admin.py:66 settings.py:177
+msgid "Custom filtering"
+msgstr "Filtro personalizado"
+
+#: admin.py:54
+msgid ""
+"Please remember to select <tt>custom filtering</tt> if you want this filter "
+"to be applied."
+msgstr ""
+"Recuerde seleccionar <TT> Filtrado personalizado </tt> Si desea este "
+"filtroAplicar"
+
+#: admin.py:58 admin.py:70 admin.py:114
+msgid "Addresses"
+msgstr "Direcciones de coreo"
+
+#: admin.py:122
+msgid "Forward from"
+msgstr ""
+
+#: admin.py:127
+msgid "Filtering"
+msgstr "Filtración"
+
+#: admin.py:181
+#, python-format
+msgid ""
+"Mailbox '%s' local address matches '%s', please consider if selecting it "
+"makes sense."
+msgstr ""
+"Mailbox '%s' coincidencia de dirección local '%s', considere si "
+"seleccionarloTiene sentido"
+
+#: admin.py:199
+#, python-brace-format
+msgid ""
+"Address <a href='{url}'>{addr}</a> clashes with '{mailbox}' mailbox local "
+"address. Consider adding this mailbox to the address."
+msgstr ""
+"Dirección <a href='{url}'>{addr}</a> se enfrenta con '{mailbox}' buzón "
+"localDirección. Considere agregar este buzón a la dirección."
+
+#: admin.py:210
+#, python-format
+msgid ""
+"You have provided a custom filtering but filtering selected option is %s"
+msgstr ""
+"Ha proporcionado un filtrado personalizado, pero la opción de filtrado "
+"seleccionada es %s"
+
+#: admin.py:246 admin.py:252
+msgid "Email"
+msgstr ""
+
+#: admin.py:260
+msgid "Mailboxes"
+msgstr ""
+
+#: admin.py:269
+msgid "Mailboxes links"
+msgstr ""
+
+#: admin.py:282
+msgid "Forward"
+msgstr "Redirección"
+
+#: admin.py:321
+#, python-format
+msgid ""
+"Address '%s' matches mailbox '%s' local address, please consider if makes "
+"sense adding the mailbox on the mailboxes or forward field."
+msgstr ""
+"Dirección '%s' coincide con buzón '%s', considere si lo hacetiene sentido "
+"agregar el buzón en los buzones o el campo Reenviar"
+
+#: backends.py:64
+msgid "UNIX maildir user"
+msgstr ""
+
+#: backends.py:263
+msgid "Postfix address virtdomain-only"
+msgstr ""
+
+#: backends.py:347
+msgid "Postfix address"
+msgstr ""
+
+#: backends.py:434
+msgid "Mail autoresponse"
+msgstr ""
+
+#: backends.py:445
+msgid "Dovecot Maildir size"
+msgstr ""
+
+#: backends.py:502
+msgid "Postfix-Mailscanner traffic"
+msgstr ""
+
+#: backends.py:672
+msgid "Roundcube Identity Controller"
+msgstr ""
+
+#: backends.py:682
+msgid "rspamd ratelimit user"
+msgstr ""
+
+#: filters.py:9
+msgid "has mailbox"
+msgstr ""
+
+#: filters.py:14
+msgid "True"
+msgstr ""
+
+#: filters.py:15
+msgid "False"
+msgstr ""
+
+#: filters.py:28
+msgid "has forward"
+msgstr ""
+
+#: filters.py:41
+msgid "has address"
+msgstr ""
+
+#: filters.py:53
+msgid "has type server"
+msgstr ""
+
+#: forms.py:20 models.py:115
+msgid "addresses"
+msgstr "direcciones de correo"
+
+#: forms.py:84
+msgid "Mailboxes or forward address should be provided."
+msgstr "Se deben proporcionar buzones o dirección de reenvío"
+
+#: models.py:17 models.py:101
+msgid "name"
+msgstr "nombre"
+
+#: models.py:19
+#, python-format
+msgid "Required. %s characters or fewer. Letters, digits and ./-/_ only."
+msgstr "Requerido. %s caracteres o menos. Letras, dígitos y ./-/_ solamente"
+
+#: models.py:22
+msgid "Enter a valid mailbox name."
+msgstr "Ingrese un nombre de buzón válido"
+
+#: models.py:24
+msgid "password"
+msgstr "contraseña"
+
+#: models.py:25
+msgid "account"
+msgstr "cuenta"
+
+#: models.py:30
+msgid "filtering"
+msgstr "filtro"
+
+#: models.py:32
+msgid ""
+"Arbitrary email filtering in <a href='https://tty1.net/blog/2011/sieve-"
+"tutorial_en.html'>sieve language</a>. This overrides any automatic junk "
+"email filtering"
+msgstr ""
+"Filtrado de correo electrónico arbitrario en <a href='https://tty1.net/"
+"blog/2011/sieve-tutorial_en.html'>lenguaje de tamiz</a>. Esto anula "
+"cualquier basura automáticaFiltrado por correo electrónico"
+
+#: models.py:35
+msgid "active"
+msgstr "activo"
+
+#: models.py:36
+msgid "ratelimit"
+msgstr ""
+
+#: models.py:43 models.py:106
+msgid "mailboxes"
+msgstr "buzones"
+
+#: models.py:76
+msgid "Custom filtering is selected but not provided."
+msgstr "El filtrado personalizado se selecciona pero no se proporciona"
+
+#: models.py:103
+msgid "Address name, left blank for a <i>catch-all</i> address"
+msgstr ""
+"Nombre de la dirección, dejado en blanco para dirección <i>aleatoria</i>"
+
+#: models.py:105
+msgid "domain"
+msgstr "dominio"
+
+#: models.py:108
+msgid "forward"
+msgstr "redirección"
+
+#: models.py:110
+msgid "Space separated email addresses or mailboxes"
+msgstr "Direcciones de correo electrónico o buzones separados por un espacio"
+
+#: models.py:111
+msgid "Account"
+msgstr "Cuenta"
+
+#: models.py:147
+#, python-format
+msgid "Please use mailboxes field for '%s' mailbox."
+msgstr "Utilice el campo de mailboxes para el buzón '%s'"
+
+#: models.py:153
+#, python-format
+msgid "'%s' forwards to itself."
+msgstr ""
+
+#: models.py:175
+msgid "address"
+msgstr "dirección"
+
+#: models.py:178
+msgid "subject"
+msgstr ""
+
+#: models.py:179
+msgid "message"
+msgstr "mensage"
+
+#: models.py:180
+msgid "enabled"
+msgstr "habilitado"
+
+#: settings.py:25
+msgid "Limit for system user based mailbox on Linux is 32."
+msgstr ""
+"El límite para el buzón basado en el usuario del sistema en Linux es 32."
+
+#: settings.py:98
+msgid "Disable"
+msgstr "Deshabilitado"
+
+#: settings.py:99
+msgid "Reject spam (Score&ge;8)"
+msgstr ""
+
+#: settings.py:118
+msgid "Reject spam (Score&ge;5)"
+msgstr ""
+
+#: settings.py:137
+msgid "Archive spam (Score&ge;8)"
+msgstr ""
+
+#: settings.py:157
+msgid "Archive spam (Score&ge;5)"
+msgstr ""
+
+#: validators.py:15
+#, python-format
+msgid "'%s' is not a correct email name."
+msgstr "'%s' no es un nombre de email correcto."
+
+#: validators.py:33
+#, python-format
+msgid "'%s' is already present."
+msgstr ""
+
+#: validators.py:41
+#, python-format
+msgid "'%s' is not a valid email address."
+msgstr "'%s' no es una dirección valida."
+
+#: validators.py:45
+#, python-format
+msgid "'%s' is not an existent mailbox."
+msgstr "'%s' no es un mailbox existente."

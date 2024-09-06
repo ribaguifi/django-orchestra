@@ -1,0 +1,462 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-09-06 07:58+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: actions.py:25
+#, python-format
+msgid "%s zone content"
+msgstr "%s contingut zona"
+
+#: actions.py:29 templates/admin/domains/domain/change_form.html:7
+#: templates/admin/domains/domain/view_zone.html:12
+msgid "View zone"
+msgstr "Veure zona"
+
+#: actions.py:53
+msgid ""
+"This subdomain was not explicitly selected but has been automatically added "
+"to this list."
+msgstr ""
+"Aquest subdomini no va ser seleccionat explícitament, però s'ha afegit automàticament"
+"A aquesta llista."
+
+
+#: actions.py:88
+msgid "Records for one selected domain have been updated."
+msgstr "S'han actualitzat els registres d'un domini seleccionat."
+
+#: actions.py:89
+#, python-format
+msgid "Records for %i selected domains have been updated."
+msgstr "S'han actualitzat els registres dels dominis seleccionars %i "
+
+#: actions.py:96 actions.py:97
+msgid "Edit records"
+msgstr "Editar registres"
+
+#: actions.py:112
+msgid "Set SOA on subdomains is not possible."
+msgstr "Configurar SOA en subdominis no és possible."
+
+#: actions.py:120
+#, python-format
+msgid "SOA set %s"
+msgstr ""
+
+#: actions.py:131
+msgid "SOA record for one domain has been updated."
+msgstr "El registre SOA per a un domini s'ha actualitzat."
+
+#: actions.py:132
+#, python-format
+msgid "SOA record for %s domains has been updated."
+msgstr "S'ha actualitzat el rècord SOA per als dominis de %s"
+
+#: actions.py:139 actions.py:152
+msgid "Set SOA for selected domains"
+msgstr "Configurar SOA pels dominis seleccionats"
+
+#: actions.py:141
+msgid "Set SOA"
+msgstr "Afegir SOA"
+
+#: admin.py:28
+msgid "Extra records"
+msgstr "Registres Extra"
+
+#: admin.py:36
+msgid "Subdomains"
+msgstr "Subdominis"
+
+#: admin.py:39
+msgid "Name"
+msgstr "Nom"
+
+#: admin.py:44
+msgid "Declared records"
+msgstr "Registres declarats"
+
+#: admin.py:78 models.py:27
+msgid "name"
+msgstr "nom"
+
+#: admin.py:83
+msgid "Is top"
+msgstr ""
+
+#: admin.py:96
+msgid "Edit website"
+msgstr "Editar website"
+
+#: admin.py:105
+msgid "Add website"
+msgstr "Crear website"
+
+#: admin.py:107
+#, python-format
+msgid "No website %s"
+msgstr ""
+
+#: admin.py:110
+msgid "Websites"
+msgstr ""
+
+#: admin.py:119
+msgid "Add address"
+msgstr ""
+
+#: admin.py:127
+#, python-format
+msgid "No address %s"
+msgstr ""
+
+#: admin.py:129
+msgid "Addresses"
+msgstr ""
+
+#: admin.py:151 admin.py:158
+msgid "Implicit records"
+msgstr "Registres implicits"
+
+#: admin.py:165
+msgid "SOA"
+msgstr ""
+
+#: admin.py:168
+msgid ""
+"SOA (Start of Authority) records are used to determine how the zone "
+"propagates to the secondary nameservers."
+msgstr ""
+"Els registres SOA (Start of Authority) s'utilitzen per determinar com la zona"
+"Es propaga als servidors de noms secundaris."
+
+#: backends.py:22
+msgid "Bind9 master domain"
+msgstr ""
+
+#: backends.py:184
+msgid "Bind9 slave domain"
+msgstr ""
+
+#: filters.py:7
+msgid "top domains"
+msgstr ""
+
+#: filters.py:12
+msgid "Top domains"
+msgstr ""
+
+#: filters.py:22
+msgid "has websites"
+msgstr ""
+
+#: filters.py:27
+msgid "True"
+msgstr ""
+
+#: filters.py:28
+msgid "False"
+msgstr ""
+
+#: filters.py:41
+msgid "has addresses"
+msgstr ""
+
+#: forms.py:14
+msgid "Names"
+msgstr ""
+
+#: forms.py:15
+msgid ""
+"Fully qualified domain name per line. All domains will have the provided "
+"account and records."
+msgstr ""
+"Nom de domini completament qualificat per línia. Tots els dominis tindran el subministrament"
+"Compte i registres."
+
+#: forms.py:29
+#, python-format
+msgid "%s domain name provided multiple times."
+msgstr "El nom de domini %s es va proporcionar diverses vegades."
+
+#: forms.py:65
+msgid "An account should be provided for top domain names."
+msgstr ""
+
+#: forms.py:72
+msgid "Provided domain names belong to different accounts."
+msgstr "Els noms de domini pertanyen a diferents comptes"
+
+#: forms.py:118
+#, python-format
+msgid ""
+"%s: Hosts can not have underscore character '_', consider providing a SRV, "
+"CNAME or TXT record."
+msgstr ""
+"%s: Els Hosts no poden tenir un caràcter '_', considereu proporcionar un SRV"
+"Registre CNAME o TXT."
+
+#: forms.py:142
+msgid "Clear refresh"
+msgstr ""
+
+#: forms.py:143
+msgid "Remove custom refresh value for all selected domains."
+msgstr ""
+
+#: forms.py:145
+msgid "Clear retry"
+msgstr ""
+
+#: forms.py:146
+msgid "Remove custom retry value for all selected domains."
+msgstr ""
+
+#: forms.py:148
+msgid "Clear expire"
+msgstr ""
+
+#: forms.py:149
+msgid "Remove custom expire value for all selected domains."
+msgstr ""
+
+#: forms.py:151
+msgid "Clear min TTL"
+msgstr ""
+
+#: forms.py:152
+msgid "Remove custom min TTL value for all selected domains."
+msgstr ""
+
+#: models.py:28
+msgid "Domain or subdomain name."
+msgstr "nom de Domini o Subdomini"
+
+#: models.py:33
+msgid "Account"
+msgstr "Compte"
+
+#: models.py:34
+msgid "Automatically selected for subdomains."
+msgstr "Seleccionat automàticament per a subdominis."
+
+#: models.py:36
+msgid "top domain"
+msgstr ""
+
+#: models.py:37
+msgid "serial"
+msgstr ""
+
+#: models.py:38
+msgid "A revision number that changes whenever this domain is updated."
+msgstr "Un número de revisió que canvia sempre que aquest domini s'actualitzi."
+
+#: models.py:39
+msgid "refresh"
+msgstr ""
+
+#: models.py:41
+#, python-format
+msgid ""
+"The time a secondary DNS server waits before querying the primary DNS "
+"server's SOA record to check for changes. When the refresh time expires, the "
+"secondary DNS server requests a copy of the current SOA record from the "
+"primary. The primary DNS server complies with this request. The secondary "
+"DNS server compares the serial number of the primary DNS server's current "
+"SOA record and the serial number in it's own SOA record. If they are "
+"different, the secondary DNS server will request a zone transfer from the "
+"primary DNS server. The default value is <tt>%s</tt>."
+msgstr ""
+"El temps que un servidor DNS secundari espera abans de consultar el DNS primari"
+"Registre SOA del servidor per comprovar si hi ha canvis. Quan el temps d'actualització caduca,"
+"El servidor DNS secundari sol·licita una còpia del registre SOA actual del"
+"Primària. El servidor DNS primari compleix aquesta sol·licitud. La secundària"
+"El servidor DNS compara el número de sèrie del corrent principal del servidor DNS"
+"Registre SOA i el número de sèrie del seu propi registre SOA. Si ho són"
+"Diferent, el servidor DNS secundari sol·licitarà una transferència de zona des del"
+"Servidor DNS primari. El valor per defecte és <tt>%s</tt>."
+
+#: models.py:50
+msgid "retry"
+msgstr ""
+
+#: models.py:52
+#, python-format
+msgid ""
+"The time a secondary server waits before retrying a failed zone transfer. "
+"Normally, the retry time is less than the refresh time. The default value is "
+"<tt>%s</tt>."
+msgstr ""
+"El temps que un servidor secundari espera abans de tornar a tornar a transferir una zona fallida."
+"Normalment, el temps de tornada és inferior al temps d'actualització. El valor predeterminat és"
+"<tt>%s</tt>."
+
+#: models.py:55
+msgid "expire"
+msgstr ""
+
+#: models.py:57
+#, python-format
+msgid ""
+"The time that a secondary server will keep trying to complete a zone "
+"transfer. If this time expires prior to a successful zone transfer, the "
+"secondary server will expire its zone file. This means the secondary will "
+"stop answering queries. The default value is <tt>%s</tt>."
+msgstr ""
+"El temps que un servidor secundari continuarà intentant completar una zona"
+"Transferència. Si aquesta vegada caduca abans d'una transferència de zona amb èxit,"
+"El servidor secundari caducarà el seu fitxer de zona. Això significa que la voluntat secundària"
+"Deixa de respondre a les consultes. El valor predeterminat és <tt>%s</tt>."
+
+#: models.py:62
+msgid "min TTL"
+msgstr ""
+
+#: models.py:64
+#, python-format
+msgid ""
+"The minimum time-to-live value applies to all resource records in the zone "
+"file. This value is supplied in query responses to inform other servers how "
+"long they should keep the data in cache. The default value is <tt>%s</tt>."
+msgstr ""
+"El valor mínim de temps en viu s'aplica a tots els registres de recursos de la zona"
+"Fitxer. Aquest valor es subministra a les respostes de consulta per informar a altres servidors com"
+"Long han de mantenir les dades en memòria cau. El valor predeterminat és <tt>%s</tt>"
+
+#: models.py:118
+msgid "top domain with one subdomain"
+msgstr ""
+
+#: models.py:119
+#, python-format
+msgid "top domain with %d subdomains"
+msgstr ""
+
+#: models.py:121
+msgid "subdomain"
+msgstr "subdomini"
+
+#: models.py:308
+msgid "A (IPv4 address)"
+msgstr ""
+
+#: models.py:309
+msgid "AAAA (IPv6 address)"
+msgstr ""
+
+#: models.py:329
+msgid "domain"
+msgstr "domini"
+
+#: models.py:330
+msgid "TTL"
+msgstr ""
+
+#: models.py:331
+#, python-format
+msgid "Record TTL, defaults to %s"
+msgstr "Registre TTL, per defecte a %s"
+
+#: models.py:333
+msgid "type"
+msgstr "tipus"
+
+#: models.py:335
+msgid "value"
+msgstr "valor"
+
+#: models.py:336
+msgid "MX, NS and CNAME records sould end with a dot."
+msgstr "Els registres de MX, NS i CNAME s'acaben amb un punt."
+
+#: serializers.py:36
+msgid "Can not create subdomains of other users domains"
+msgstr "No es pot crear subdominis d'altres dominis d'usuaris"
+
+#: templates/admin/domains/domain/change_form.html:11
+msgid "History"
+msgstr "Historial"
+
+#: templates/admin/domains/domain/change_form.html:13
+msgid "View on site"
+msgstr "Veure al lloc"
+
+#: templates/admin/domains/domain/view_zone.html:8
+msgid "Home"
+msgstr ""
+
+#: validators.py:28
+msgid "This domain name is not allowed"
+msgstr "Aquest nom de domini no està permès"
+
+#: validators.py:37
+msgid "Not a valid domain name."
+msgstr "No és un nom de domini vàlid."
+
+#: validators.py:46
+#, python-format
+msgid "%s is not an appropiate zone interval value"
+msgstr "%s no és un valor d'interval de zona adequat"
+
+#: validators.py:57
+msgid ""
+"Labels must start and end with a letter or digit, and have as interior "
+"characters only letters, digits, and hyphen."
+msgstr ""
+"Les etiquetes han de començar i acabar amb una lletra o dígit i tenir en l'interior"
+"Només caràcters lletres, dígits i guionet."
+
+#: validators.py:61
+msgid "Use a fully expanded domain name ending with a dot."
+msgstr "Utilitzeu un nom de domini complet amb un punt final."
+
+#: validators.py:64
+msgid "Labels must be 63 characters or less."
+msgstr "Les etiquetes han de tenir 63 caràcters o menys."
+
+#: validators.py:68
+msgid ""
+"MX record format is 'priority domain.' tuple, with priority being a number."
+msgstr ""
+"El format de registre MX és 'domini prioritari'. Tuple, amb la prioritat que és un número "
+
+#: validators.py:83 validators.py:95
+#, python-format
+msgid "%s is not an appropiate SRV record value"
+msgstr "%s no és un valor de registre SRV Apropiat"
+
+#: validators.py:111
+#, python-format
+msgid ""
+"%s is not an appropiate CAA record value, sintax: 0-255 issue|issuewild|"
+"iodef \"domain|mailto:email\""
+msgstr ""
+"%s no és un valor de registre CAA adequat, sintaxi: 0-255 issue|issuewild|"
+"iodef \"domain|mailto:email\""
+
+#: validators.py:134
+msgid ""
+"This record value contains spaces, you must enclose the string in double "
+"quotes; otherwise, individual words will be separately quoted and break up "
+"the record into multiple parts."
+msgstr ""
+"Aquest valor de registre conté espais, heu d'incloure la cadena ab cometes dobles"
+"en cas contrari, les paraules individuals es citaran per separat i es trencaran"
+"El registre en diverses parts"

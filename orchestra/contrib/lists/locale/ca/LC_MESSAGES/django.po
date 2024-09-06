@@ -1,0 +1,117 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-09-06 10:23+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: admin.py:28 admin.py:42
+msgid "Address"
+msgstr "Direccio"
+
+#: admin.py:32
+msgid "Admin"
+msgstr "Administrador"
+
+#: admin.py:44
+#, python-format
+msgid "Additional address besides the default &lt;name&gt;@%s"
+msgstr "Adreça addicional a més del valor predeterminat &lt;name&gt;@%s"
+
+#: backends.py:16
+msgid "Mailman virtdomain-only"
+msgstr ""
+
+#: backends.py:201
+msgid "Mailman traffic"
+msgstr "Trànsit de Mailman"
+
+#: backends.py:309
+msgid "Mailman subscribers"
+msgstr "Subscriptors Mailman"
+
+#: filters.py:7
+msgid "has custom address"
+msgstr "té adreça personalitzada"
+
+#: filters.py:12
+msgid "True"
+msgstr ""
+
+#: filters.py:13
+msgid "False"
+msgstr ""
+
+#: models.py:13
+msgid "name"
+msgstr "nom"
+
+#: models.py:14
+#, python-format
+msgid "Default list address &lt;name&gt;@%s"
+msgstr "Adreça de llista predeterminada &lt;name&gt;@%s"
+
+#: models.py:15
+msgid "address name"
+msgstr "Nom de l'adreça"
+
+#: models.py:18
+msgid "address domain"
+msgstr "Domini adicional"
+
+#: models.py:19
+msgid "admin email"
+msgstr "Correu electrònic d'administració"
+
+#: models.py:20
+msgid "Administration email address"
+msgstr "Adreça de correu electrònic d'administració"
+
+#: models.py:21
+msgid "Account"
+msgstr "Compte"
+
+#: models.py:24
+msgid "active"
+msgstr "actiu"
+
+#: models.py:25
+msgid ""
+"Designates whether this account should be treated as active. Unselect this "
+"instead of deleting accounts."
+msgstr ""
+"Designa si aquest compte ha de ser tractat com a actiu. Deselecteu això "
+"En lloc de suprimir els comptes."
+
+#: models.py:47
+msgid "Domain should be selected for provided address name."
+msgstr "El domini s'ha de seleccionar per al nom de l'adreça proporcionat."
+
+#: serializers.py:20
+msgid "Password"
+msgstr "Contrasenya"
+
+#: serializers.py:25
+msgid ""
+"Enter a valid password. This value may contain any ascii character except "
+"for  '/\"/\\/ characters."
+msgstr ""
+"Introduïu una contrasenya vàlida. Aquest valor pot contenir qualsevol personatge ASCII excepte"
+"Per a '/\"/\\/caràcters. "
+
+#: serializers.py:43
+msgid "address_domains should should be provided when providing an addres_name"
+msgstr "S'hauria de proporcionar address_domains en proporcionar un address_name"
