@@ -1,0 +1,654 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-09-10 07:49+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: admin.py:89
+msgid "Web application type"
+msgstr "Tipus d'aplicació web"
+
+#: admin.py:102
+msgid "user sftp"
+msgstr "usuari SFTP"
+
+#: admin.py:119
+msgid "Add website"
+msgstr "crear website"
+
+#: admin.py:121
+msgid "web sites"
+msgstr ""
+
+#: admin.py:128 filters.py:26
+msgid "detail"
+msgstr "detalls"
+
+#: backends/limesurvey.py:18
+msgid "Limesurvey"
+msgstr ""
+
+#: backends/moodle.py:18
+msgid "Moodle"
+msgstr ""
+
+#: backends/php.py:22
+msgid "PHP FPM/FCGID"
+msgstr ""
+
+#: backends/python.py:16
+msgid "Python uWSGI"
+msgstr ""
+
+#: backends/static.py:13
+msgid "Static"
+msgstr ""
+
+#: backends/symboliclink.py:14
+msgid "Symbolic link webapp"
+msgstr ""
+
+#: backends/webalizer.py:13
+msgid "Webalizer App"
+msgstr ""
+
+#: backends/wordpress.py:21
+msgid "Wordpress"
+msgstr ""
+
+#: filters.py:8
+msgid "website"
+msgstr ""
+
+#: filters.py:13
+msgid "True"
+msgstr ""
+
+#: filters.py:14
+msgid "False"
+msgstr ""
+
+#: filters.py:30
+msgid "Empty"
+msgstr ""
+
+#: models.py:19 models.py:105
+msgid "name"
+msgstr "nom"
+
+#: models.py:20
+#, python-format
+msgid "The app will be installed in %s"
+msgstr "Laplicació s'instalara en %s"
+
+#: models.py:21
+msgid "type"
+msgstr "tipus"
+
+#: models.py:23
+msgid "Account"
+msgstr "Compte"
+
+#: models.py:24
+msgid "data"
+msgstr ""
+
+#: models.py:25
+msgid "Extra information dependent of each service."
+msgstr "Informació addicional depenent de cada servei."
+
+#: models.py:27
+msgid "Target Server"
+msgstr ""
+
+#: models.py:30
+msgid "SFTP user"
+msgstr "usuari SFTP"
+
+#: models.py:30
+msgid "This option is only required for the new webservers."
+msgstr "Aquesta opció només és necessària per als nous servidors web."
+
+#: models.py:38
+msgid "Web App"
+msgstr ""
+
+#: models.py:39
+msgid "Web Apps"
+msgstr ""
+
+#: models.py:104
+msgid "Web application"
+msgstr "Aplicació web"
+
+#: models.py:107
+msgid "value"
+msgstr "valor"
+
+#: models.py:111
+msgid "option"
+msgstr "opció"
+
+#: models.py:112
+msgid "options"
+msgstr "opcions"
+
+#: options.py:48
+#, python-format
+msgid "'%(value)s' does not match %(regex)s."
+msgstr "'%(value)s' no coincideix amb %(regex)s."
+
+#: options.py:67
+#, python-format
+msgid "This option is deprecated since PHP version %s."
+msgstr "Aquesta opció està en desús de la versió PHP %s."
+
+#: options.py:73
+msgid "Public root"
+msgstr ""
+
+#: options.py:74
+msgid "Document root relative to webapps/&lt;webapp&gt;/"
+msgstr "Ruta relativa des de webapps/&lt;webapp&gt;/"
+
+#: options.py:85
+#, python-format
+msgid "Public root path '%s' outside of webapp base path '%s'"
+msgstr ""
+
+#: options.py:94
+msgid "Process timeout"
+msgstr ""
+
+#: options.py:95
+msgid ""
+"Maximum time in seconds allowed for a request to complete (a number between "
+"0 and 999).<br>Also sets <tt>max_request_time</tt> when php-cgi is used."
+msgstr ""
+"El temps màxim en segons que permet completar una sol·licitud (un número entre"
+"0 i 999). <br>També estableix <tt>max_request_time</tt> quan s'utilitza PHP-CGI."
+
+#: options.py:105
+msgid "Number of processes"
+msgstr ""
+
+#: options.py:106
+msgid ""
+"Maximum number of children that can be alive at the same time (a number "
+"between 0 and 99)."
+msgstr ""
+"Nombre màxim de fills que poden estar vius alhora (un nombre"
+"Entre 0 i 99)."
+
+#: options.py:113
+msgid "Enable functions"
+msgstr ""
+
+#: options.py:129
+msgid "Disable functions"
+msgstr ""
+
+#: options.py:130
+#, python-format
+msgid ""
+"This directive allows you to disable certain functions for security reasons. "
+"It takes on a comma-delimited list of function names. disable_functions is "
+"not affected by Safe Mode. Default disabled fuctions include:<br><tt>%s</tt>"
+msgstr ""
+"Aquesta directiva us permet desactivar determinades funcions per motius de seguretat."
+"Feu una llista de noms de funcions delimitades per Comas."
+"disable_functions no es veu afectat pel mode segur. Les funcions desactivades predeterminades inclouen: <br><tt>%s</tt>"
+
+#: options.py:148
+msgid "Allow URL include"
+msgstr ""
+
+#: options.py:149
+msgid ""
+"Allows the use of URL-aware fopen wrappers with include, include_once, "
+"require, require_once (On or Off)."
+msgstr ""
+"Habilita els embolcalls de tipus URL com a include, include_once, "
+"requereix (On or Off)."
+
+#: options.py:156
+msgid "Allow URL fopen"
+msgstr ""
+
+#: options.py:157
+msgid ""
+"Enables the URL-aware fopen wrappers that enable accessing URL object like "
+"files (On or Off)."
+msgstr ""
+"Habilita els embolcalls de tipus URL com a"
+"arxius (On or Off)."
+
+#: options.py:163
+msgid "Auto append file"
+msgstr ""
+
+#: options.py:164
+msgid ""
+"Specifies the name of a file that is automatically parsed after the main "
+"file."
+msgstr ""
+"Especifica el nom d’un fitxer que s’analitza automàticament després del fitxer principal."
+
+#: options.py:170
+msgid "Auto prepend file"
+msgstr ""
+
+#: options.py:171
+msgid ""
+"Specifies the name of a file that is automatically parsed before the main "
+"file."
+msgstr ""
+"Especifica el nom d’un fitxer que s’analitza automàticament abans del fitxer principal."
+
+#: options.py:177
+msgid "date.timezone"
+msgstr ""
+
+#: options.py:178
+msgid ""
+"Sets the default timezone used by all date/time functions (Timezone string "
+"'Europe/London')."
+msgstr ""
+"Estableix la zona horària predeterminada utilitzada per totes les funcions date/time (Timezone string "
+"'Europe/London')."
+
+#: options.py:184
+msgid "Default socket timeout"
+msgstr ""
+
+#: options.py:185 options.py:265
+msgid "Number between 0 and 999."
+msgstr "Numero entre 0 y 999."
+
+#: options.py:191
+msgid "Display errors"
+msgstr ""
+
+#: options.py:192
+msgid ""
+"Determines whether errors should be printed to the screen as part of the "
+"output or if they should be hidden from the user (On or Off)."
+msgstr ""
+"Determineu si s'han d'imprimir errors a la pantalla com a part de la"
+"Sortida o si s'han d'amagar a l'usuari (On o Off)."
+
+#: options.py:199
+msgid "Extension"
+msgstr ""
+
+#: options.py:205
+msgid "Include path"
+msgstr ""
+
+#: options.py:210
+msgid "Open basedir"
+msgstr ""
+
+#: options.py:215
+msgid "Magic quotes GPC"
+msgstr ""
+
+#: options.py:216
+msgid ""
+"Sets the magic_quotes state for GPC (Get/Post/Cookie) operations (On or Off) "
+"<b>DEPRECATED as of PHP 5.3.0</b>."
+msgstr ""
+
+#: options.py:224
+msgid "Magic quotes runtime"
+msgstr ""
+
+#: options.py:225
+msgid ""
+"Functions that return data from any sort of external source will have quotes "
+"escaped with a backslash (On or Off) <b>DEPRECATED as of PHP 5.3.0</b>."
+msgstr ""
+
+#: options.py:233
+msgid "Magic quotes sybase"
+msgstr ""
+
+#: options.py:234
+msgid ""
+"Single-quote is escaped with a single-quote instead of a backslash (On or "
+"Off)."
+msgstr ""
+
+#: options.py:240
+msgid "Max input time"
+msgstr ""
+
+#: options.py:241
+msgid ""
+"Maximum time in seconds a script is allowed to parse input data, like POST "
+"and GET (Integer between 0 and 999)."
+msgstr ""
+"Temps màxim en segons que un script pot analitzar les dades d’entrada, com POST"
+"i GET (nombre enter entre 0 i 999)."
+
+#: options.py:248
+msgid "Max input vars"
+msgstr ""
+
+#: options.py:249
+msgid ""
+"How many input variables may be accepted (limit is applied to $_GET, $_POST "
+"and $_COOKIE superglobal separately) (Integer between 0 and 9999)."
+msgstr ""
+"Cuántas variables de entrada se pueden aceptar (el límite se aplica a $_GET, $_POST"
+"y $_COOKIE Superglobal por separado) (entero entre 0 y 9999)."
+
+#: options.py:256
+msgid "Memory limit"
+msgstr ""
+
+#: options.py:257
+msgid ""
+"This sets the maximum amount of memory in bytes that a script is allowed to "
+"allocate (Value between 0M and 999M)."
+msgstr ""
+"Això estableix la quantitat màxima de memòria en bytes que es permet un script"
+"Asignar (valor entre 0M y 999M)."
+
+
+#: options.py:264
+msgid "Mysql connect timeout"
+msgstr ""
+
+#: options.py:271
+msgid "Output buffering"
+msgstr ""
+
+#: options.py:272
+msgid "Turn on output buffering (On or Off)."
+msgstr "Enceneu el buffering de sortida (On or Off)."
+
+#: options.py:278
+msgid "Register globals"
+msgstr ""
+
+#: options.py:279
+msgid ""
+"Whether or not to register the EGPCS (Environment, GET, POST, Cookie, "
+"Server) variables as global variables (On or Off)."
+msgstr ""
+"Enregistrar o no EGPCS (Environment, GET, POST, Cookie, "
+"Server) com variables globals (On or Off)."
+
+#: options.py:286
+msgid "Post max size"
+msgstr ""
+
+#: options.py:287
+msgid "Sets max size of post data allowed (Value between 0M and 999M)."
+msgstr "Estableix la mida màxima de dades de publicació permesa (valor entre 0M a 999M)"
+
+#: options.py:293
+msgid "Sendmail path"
+msgstr ""
+
+#: options.py:294
+msgid "Where the sendmail program can be found."
+msgstr "On podeu trobar el programa Sendmail."
+
+#: options.py:300
+msgid "Session bug compat warning"
+msgstr ""
+
+#: options.py:301
+msgid ""
+"Enables an PHP bug on session initialization for legacy behaviour (On or "
+"Off)."
+msgstr ""
+"Activa un error de PHP en la inicialització de la sessió per a un comportament heretat (On o Off)."
+
+#: options.py:307
+msgid "Session auto start"
+msgstr ""
+
+#: options.py:308
+msgid ""
+"Specifies whether the session module starts a session automatically on "
+"request startup (On or Off)."
+msgstr ""
+"Especifiqueu si el mòdul de sessió comença una sessió automàticament"
+"Sol·licitud inici (On or Off)."
+
+#: options.py:316
+msgid "Safe mode"
+msgstr ""
+
+#: options.py:317
+msgid ""
+"Whether to enable PHP's safe mode (On or Off) <b>DEPRECATED as of PHP 5.3.0</"
+"b>"
+msgstr ""
+
+#: options.py:324
+msgid "Suhosin POST max vars"
+msgstr ""
+
+#: options.py:325 options.py:332 options.py:339
+msgid "Number between 0 and 9999."
+msgstr "Numero entre 0 y 9999"
+
+#: options.py:331
+msgid "Suhosin GET max vars"
+msgstr ""
+
+#: options.py:338
+msgid "Suhosin request max vars"
+msgstr ""
+
+#: options.py:345
+msgid "Suhosin session encrypt"
+msgstr ""
+
+#: options.py:346 options.py:353
+msgid "On or Off"
+msgstr ""
+
+#: options.py:352
+msgid "Suhosin simulation"
+msgstr ""
+
+#: options.py:359
+msgid "Suhosin executor include whitelist"
+msgstr ""
+
+#: options.py:365
+msgid "Upload max filesize"
+msgstr ""
+
+#: options.py:366
+msgid "Value between 0M and 999M."
+msgstr "Valor entre 0M y 999M"
+
+#: options.py:372
+msgid "Upload tmp dir"
+msgstr ""
+
+#: options.py:373
+msgid ""
+"The temporary directory used for storing files when doing file upload. Must "
+"be writable by whatever user PHP is running as. If not specified PHP will "
+"use the system's default.<br>If the directory specified here is not "
+"writable, PHP falls back to the system default temporary directory. If "
+"open_basedir is on, then the system default directory must be allowed for an "
+"upload to succeed."
+msgstr ""
+"El directori temporal que s'utilitza per emmagatzemar fitxers quan es carrega."
+"Ha de permetre l'escriptura de qualsevol usuari PHP que s'executa. Si no s'especifica, PHP ho farà"
+"Utilitzeu el valor per defecte del sistema. <br> Si el directori especificat aquí no és"
+"writeable, PHP torna al directori temporal predeterminat del sistema. Sí"
+"Open_Basedir s'activa, i s'ha de permetre el sistema predeterminat del sistema per a"
+"upload per tenir èxit."
+
+#: options.py:383
+msgid "Zend extension"
+msgstr ""
+
+#: types/__init__.py:46
+msgid "A WordPress blog with this name already exists."
+msgstr "Ya existeix un blog de WordPress amb aquest nom"
+
+#: types/cms.py:19 types/cms.py:46
+msgid "Database name"
+msgstr "Nom BD"
+
+#: types/cms.py:20
+msgid "Database exclusively used for this webapp."
+msgstr "Base de dades utilitzada exclusivament per a aquesta aplicació web."
+
+#: types/cms.py:21 types/cms.py:47
+msgid "Database user"
+msgstr "Usuari BD"
+
+#: types/cms.py:22
+msgid "Database user exclusively used for this webapp."
+msgstr "L’usuari de la base de dades s’utilitza exclusivament per a aquesta aplicació web"
+
+#: types/cms.py:23 types/cms.py:48
+msgid "Password"
+msgstr "Contrasenya"
+
+#: types/cms.py:24
+msgid ""
+"Initial database and App admin password.<br>Subsequent changes to the admin "
+"password will not be reflected."
+msgstr ""
+"Base de dades inicial i contrasenya per a l'administrador de l'aplicació. <br>"
+"No es reflectiran els canvis de contrasenya d'administrador posteriors."
+
+#: types/cms.py:49
+msgid "Database ID"
+msgstr "ID BD"
+
+#: types/cms.py:50
+msgid "Database user ID"
+msgstr "ID usuari BD"
+
+#: types/limesurvey.py:10
+msgid ""
+"This installs the latest version of Limesurvey into the webapp directory."
+"<br>A database and database user will automatically be created for this "
+"webapp.<br>This installer creates a user 'admin' with a randomly generated "
+"password.<br>The password will be visible in the 'password' field after the "
+"installer has finished."
+msgstr ""
+"Això instal·la la versió més recent de Limesurvey al directori WebApp. <br>"
+"L'usuari de la base de dades i la base de dades es crearan automàticament per a aquesta aplicació web."
+"<br> Aquest instal·lador crea un usuari d'administració amb una contrasenya generada aleatòriament."
+"<br> La contrasenya serà visible al camp 'Contrasenya' després de l'instal·lador"
+
+#: types/misc.py:16
+msgid ""
+"This creates a Static application under ~/webapps/&lt;app_name&gt;"
+"<br>Apache2 will be used to serve static content and execute CGI files."
+msgstr ""
+"Aixó crea una aplicació estática a ~/webapps/&lt;app_name&gt;"
+"<br>APACHE2 s'utilitzarà per servir contingut estàtic i executar fitxers CGI."
+
+#: types/misc.py:39
+msgid ""
+"This creates a Webalizer application under ~/webapps/&lt;app_name&gt;-&lt;"
+"site_name&gt;<br>Statistics will be collected once this app is mounted into "
+"one or more Websites."
+msgstr ""
+"Això crea una aplicació webalizer a ~/webapps/&lt;app_name&gt;-&lt;"
+"site_name&gt;<br>Les estadístiques es recolliran un cop es munti aquesta aplicació a "
+"Un o més llocs web."
+
+#: types/misc.py:53 types/misc.py:58
+msgid "Path"
+msgstr "Ruta"
+
+#: types/misc.py:54
+msgid "Path for the origin of the symbolic link."
+msgstr "Ruta per l'origen de l'enllaç simbòlic."
+
+#: types/moodle.py:10
+msgid ""
+"This installs the latest version of Moodle into the webapp directory.<br>A "
+"database and database user will automatically be created for this webapp."
+"<br>This installer creates a user 'admin' with a randomly generated password."
+"<br>The password will be visible in the 'password' field after the installer "
+"has finished."
+msgstr ""
+"Això instal·la la versió més recent de Moodle al directori WebApp. <br>"
+"L'usuari de la base de dades i la base de dades es crearan automàticament per a aquesta aplicació web."
+"<br> Aquest instal·lador crea un usuari d'administració amb una contrasenya generada aleatòriament."
+"<br> La contrasenya serà visible al camp 'Contrasenya' després de l'instal·lador"
+
+#: types/php.py:19
+msgid ""
+"Version of PHP used to execute this webapp. <br>Changing the PHP version may "
+"result in application malfunction, make sure that everything continue to "
+"work as expected."
+msgstr ""
+"Versió PHP que s'utilitza per executar aquesta aplicació web. <br>Canviar la versió PHP"
+"pot donar lloc a un mal funcionament de l'aplicació, assegureu-vos que tot continuï"
+"Funcionament com s'esperava."
+
+#: types/php.py:24 types/php.py:48
+msgid "PHP version"
+msgstr ""
+
+#: types/php.py:41
+#, python-brace-format
+msgid "Server {webapp_server.name} not allow {php_version}"
+msgstr "El servidor {webapp_server.name} no permet {php_version}"
+
+#: types/php.py:57
+msgid "This creates a PHP application under ~/webapps/&lt;app_name&gt;<br>"
+msgstr "Això crea una aplicació PHP sota ~/webapps/&lt;app_name&gt;<br>"
+
+#: types/python.py:15
+msgid ""
+"Version of Python used to execute this webapp. <br>Changing the Python "
+"version may result in application malfunction, make sure that everything "
+"continue to work as expected."
+msgstr ""
+"La versió Python s'utilitza per executar aquesta aplicació web. <br> Canvieu el Python"
+"La versió pot comportar un mal funcionament de l'aplicació, assegureu -vos que tot"
+"Continua treballant com s'esperava."
+
+#: types/python.py:21 types/python.py:28
+msgid "Python version"
+msgstr ""
+
+#: types/python.py:37
+msgid "This creates a Python application under ~/webapps/&lt;app_name&gt;<br>"
+msgstr ""
+
+#: types/wordpress.py:10
+msgid ""
+"This installs the latest version of WordPress into the webapp directory."
+"<br>A database and database user will automatically be created for this "
+"webapp.<br>This installer creates a user 'admin' with a randomly generated "
+"password.<br>The password will be visible in the 'password' field after the "
+"installer has finished."
+msgstr ""
+"Això instal·la la versió més recent de WordPress al directori WebApp. <br>"
+"L'usuari de la base de dades i la base de dades es crearan automàticament per a aquesta aplicació web."
+"<br> Aquest instal·lador crea un usuari d'administració amb una contrasenya generada aleatòriament."
+"<br> La contrasenya serà visible al camp 'Contrasenya' després de l'instal·lador"

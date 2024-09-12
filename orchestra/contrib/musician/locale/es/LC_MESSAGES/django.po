@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-08-05 11:19+0000\n"
+"POT-Creation-Date: 2024-09-12 10:10+0000\n"
 "PO-Revision-Date: 2021-11-25 12:53+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -48,7 +48,8 @@ msgstr "Introduce la misma contraseña para verificarla"
 
 #: lists/forms.py:17 lists/forms.py:31
 msgid "Additional address besides the default <name>@grups.pangea.org"
-msgstr "Dirección adicional además de la predeterminada <name>@grups.pangea.org"
+msgstr ""
+"Dirección adicional además de la predeterminada <name>@grups.pangea.org"
 
 #. Translators: This message appears on the page title
 #: lists/views.py:22 mixins.py:20
@@ -56,14 +57,14 @@ msgid "Mailing lists"
 msgstr "Listas de correo"
 
 #. Translators: This message appears on the page title
-#: mixins.py:17 views.py:68
+#: mixins.py:17 views.py:119
 msgid "Dashboard"
 msgstr "Panel de gestión"
 
 #. Translators: This message appears on the page title
-#: mixins.py:18 templates/musician/dashboard.html:89
-#: templates/musician/dashboard.html:90 views.py:202
-#: templates/musician/websites/website_detail.html:17
+#: mixins.py:18 templates/musician/dashboard.html:101
+#: templates/musician/dashboard.html:102
+#: templates/musician/websites/website_detail.html:17 views.py:252
 msgid "Domains"
 msgstr "Dominios"
 
@@ -72,11 +73,8 @@ msgid "Mails"
 msgstr "Correos"
 
 #. Translators: This message appears on the page title
-#: mixins.py:21 models.py:146 views.py:542
+#: mixins.py:21 models.py:146 views.py:592
 msgid "Databases"
-msgstr "Bases de datos"
-
-msgid "Database"
 msgstr "Bases de datos"
 
 #: mixins.py:22
@@ -102,7 +100,7 @@ msgid "Description details for databases page."
 msgstr "Consulta la configuración de tus bases de datos."
 
 #. Translators: This message appears on the page title
-#: models.py:234 views.py:342
+#: models.py:234 views.py:392
 msgid "Mail addresses"
 msgstr "Direcciones de correo"
 
@@ -242,7 +240,7 @@ msgstr "Dominio"
 
 #. Translators: This message appears on the page title
 #: templates/musician/address_list.html:27 templates/musician/mail_base.html:22
-#: views.py:428
+#: views.py:478
 msgid "Mailboxes"
 msgstr "Buzones de correo"
 
@@ -264,7 +262,7 @@ msgstr "Perfil"
 
 #. Translators: This message appears on the page title
 #: templates/musician/base.html:71 templates/musician/billing.html:6
-#: views.py:300
+#: views.py:350
 msgid "Billing"
 msgstr "Facturas"
 
@@ -290,7 +288,8 @@ msgstr "Fecha de la factura"
 
 #: templates/musician/billing.html:21 templates/musician/database_list.html:22
 #: templates/musician/domain_detail.html:38
-#: templates/musician/webapps/webapp_detail.html:94
+#: templates/musician/webapps/webapp_detail.html:17
+#: templates/musician/webapps/webapp_detail.html:96
 #: templates/musician/webapps/webapp_list.html:26
 msgid "Type"
 msgstr "Tipo"
@@ -325,11 +324,12 @@ msgid "Show history"
 msgstr "Mostrar historial"
 
 #: templates/musician/database_list.html:21
-#: templates/musician/mailbox_list.html:30 templates/musician/saas_list.html:19
+#: templates/musician/mailbox_list.html:30
+#: templates/musician/mailinglist_list.html:24
+#: templates/musician/saas_list.html:19
 #: templates/musician/webapps/webapp_list.html:25
 #: templates/musician/websites/website_detail.html:77
 #: templates/musician/websites/website_list.html:20
-#: templates/musician/mailinglist_list.html:24
 msgid "Name"
 msgstr "Nombre"
 
@@ -389,13 +389,15 @@ msgid ""
 msgstr ""
 "\n"
 "    <h5 class=\"alert-heading\">AVISO IMPORTANTE!!!</h5>\n"
-"      Los registros DNS controlan el funcionamiento de su dominio, y por lo tanto, "
-"sus sitios web, direcciones de correo electrónico, listas de correo, etc.<br>\n"
-"      Si no tiene el conocimiento necesario sobre este tema, no haga cambios en esta sección. ¡Es peligroso!\n"
+"      Los registros DNS controlan el funcionamiento de su dominio, y por lo "
+"tanto, sus sitios web, direcciones de correo electrónico, listas de correo, "
+"etc.<br>\n"
+"      Si no tiene el conocimiento necesario sobre este tema, no haga cambios "
+"en esta sección. ¡Es peligroso!\n"
 "  "
 
 #: templates/musician/domain_detail.html:39
-#: templates/musician/webapps/webapp_detail.html:95
+#: templates/musician/webapps/webapp_detail.html:97
 #: templates/musician/websites/website_detail.html:78
 msgid "Value"
 msgstr "Valor"
@@ -442,7 +444,7 @@ msgid "Mail list"
 msgstr "Lista de correo"
 
 #. Translators: This message appears on the page title
-#: templates/musician/domain_list.html:51 views.py:565
+#: templates/musician/domain_list.html:51 views.py:615
 msgid "Software as a Service"
 msgstr "Software as a Service"
 
@@ -499,6 +501,8 @@ msgstr "Direcciones de correo"
 
 #: templates/musician/mailbox_change_password.html:5
 #: templates/musician/mailbox_form.html:24
+#: templates/musician/systemuser_change_password.html:5
+#: templates/musician/webapps/webappuser_change_password.html:5
 msgid "Change password"
 msgstr "Cambia la contraseña"
 
@@ -559,9 +563,9 @@ msgstr "Actualizar lista"
 msgid "Create list"
 msgstr "Crear lista"
 
-#: templates/musician/websites/website_list.html:23
-#: templates/musician/saas_list.html:20
 #: templates/musician/mailinglist_list.html:25
+#: templates/musician/saas_list.html:20
+#: templates/musician/websites/website_list.html:23
 msgid "Status"
 msgstr "Estado"
 
@@ -578,7 +582,6 @@ msgid "Configure"
 msgstr "Configura"
 
 #: templates/musician/mailinglist_list.html:37
-#: templates/musician/websites/website_detail.html:25
 msgid "Active"
 msgstr "Activo"
 
@@ -628,7 +631,6 @@ msgstr "Actualiza la contraseña"
 msgid "Add record to"
 msgstr "Agregar registro a"
 
-
 #: templates/musician/saas_list.html:21
 msgid "Service"
 msgstr "Servicio"
@@ -645,22 +647,15 @@ msgstr "Instalado en"
 msgid "Open service admin panel"
 msgstr "Abre el panel de administración del servicio"
 
-#: templates/musician/systemuser_change_password.html:5
-#: templates/musician/webapps/webappuser_change_password.html:5
-#, fuzzy
-#| msgid "Change password for"
-msgid "Change password for"
-msgstr "Cambia la contraseña de"
-
 #: templates/musician/systemuser_list.html:6
 msgid ""
 "The main user is your system's main user on each server. You'll be able to "
 "view the logs of your websites at (/home/account/logs) and all web content, "
 "but you'll never be able to edit content on a website."
 msgstr ""
-"El usuario principal existe en cada servidor web."
-"Podrá ver los registros de sus sitios web en (/home/account/logs) y todo"
-"el contenido web (/home/account/webapps/*), pero nunca podrá editar el contenido en un sitio web."
+"El usuario principal existe en cada servidor web.Podrá ver los registros de "
+"sus sitios web en (/home/account/logs) y todoel contenido web (/home/account/"
+"webapps/*), pero nunca podrá editar el contenido en un sitio web."
 
 #: templates/musician/systemuser_list.html:7
 msgid "This user only has write permissions in their own directory."
@@ -672,9 +667,9 @@ msgid "Username"
 msgstr "Nombre de usuario/a"
 
 #: templates/musician/systemuser_list.html:19
+#: templates/musician/webapps/webapp_detail.html:47
 #: templates/musician/webapps/webappuser_list.html:16
 #: templates/musician/websites/website_detail.html:49
-#: templates/musician/webapps/webapp_detail.html:47
 msgid "Path"
 msgstr "Ruta"
 
@@ -686,22 +681,21 @@ msgstr "Usuario Principal"
 msgid "SFTP Users"
 msgstr "Usuarios SFTP"
 
-#: templates/musician/webapps/webapp_detail.html:72
-msgid ""
-"\n"
-"      Initial database and App admin password. <br>\n"
-"      Subsequent changes to the admin password will not be reflected.\n"
-"    "
-msgstr ""
-"\n"
-"Contraseña inicial de la base de datos y del administrador de la aplicación. <br>"
-"Los cambios posteriores en la contraseña del administrador no se reflejarán.\n"
-"   "
-
-
 #: templates/musician/webapps/webapp_detail.html:7
 msgid "WebApp Options for"
 msgstr "Opciones de WebApp para"
+
+#: templates/musician/webapps/webapp_detail.html:13
+#: templates/musician/webapps/webapp_list.html:29
+#: templates/musician/webapps/webappuser_list.html:17
+#: templates/musician/websites/website_detail.html:13
+#: templates/musician/websites/website_list.html:22
+msgid "Server"
+msgstr "Servidor"
+
+#: templates/musician/webapps/webapp_detail.html:27
+msgid "SFTP user"
+msgstr "Usuario SFTP"
 
 #: templates/musician/webapps/webapp_detail.html:58
 #, fuzzy
@@ -717,25 +711,36 @@ msgstr "Bases de datos"
 msgid "Password:"
 msgstr "Contraseña"
 
-#: templates/musician/webapps/webapp_detail.html:80
+#: templates/musician/webapps/webapp_detail.html:72
+msgid ""
+"\n"
+"      Initial database and App admin password. <br>\n"
+"      Subsequent changes to the admin password will not be reflected.\n"
+"    "
+msgstr ""
+"\n"
+"Contraseña inicial de la base de datos y del administrador de la aplicación. "
+"<br>Los cambios posteriores en la contraseña del administrador no se "
+"reflejarán.\n"
+"   "
+
+#: templates/musician/webapps/webapp_detail.html:82
 msgid "PHP settings"
 msgstr "Configuración PHP"
 
-#: templates/musician/webapps/webapp_detail.html:85
+#: templates/musician/webapps/webapp_detail.html:87
 msgid "PHP settings page description."
 msgstr "Consulta aquí tu configuración DNS."
 
-#: templates/musician/webapps/webapp_detail.html:117
-msgid "This WebApp has PHP options by default, create one if you need it."
-msgstr "Esta WebApp tiene las opciones por defecto, crea una nueva opción si la necesitas"
-
 #: templates/musician/webapps/webapp_detail.html:119
+msgid "This WebApp has PHP options by default, create one if you need it."
+msgstr ""
+"Esta WebApp tiene las opciones por defecto, crea una nueva opción si la "
+"necesitas"
+
+#: templates/musician/webapps/webapp_detail.html:121
 msgid "Add new option"
 msgstr "Añadir nueva opción"
-
-#: templates/musician/webapps/webapp_detail.html:27
-msgid "SFTP user"
-msgstr "Usuario SFTP"
 
 #: templates/musician/webapps/webapp_list.html:27
 msgid "Version"
@@ -744,14 +749,6 @@ msgstr ""
 #: templates/musician/webapps/webapp_list.html:28
 msgid "SFTP User"
 msgstr "Usuario SFTP"
-
-#: templates/musician/webapps/webapp_detail.html:13
-#: templates/musician/webapps/webapp_list.html:29
-#: templates/musician/webapps/webappuser_list.html:17
-#: templates/musician/websites/website_list.html:22
-#: templates/musician/websites/website_detail.html:13
-msgid "Server"
-msgstr "Servidor"
 
 #: templates/musician/webapps/webapp_option_form.html:10
 msgid "Update Option of"
@@ -771,6 +768,9 @@ msgstr "¿Estás seguro/a de que quieres borrar la siguiente opción?"
 msgid "WebSite Options for"
 msgstr "Opciones de Website para"
 
+#: templates/musician/websites/website_detail.html:25
+msgid "active"
+msgstr "activo"
 
 #: templates/musician/websites/website_detail.html:32
 msgid "Protocol"
@@ -792,7 +792,6 @@ msgstr "WebApps asignadas a este WebSite"
 msgid "Webapp"
 msgstr ""
 
-#: templates/musician/webapps/webapp_detail.html:17
 #: templates/musician/websites/website_detail.html:48
 msgid "Type "
 msgstr "Tipo"
@@ -800,6 +799,12 @@ msgstr "Tipo"
 #: templates/musician/websites/website_detail.html:67
 msgid "Assigned new Webapp"
 msgstr "Añadir nueva Webapp"
+
+#: templates/musician/websites/website_detail.html:70
+#, fuzzy
+#| msgid "Active"
+msgid "Directives"
+msgstr "Activo"
 
 #: templates/musician/websites/website_detail.html:73
 msgid "Options assigned to this Website"
@@ -823,40 +828,44 @@ msgid ""
 "%s: Hosts can not have underscore character '_', consider providing a SRV, "
 "CNAME or TXT record."
 msgstr ""
-"%s: Los hosts no pueden tener el carácter de subrayado '_'. "
-"Considere proporcionar un registro SRV, CNAME o TXT."
+"%s: Los hosts no pueden tener el carácter de subrayado '_'. Considere "
+"proporcionar un registro SRV, CNAME o TXT."
 
-#: views.py:182
+#: views.py:200 views.py:202 views.py:229
+msgid "available"
+msgstr "disponibles"
+
+#: views.py:232
 msgid "Account"
 msgstr "Cuenta"
 
 #. Translators: This message appears on the page title
-#: views.py:227
+#: views.py:277
 msgid "User profile"
 msgstr "Tu perfil"
 
 #. Translators: This message appears on the page title
-#: views.py:314
+#: views.py:364
 msgid "Download bill"
 msgstr "Descarga la factura"
 
 #. Translators: This message appears on the page title
-#: views.py:573
+#: views.py:623
 msgid "Domain details"
 msgstr "Detalles del dominio"
 
 #. Translators: This message appears on the page title
-#: views.py:629
+#: views.py:679
 msgid "Login"
 msgstr "Accede"
 
 #. Translators: This message appears on the page title
-#: views.py:700
+#: views.py:750
 msgid "Webapp users"
 msgstr ""
 
 #. Translators: This message appears on the page title
-#: views.py:718
+#: views.py:768
 msgid "Main users"
 msgstr ""
 
@@ -869,15 +878,16 @@ msgid ""
 "A web app is the directory where your website is stored. Through SFTP, you "
 "can access this directory and upload/edit/delete files."
 msgstr ""
-"Una aplicación web es el directorio donde se almacena su sitio web. "
-"A través de SFTP, puede acceder a este directorio y subir, editar o eliminar archivos."
+"Una aplicación web es el directorio donde se almacena su sitio web. A través "
+"de SFTP, puede acceder a este directorio y subir, editar o eliminar archivos."
 
 #: webapps/views.py:35
 msgid ""
 "Each Webapp has its own SFTP user, which is created automatically when the "
 "Webapp is created."
 msgstr ""
-"Cada WebApp tiene su propio usuario SFTP, que se crea automáticamente cuando se crea la aplicación web."
+"Cada WebApp tiene su propio usuario SFTP, que se crea automáticamente cuando "
+"se crea la aplicación web."
 
 #. Translators: This message appears on the page title
 #: webapps/views.py:44
@@ -890,7 +900,8 @@ msgstr "Detalles de cada tipo"
 msgid ""
 "Hold down \"Control\", or \"Command\" on a Mac, to select more than one."
 msgstr ""
-"Mantén presionada la tecla \"Control\" o \"Comando\" en un Mac para seleccionar más de uno."
+"Mantén presionada la tecla \"Control\" o \"Comando\" en un Mac para "
+"seleccionar más de uno."
 
 #: websites/forms.py:54
 msgid "This Path already exists on this Website."
@@ -901,65 +912,80 @@ msgid ""
 "A website is the place where a domain is associated with the directory where "
 "the web files are located. (WebApp)"
 msgstr ""
-"Un WebSite es el lugar donde se asocia un dominio con el directorio donde"
-"se encuentran los archivos web. (WebApp)"
+"Un WebSite es el lugar donde se asocia un dominio con el directorio dondese "
+"encuentran los archivos web. (WebApp)"
 
 #. Translators: This message appears on the page title
 #: websites/views.py:42
 msgid "website details"
 msgstr "Detalles de cada tipo"
 
+msgid "Database"
+msgstr "Bases de datos"
+
+msgid "Change password for"
+msgstr "Cambia la contraseña de"
+
 #~ msgid "Domains & websites"
 #~ msgstr "Dominios y sitios web"
 
-#~ msgid "Previous"
-#~ msgstr "Previa"
+msgid "Previous"
+msgstr "Previa"
 
-#~ msgid "Next"
-#~ msgstr "Siguiente"
+msgid "Next"
+msgstr "Siguiente"
 
-#~ msgid "Notifications"
-#~ msgstr "Notificaciones"
+msgid "Notifications"
+msgstr "Notificaciones"
 
-#~ msgid "There is no notifications at this time."
-#~ msgstr "No tienes ninguna notificación."
+msgid "There is no notifications at this time."
+msgstr "No tienes ninguna notificación."
 
-#~ msgid "Dashboard page description."
-#~ msgstr ""
-#~ "Este es tu panel de gestión, desde donde podrás consultar la "
-#~ "configuración de los servicios que Pangea te ofrece."
+msgid "Dashboard page description."
+msgstr ""
+"Este es tu panel de gestión, desde donde podrás consultar la "
+"configuración de los servicios que Pangea te ofrece."
 
-#~ msgid "associated to"
-#~ msgstr "asociada a"
+msgid "associated to"
+msgstr "asociada a"
 
-#~ msgid "No users for this database."
-#~ msgstr "No hay usuarias/os de esta base de datos."
+msgid "No users for this database."
+msgstr "No hay usuarias/os de esta base de datos."
 
-#~ msgid "active"
-#~ msgstr "activo"
+msgid "Traffic"
+msgstr "Tráfico"
 
-#~ msgid "Traffic"
-#~ msgstr "Tráfico"
+msgid "Mailbox usage"
+msgstr "Uso de espacio en tu buzón de correo"
 
-#~ msgid "Mailbox usage"
-#~ msgstr "Uso de espacio en tu buzón de correo"
+msgid "Address deleted!"
+msgstr "Has eliminado la dirección de correo"
 
-#~ msgid "Address deleted!"
-#~ msgstr "Has eliminado la dirección de correo"
+msgid "Cannot process your request, please try again later."
+msgstr ""
+"Ahora no podemos procesar tu petición, inténtalo de nuevo un poco más "
+"tarde por favor."
 
-#~ msgid "Cannot process your request, please try again later."
-#~ msgstr ""
-#~ "Ahora no podemos procesar tu petición, inténtalo de nuevo un poco más "
-#~ "tarde por favor."
+msgid "Mailbox deleted!"
+msgstr "Has eliminado el buzón de correo"
 
-#~ msgid "Mailbox deleted!"
-#~ msgstr "Has eliminado el buzón de correo"
+msgid "mail address left"
+msgstr "direcciones de correo por activar"
 
-#~ msgid "mail address left"
-#~ msgstr "direcciones de correo por activar"
+msgid "Aliases"
+msgstr "Alias"
 
-#~ msgid "Aliases"
-#~ msgstr "Alias"
+msgid "databases created"
+msgstr "bases de datos creadas"
 
-#~ msgid "databases created"
-#~ msgstr "bases de datos creadas"
+msgid "size"
+msgstr "tamaño"
+
+msgid "traffic"
+msgstr "tráfico"
+
+msgid "Mailman list traffic"
+msgstr "Listas de Mailman"
+
+msgid "Mailman list Traffic"
+msgstr "Listas de Mailman"

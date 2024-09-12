@@ -197,9 +197,9 @@ class DashboardView(CustomContextMixin, UserTokenRequiredMixin, TemplateView):
             if rs_left < 0:
                 alert = format_html(f"<span class='text-danger'>{rs_left * -1} extra {name_resource}</span>")
             elif rs_left <= 1:
-                alert = format_html(f"<span class='text-warning'>{rs_left} {name_resource} available</span>")
+                alert = format_html("<span class='text-warning'>{} {} {}</span>".format(rs_left, name_resource, _('available')))
             elif rs_left > 1:
-                alert = format_html(f"<span class='text-secondary'>{rs_left} {name_resource} available</span>")
+                alert = format_html("<span class='text-secondary'>{} {} {}</span>".format(rs_left, name_resource, _('available')))
         return {
             'verbose_name': _(name_resource.capitalize()),
             'data': {
@@ -226,7 +226,7 @@ class DashboardView(CustomContextMixin, UserTokenRequiredMixin, TemplateView):
         if size_left < 0:
             alert = format_html(f"<span class='text-danger'>{size_left * -1} {unit} extra</span>")
         elif size_left <= 1:
-            alert = format_html(f"<span class='text-warning'>{size_left} {unit} available</span>")
+            alert = format_html("<span class='text-warning'>{} {} {}</span>".format(size_left, unit, _('available')))
 
         return {
             'verbose_name': _('Account'),

@@ -809,6 +809,10 @@ msgid ""
 msgstr ""
 "%s: Els hosts no poden tenir el caràcter d'èmfasi '_'. Considera proporcionar un registre SRV, CNAME o TXT."
 
+#: views.py:200 views.py:202 views.py:229
+msgid "available"
+msgstr "disponibles"
+
 #: views.py:182
 msgid "Account"
 msgstr "Compte"
@@ -960,3 +964,15 @@ msgstr "Detalls de cada tipus"
 
 #~ msgid "databases created"
 #~ msgstr "bases de dades creades"
+
+msgid "size"
+msgstr "tamany"
+
+msgid "traffic"
+msgstr "tránsit"
+
+msgid "Mailman list traffic"
+msgstr "Llistes de Mailman"
+
+msgid "Mailman list Traffic"
+msgstr "Llistes de Mailman"
