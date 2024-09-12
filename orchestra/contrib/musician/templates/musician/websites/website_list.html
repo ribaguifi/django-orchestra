@@ -26,7 +26,7 @@
   </thead>
   <tbody>
     {% for website in object_list %}
-    <tr class="fila-principal" data-toggle="collapse" data-target=".detalles{{ website.id }}">
+    <tr class="fila-principal cursor-pointer" data-toggle="collapse" data-target=".detalles{{ website.id }}">
       <td>{{ website.name }}</td>
       <td>
         {% for domain in website.domains.all %}
@@ -69,7 +69,7 @@
                     <td></td>
                   </tr>
                   <tr>
-                    <td>Type</td>
+                    <td>{% trans "Type" %}</td>
                     {% if content.webapp.type == "php" %}
                       <td>PHP {{ content.webapp.type_instance.get_detail }}</td>
                     {% else %}
@@ -79,14 +79,14 @@
                   </tr>
                   <tr>
                     {% if content.webapp.sftpuser %}
-                      <td>SFTP user</td>
+                      <td>{% trans "SFTP user" %}</td>
                       <td>{{ content.webapp.sftpuser }}</td>
                       <td  class="text-right">
                         <a class="btn btn-outline-warning" href="{% url 'musician:webappuser-password' content.webapp.sftpuser.id %}">
                           <i class="fas fa-key"></i> {% trans "Update password" %}</a>
                       </td>
                     {% else %}
-                      <td>FTP user</td>
+                      <td>{% trans "FTP user" %}</td>
                       <td>{{ content.webapp.account.main_systemuser }}</td>
                       <td  class="text-right">
                         <a class="btn btn-outline-warning" href="{% url 'musician:systemuser-password' content.webapp.account.main_systemuser.id %}">

@@ -354,6 +354,10 @@ td:hover .roll-hover {
     font-family: "Font Awesome 5 Free";
 }
 
+.cursor-pointer {
+    cursor: pointer;
+}
+
 @media (min-width: 1350px){
     .card-deck .card {
         flex: 1 0 0%;
