@@ -57,6 +57,14 @@ class MailmanVirtualDomainController(ServiceController):
     def commit(self):
         context = self.get_context_files()
         super(MailmanVirtualDomainController, self).commit()
+        self.append(textwrap.dedent("""
+            # Apply changes if needed
+            if [[ $UPDATED_VIRTUAL_ALIAS_DOMAINS == 1 ]]; then
+                postmap %(virtual_alias_domains)s
+                systemctl reload postfix 
+            fi
+            exit $exit_code""") % context
+        )
     
     def get_context_files(self):
         return {
@@ -165,7 +173,18 @@ class MailmanController(MailmanVirtualDomainController):
 
 
     def commit(self):
-        pass
+        context = self.get_context_files()
+        self.append(textwrap.dedent("""
+            # Apply changes if needed
+            if [[ $UPDATED_VIRTUAL_ALIAS == 1 ]]; then
+                postmap %(virtual_alias)s
+            fi
+            if [[ $UPDATED_VIRTUAL_ALIAS_DOMAINS == 1 ]]; then
+                systemctl reload postfix
+            fi
+            exit $exit_code""") % context
+        )
+        
 
     def get_context_files(self):
         return {
