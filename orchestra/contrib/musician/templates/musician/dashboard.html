@@ -87,6 +87,11 @@
         {% for obj_data in usage.objects %}
         <li class="list-group-item d-flex justify-content-between align-items-center">
           {{ obj_data }}
+          {% if obj_data.rs_percent %}
+              <div class="progress"  style="width:80%;margin:1em;">
+                <div class="progress-bar" role="progressbar" style="width: {{ obj_data.rs_percent }}%;"></div>
+              </div>
+          {% endif %}
           <span class="badge badge-primary badge-pill">{{ obj_data.used }} {{ obj_data.resource.unit }}</span>
         </li>
         {% endfor %}

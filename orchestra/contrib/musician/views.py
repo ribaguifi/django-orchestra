@@ -200,6 +200,14 @@ class DashboardView(CustomContextMixin, UserTokenRequiredMixin, TemplateView):
                 alert = format_html("<span class='text-warning'>{} {} {}</span>".format(rs_left, name_resource, _('available')))
             elif rs_left > 1:
                 alert = format_html("<span class='text-secondary'>{} {} {}</span>".format(rs_left, name_resource, _('available')))
+
+        # porcentage de uso en los recursos
+        for x in resource_data:
+            if getattr(x, 'used', False) and getattr(x, 'allocated', False):
+                rs_percent = getattr(x, 'used') / getattr(x, 'allocated') * 100
+                x.rs_percent = int(rs_percent)
+                
+
         return {
             'verbose_name': _(name_resource.capitalize()),
             'data': {
