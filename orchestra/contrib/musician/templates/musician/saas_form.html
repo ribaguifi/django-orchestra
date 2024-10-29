@@ -1,0 +1,41 @@
+{% extends "musician/base.html" %}
+{% load bootstrap4 i18n %}
+
+
+{% block content %}
+
+<style>
+.form-check{
+  background-color: #fff;
+  padding: .375rem 2.0rem;
+  border: 1px solid #ced4da;
+  border-radius: 5px;
+}
+</style>
+
+<a class="btn-arrow-left" href="{% url 'musician:saas-list' %}">{% trans "Go back" %}</a>
+
+<h1 class="service-name">
+  {% if form.instance.pk %}
+    {% trans "Update SaaS" %} <span class="font-weight-light">{{ saas.name }}</span>
+  {% else %}
+    {% trans "Create SaaS" %}
+  {% endif %}
+</h1>
+
+<form method="post">
+  {% csrf_token %}
+  {% bootstrap_form form %}
+  {% buttons %}
+  <a class="btn btn-light mr-2" href="{% url 'musician:saas-list' %}">{% trans "Cancel" %}</a>
+  <button type="submit" class="btn btn-secondary">{% trans "Save" %}</button>
+  {% if form.instance.pk %}
+    <div class="float-right">
+      <a class="btn btn-outline-warning" href="{% url 'musician:nextcloud-password' form.instance.pk %}"><i class="fas fa-key"></i> {% trans "Change password" %}</a>
+      <a class="btn btn-danger" href="{% url 'musician:saas-delete' view.kwargs.pk %}">{% trans "Delete" %}</a>
+    </div>
+  {% endif %}
+  {% endbuttons %}
+</form>
+{% endblock %}
+

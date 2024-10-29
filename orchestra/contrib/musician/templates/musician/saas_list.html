@@ -20,6 +20,7 @@
       <th scope="col">{% trans "Status" %}</th>
       <th scope="col">{% trans "Service" %}</th>
       <th scope="col">{% trans "Service info" %}</th>
+      <th></th>
     </tr>
   </thead>
   <tbody>
@@ -43,6 +44,12 @@
           <label>{{ key }}:</label> <strong>{{ value }}</strong><br/>
         {% endfor %}
       </td>
+      <td class="text-right">
+        <a class="btn btn-outline-warning" role="button" href="{% url 'musician:saas-update' saas.id %}">
+          <i class="fas fa-tools"></i></a>
+        <a class="btn btn-outline-danger" role="button" href="{% url 'musician:saas-delete' saas.id %}">
+          <i class="text-danger fas fa-trash"></i></a>
+      </td>
     </tr>
     {% empty %}
     <tr>
@@ -59,4 +66,5 @@
   {% include "musician/components/table_paginator.html" %}
 </table>
 </div>
+<a class="btn btn-primary mt-4 mb-4" href="#">{% trans "New SaaS" %}</a>
 {% endblock %}

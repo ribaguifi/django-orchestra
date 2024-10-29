@@ -2,12 +2,14 @@ from django import forms
 from django.contrib.auth.forms import AuthenticationForm
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
+from django.forms.widgets import HiddenInput
 
 from django.contrib.auth.hashers import make_password
 
 from orchestra.contrib.domains.models import Domain, Record
 from orchestra.contrib.mailboxes.models import Address, Mailbox
 from orchestra.contrib.systemusers.models import WebappUsers, SystemUser
+from orchestra.contrib.saas.models import SaaS
 from orchestra.contrib.musician.validators import ValidateZoneMixin
 
 from . import api
@@ -202,3 +204,22 @@ class SystemUsersChangePasswordForm(ChangePasswordForm):
         fields = ("password",)
         model = SystemUser
 
+
+class SaasUpdateForm(forms.ModelForm):
+    class Meta:
+        model = SaaS
+        fields = ("is_active", "service", "name", "data", "custom_url")
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user')
+        super().__init__(*args, **kwargs)
+        self.fields['name'].widget.attrs['readonly'] = True
+        self.fields['service'].widget.attrs['disabled'] = 'disabled'
+        self.fields['data'].widget = HiddenInput()
+        self.fields["custom_url"].widget = HiddenInput()
+
+class NextcloudChangePasswordForm(ChangePasswordForm):
+ 
+    class Meta:
+        fields = ("password",)
+        model = SaaS
