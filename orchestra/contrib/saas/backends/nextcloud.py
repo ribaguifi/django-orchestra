@@ -43,7 +43,7 @@ class NextCloudController(NextCloudAPIMixin, ServiceController):
     def remove(self, saas, server):
         self.api_delete('users/%s' % saas.name)
     
-    def save(self, saas):      
+    def save(self, saas):  
         self.append(self.update_or_create, saas)
           
     def delete(self, saas):
