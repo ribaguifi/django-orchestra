@@ -130,9 +130,8 @@ class DashboardView(CustomContextMixin, UserTokenRequiredMixin, TemplateView):
         mailboxes = related_resources.filter(resource_id__verbose_name='mailbox-disk')
         lists = related_resources.filter(resource_id__verbose_name='list-traffic')
         databases = related_resources.filter(resource_id__verbose_name='database-disk')
-        nextcloud = related_resources.filter(resource_id__verbose_name='nextcloud-disk')
+        nextcloud = related_resources.filter(resource_id__verbose_name='nextcloud-disk', content_object_repr__iregex=r'^.*@nextcloud$')
         domains = Domain.objects.filter(account_id=self.request.user)
-  
 
         # TODO(@slamora) update when backend supports notifications
         notifications = []
