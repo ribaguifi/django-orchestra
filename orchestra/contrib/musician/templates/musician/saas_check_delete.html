@@ -6,7 +6,7 @@
   {% csrf_token %}
   <p>{% blocktrans %}Are you sure that you want remove the SaaS:{% endblocktrans %} {{ saas }} ?</p>
   <p class="alert alert-warning"><strong>{% trans 'WARNING: This action cannot be undone.' %}</strong></p>
-  <a class="btn btn-light mr-2" href="{% url 'musician:saas-list' %}">{% trans 'Cancel' %}</a>
+  <a class="btn btn-light mr-2" href="{% url 'musician:saas-nextcloud-list' %}">{% trans 'Cancel' %}</a>
   <input class="btn btn-danger" type="submit" value="{% trans 'Delete' %}">
 </form>
 {% endblock %}

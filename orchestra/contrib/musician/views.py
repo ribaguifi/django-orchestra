@@ -34,7 +34,6 @@ from orchestra.contrib.domains.models import Domain, Record
 from orchestra.contrib.lists.models import List
 from orchestra.contrib.mailboxes.models import Address, Mailbox
 from orchestra.contrib.resources.models import Resource, ResourceData
-from orchestra.contrib.saas.models import SaaS
 from orchestra.contrib.systemusers.models import WebappUsers, SystemUser
 from orchestra.utils.html import html_to_pdf
 
@@ -42,7 +41,7 @@ from .auth import logout as auth_logout
 from .forms import (LoginForm, MailboxChangePasswordForm, MailboxCreateForm,
                     MailboxSearchForm, MailboxUpdateForm, MailForm,
                     RecordCreateForm, RecordUpdateForm, WebappUsersChangePasswordForm,
-                    SystemUsersChangePasswordForm, SaasUpdateForm, NextcloudChangePasswordForm)
+                    SystemUsersChangePasswordForm)
 from .mixins import (CustomContextMixin, ExtendedPaginationMixin,
                      UserTokenRequiredMixin)
 from .models import Address as AddressService
@@ -56,6 +55,7 @@ from .utils import get_bootstraped_percent, get_bootstraped_percent_exact
 from .webapps.views import *
 from .websites.views import *
 from .lists.views import *
+from .saas.views import *
 
 logger = logging.getLogger(__name__)
 
@@ -612,73 +612,6 @@ class DatabaseListView(ServiceListView):
             except ResourceData.DoesNotExist:
                 db.usage = ResourceData(resource=disk_resource)
         return qs
-
-
-# class SaasListView(ServiceListView):
-#     service_class = SaasService
-#     model = SaaS
-#     template_name = "musician/saas_list.html"
-#     extra_context = {
-#         # Translators: This message appears on the page title
-#         'title': _('Software as a Service'),
-#     }
-
-class SaasNextcloudListView(CustomContextMixin, UserTokenRequiredMixin, ListView):
-    model = SaaS
-    template_name = "musician/saas_nextcloud_list.html"
-    extra_context = {
-        # Translators: This message appears on the page title
-        'title': _('Software as a Service'),
-    }
-
-    def get_queryset(self):
-        return self.model.objects.filter(account=self.request.user, service='nextcloud')
-
-
-class SaasWordpressListView(CustomContextMixin, UserTokenRequiredMixin, ListView):
-    model = SaaS
-    template_name = "musician/saas_wordpress_list.html"
-    extra_context = {
-        # Translators: This message appears on the page title
-        'title': _('Software as a Service'),
-    }
-
-    def get_queryset(self):
-        return self.model.objects.filter(account=self.request.user, service='wordpress')
-
-class SaasUpdateView(CustomContextMixin, UserTokenRequiredMixin, UpdateView):
-    model = SaaS
-    form_class = SaasUpdateForm
-    template_name = "musician/saas_form.html"
-
-    def get_queryset(self):
-        qs = SaaS.objects.filter(account=self.request.user)
-        return qs
-
-    def get_success_url(self):
-        return reverse_lazy("musician:saas-nextcloud-list")
-    
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs["user"] = self.request.user
-        return kwargs
-
-class NextcloudChangePasswordView(CustomContextMixin, UserTokenRequiredMixin, UpdateView):
-    template_name = "musician/nextcloud_change_password.html"
-    model = SaaS
-    form_class = NextcloudChangePasswordForm
-    success_url = reverse_lazy("musician:saas-nextcloud-list")
-
-    def get_queryset(self):
-        return self.model.objects.filter(account=self.request.user)
-
-class SaasDeleteView(CustomContextMixin, UserTokenRequiredMixin, DeleteView):
-    template_name = "musician/saas_check_delete.html"
-    model = SaaS
-    success_url = reverse_lazy("musician:saas-nextcloud-list")
-
-    def get_queryset(self):
-        return self.model.objects.filter(account=self.request.user)
 
 
 class DomainDetailView(CustomContextMixin, UserTokenRequiredMixin, DetailView):
