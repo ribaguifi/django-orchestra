@@ -31,9 +31,7 @@
   <button type="submit" class="btn btn-secondary">{% trans "Save" %}</button>
   {% if form.instance.pk %}
     <div class="float-right">
-      {% if form.instance.service == 'nextcloud' %}
-        <a class="btn btn-outline-warning" href="{% url 'musician:nextcloud-password' form.instance.pk %}"><i class="fas fa-key"></i> {% trans "Change password" %}</a>
-      {% endif %}
+      <a class="btn btn-outline-warning" href="{% url 'musician:nextcloud-password' form.instance.pk %}"><i class="fas fa-key"></i> {% trans "Change password" %}</a>
       <a class="btn btn-danger" href="{% url 'musician:saas-delete' view.kwargs.pk %}">{% trans "Delete" %}</a>
     </div>
   {% endif %}

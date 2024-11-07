@@ -50,12 +50,12 @@ urlpatterns = [
     
     path('databases/', views.DatabaseListView.as_view(), name='database-list'),
     
-    # path('saas/', views.SaasListView.as_view(), name='saas-list'),
     path('saas/nextcloud/', views.SaasNextcloudListView.as_view(), name='saas-nextcloud-list'),
-    path('saas/wordpress/', views.SaasWordpressListView.as_view(), name='saas-wordpress-list'),
-    path('saas/<int:pk>/', views.SaasUpdateView.as_view(), name='saas-update'),
-    path('saas/<int:pk>/delete/', views.SaasDeleteView.as_view(), name='saas-delete'),
+    path('saas/nextcloud/<int:pk>/', views.SaasNextcloudUpdateView.as_view(), name='saas-nextcloud-update'),
     path('saas/<int:pk>/nextcloud-change-password/', views.NextcloudChangePasswordView.as_view(), name='nextcloud-password'),
+    path('saas/wordpress/', views.SaasWordpressListView.as_view(), name='saas-wordpress-list'),
+    path('saas/wordpress/<int:pk>/', views.SaasWordpressUpdateView.as_view(), name='saas-wordpress-update'),
+    path('saas/<int:pk>/delete/', views.SaasDeleteView.as_view(), name='saas-delete'),
     
     path('webappusers/', views.WebappUserListView.as_view(), name='webappuser-list'),
     path('webappuser/<int:pk>/change-password/', views.WebappUserChangePasswordView.as_view(), name='webappuser-password'),

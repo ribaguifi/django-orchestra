@@ -11,18 +11,10 @@ from django.views.generic.list import ListView
 from orchestra.contrib.musician.mixins import (CustomContextMixin, ExtendedPaginationMixin,
                      UserTokenRequiredMixin)
 
-from .forms import ( SaasUpdateForm, NextcloudChangePasswordForm )
+from .forms import ( NextcloudChangePasswordForm, SaasNextcloudUpdateForm,
+                    SaasWordpressUpdateForm )
 from orchestra.contrib.saas.models import SaaS
 
-
-# class SaasListView(ServiceListView):
-#     service_class = SaasService
-#     model = SaaS
-#     template_name = "musician/saas_list.html"
-#     extra_context = {
-#         # Translators: This message appears on the page title
-#         'title': _('Software as a Service'),
-#     }
 
 class SaasNextcloudListView(CustomContextMixin, UserTokenRequiredMixin, ListView):
     model = SaaS
@@ -47,10 +39,29 @@ class SaasWordpressListView(CustomContextMixin, UserTokenRequiredMixin, ListView
     def get_queryset(self):
         return self.model.objects.filter(account=self.request.user, service='wordpress')
 
-class SaasUpdateView(CustomContextMixin, UserTokenRequiredMixin, UpdateView):
+
+class SaasWordpressUpdateView(CustomContextMixin, UserTokenRequiredMixin, UpdateView):
     model = SaaS
-    form_class = SaasUpdateForm
-    template_name = "musician/saas_form.html"
+    form_class = SaasWordpressUpdateForm
+    template_name = "musician/saas_wordpress_form.html"
+
+    def get_queryset(self):
+        qs = SaaS.objects.filter(account=self.request.user)
+        return qs
+
+    def get_success_url(self):
+        return reverse_lazy("musician:saas-wordpress-list")
+    
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
+
+
+class SaasNextcloudUpdateView(CustomContextMixin, UserTokenRequiredMixin, UpdateView):
+    model = SaaS
+    form_class = SaasNextcloudUpdateForm
+    template_name = "musician/saas_nextcloud_form.html"
 
     def get_queryset(self):
         qs = SaaS.objects.filter(account=self.request.user)
