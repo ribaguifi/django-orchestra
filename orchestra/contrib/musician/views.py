@@ -614,14 +614,37 @@ class DatabaseListView(ServiceListView):
         return qs
 
 
-class SaasListView(ServiceListView):
-    service_class = SaasService
+# class SaasListView(ServiceListView):
+#     service_class = SaasService
+#     model = SaaS
+#     template_name = "musician/saas_list.html"
+#     extra_context = {
+#         # Translators: This message appears on the page title
+#         'title': _('Software as a Service'),
+#     }
+
+class SaasNextcloudListView(CustomContextMixin, UserTokenRequiredMixin, ListView):
     model = SaaS
-    template_name = "musician/saas_list.html"
+    template_name = "musician/saas_nextcloud_list.html"
     extra_context = {
         # Translators: This message appears on the page title
         'title': _('Software as a Service'),
     }
+
+    def get_queryset(self):
+        return self.model.objects.filter(account=self.request.user, service='nextcloud')
+
+
+class SaasWordpressListView(CustomContextMixin, UserTokenRequiredMixin, ListView):
+    model = SaaS
+    template_name = "musician/saas_wordpress_list.html"
+    extra_context = {
+        # Translators: This message appears on the page title
+        'title': _('Software as a Service'),
+    }
+
+    def get_queryset(self):
+        return self.model.objects.filter(account=self.request.user, service='wordpress')
 
 class SaasUpdateView(CustomContextMixin, UserTokenRequiredMixin, UpdateView):
     model = SaaS
@@ -633,7 +656,7 @@ class SaasUpdateView(CustomContextMixin, UserTokenRequiredMixin, UpdateView):
         return qs
 
     def get_success_url(self):
-        return reverse_lazy("musician:saas-list")
+        return reverse_lazy("musician:saas-nextcloud-list")
     
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -644,7 +667,7 @@ class NextcloudChangePasswordView(CustomContextMixin, UserTokenRequiredMixin, Up
     template_name = "musician/nextcloud_change_password.html"
     model = SaaS
     form_class = NextcloudChangePasswordForm
-    success_url = reverse_lazy("musician:saas-list")
+    success_url = reverse_lazy("musician:saas-nextcloud-list")
 
     def get_queryset(self):
         return self.model.objects.filter(account=self.request.user)
@@ -652,7 +675,7 @@ class NextcloudChangePasswordView(CustomContextMixin, UserTokenRequiredMixin, Up
 class SaasDeleteView(CustomContextMixin, UserTokenRequiredMixin, DeleteView):
     template_name = "musician/saas_check_delete.html"
     model = SaaS
-    success_url = reverse_lazy("musician:saas-list")
+    success_url = reverse_lazy("musician:saas-nextcloud-list")
 
     def get_queryset(self):
         return self.model.objects.filter(account=self.request.user)

@@ -1,0 +1,57 @@
+{% extends "musician/base.html" %}
+{% load i18n %}
+
+{% block content %}
+
+<h1 class="service-name">{{ service.verbose_name }}</h1>
+<p class="service-description">{{ service.description }}</p>
+
+<div class="table-responsive">
+<table class="table service-list">
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">{% trans "Name" %}</th>
+      <th scope="col">{% trans "Status" %}</th>
+      <th scope="col">{% trans "Service" %}</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for saas in object_list %}
+    <tr>
+      <td>
+        <strong>{{ saas.name }}</strong><br>
+        <span class="text-secondary">{% trans "Installed on" %}: <strong>{{ saas.get_site_domain|default:"-" }}</strong></span>
+      </td>
+      <td class="text-{{saas.is_active|yesno:'success,danger'}}">
+        <i class="fa fa-{{ saas.is_active|yesno:'check,times' }}"></i>
+        <span class="sr-only">{{ saas.is_active|yesno }}</span>
+      </td>
+      <td>
+        <a class="btn btn-sm btn-link" href="https://{{ saas.get_site_domain|default:'#' }}" target="_blank" rel="noopener noreferrer" title="{% trans 'Open service admin panel' %}">
+          <i class="fab fa-{{ saas.service }}"></i> {{ saas.service|capfirst }}
+          <span class="sr-only">{% trans "Open service admin panel" %}</span> <i class="fas fa-external-link-alt"></i></a>
+      </td>
+      <td class="text-right">
+        <a class="btn btn-outline-warning" role="button" href="{% url 'musician:saas-update' saas.id %}">
+          <i class="fas fa-tools"></i></a>
+        <a class="btn btn-outline-danger" role="button" href="{% url 'musician:saas-delete' saas.id %}">
+          <i class="text-danger fas fa-trash"></i></a>
+      </td>
+    </tr>
+    {% empty %}
+    <tr>
+      <td colspan="4">
+        <h5 class="text-dark">
+          <i class="fas fa-fire fa-2x mr-2"></i>
+          {# Translators: saas page when there isn't any saas. #}
+          {% trans "Ooops! Looks like there is nothing here!" %}
+        </h5>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+  
+</table>
+</div>
+{% endblock %}

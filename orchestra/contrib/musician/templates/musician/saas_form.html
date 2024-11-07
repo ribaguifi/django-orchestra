@@ -13,7 +13,7 @@
 }
 </style>
 
-<a class="btn-arrow-left" href="{% url 'musician:saas-list' %}">{% trans "Go back" %}</a>
+<a class="btn-arrow-left" href="{% url 'musician:saas-nextcloud-list' %}">{% trans "Go back" %}</a>
 
 <h1 class="service-name">
   {% if form.instance.pk %}
@@ -27,7 +27,7 @@
   {% csrf_token %}
   {% bootstrap_form form %}
   {% buttons %}
-  <a class="btn btn-light mr-2" href="{% url 'musician:saas-list' %}">{% trans "Cancel" %}</a>
+  <a class="btn btn-light mr-2" href="{% url 'musician:saas-nextcloud-list' %}">{% trans "Cancel" %}</a>
   <button type="submit" class="btn btn-secondary">{% trans "Save" %}</button>
   {% if form.instance.pk %}
     <div class="float-right">

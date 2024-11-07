@@ -14,15 +14,17 @@ class CustomContextMixin(ContextMixin):
         context = super().get_context_data(**kwargs)
         # generate services menu items
         services_menu = [
-            {'icon': 'home', 'pattern_name': 'musician:dashboard', 'title': _('Dashboard')},
-            {'icon': 'globe-europe', 'pattern_name': 'musician:domain-list', 'title': _('Domains')},
-            {'icon': 'envelope', 'pattern_name': 'musician:address-list', 'title': _('Mails')},
-            {'icon': 'mail-bulk', 'pattern_name': 'musician:mailing-lists', 'title': _('Mailing lists')},
-            {'icon': 'database', 'pattern_name': 'musician:database-list', 'title': _('Databases')},
-            {'icon': 'fire', 'pattern_name': 'musician:saas-list', 'title': _('SaaS')},
-            {'icon': 'globe', 'pattern_name': 'musician:website-list', 'title': _('Websites')},
-            {'icon': 'folder', 'pattern_name': 'musician:webapp-list', 'title': _('Webapps'), 'indent': True},
-            {'icon': 'user', 'pattern_name': 'musician:systemuser-list', 'title': _('Users'), 'indent': True},
+            {'icon': 'fas fa-home', 'pattern_name': 'musician:dashboard', 'title': _('Dashboard')},
+            {'icon': 'fas fa-globe', 'pattern_name': 'musician:domain-list', 'title': _('Domains')},
+            {'icon': 'fas fa-envelope', 'pattern_name': 'musician:address-list', 'title': _('Mails')},
+            {'icon': 'fas fa-mail-bulk', 'pattern_name': 'musician:mailing-lists', 'title': _('Mailing lists')},
+            {'icon': 'fas fa-database', 'pattern_name': 'musician:database-list', 'title': _('Databases')},
+            {'icon': 'fas fa-fire', 'pattern_name': 'musician:saas-nextcloud-list', 'title': _('SaaS')},
+            {'icon': 'fas fa-cloud', 'pattern_name': 'musician:saas-nextcloud-list', 'title': _('Nextcloud'), 'indent': True},
+            {'icon': 'fab fa-wordpress', 'pattern_name': 'musician:saas-wordpress-list', 'title': _('Community WP'), 'indent': True},
+            {'icon': 'fas fa-globe', 'pattern_name': 'musician:website-list', 'title': _('Websites')},
+            {'icon': 'fas fa-folder', 'pattern_name': 'musician:webapp-list', 'title': _('Webapps'), 'indent': True},
+            {'icon': 'fas fa-user', 'pattern_name': 'musician:systemuser-list', 'title': _('Users'), 'indent': True},
         ]
         context.update({
             'services_menu': services_menu,
