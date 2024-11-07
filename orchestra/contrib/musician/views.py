@@ -499,10 +499,10 @@ class MailboxListView(ServiceListView):
                 ).filter(
                     full_address__icontains=cleaned_data["address"]
                 )
-
+        
         if "name" in cleaned_data:
             qs = qs.filter(name__icontains=cleaned_data["name"])
-
+        
         return qs
 
 

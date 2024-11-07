@@ -7,6 +7,10 @@ from django.forms.widgets import HiddenInput
 
 from django.contrib.auth.hashers import make_password
 
+from orchestra.forms.widgets import SpanWidget
+from orchestra.forms import widgets
+from django.utils.safestring import mark_safe
+
 from orchestra.contrib.domains.models import Domain, Record
 from orchestra.contrib.mailboxes.models import Address, Mailbox
 from orchestra.contrib.systemusers.models import WebappUsers, SystemUser
@@ -205,15 +209,12 @@ class SystemUsersChangePasswordForm(ChangePasswordForm):
         fields = ("password",)
         model = SystemUser
 
-from orchestra.forms.widgets import SpanWidget
-from orchestra.forms import widgets
-from django.utils.safestring import mark_safe
-from rest_framework import serializers
+
 class SaasUpdateForm(forms.ModelForm):
     site_url = forms.CharField(label=_("Site URL"), widget=SpanWidget(), required=False)
 
     # dos campos para wordpress
-    blog_id = forms.IntegerField(label=("Blog ID"), widget=widgets.SpanWidget, required=False,
+    blog_id = forms.IntegerField(label=("Blog ID"), widget=SpanWidget(), required=False,
         help_text=_("ID of this blog used by WordPress, the only attribute that doesn't change."))
     email = forms.EmailField(label=_("Email"),
             help_text=_("A new user will be created if the above email address is not in the database.<br>"
@@ -232,7 +233,6 @@ class SaasUpdateForm(forms.ModelForm):
         self.fields['blog_id'].widget.attrs['readonly'] = True
         self.fields['service'].widget = HiddenInput()
         self.fields['data'].widget = HiddenInput()
-        self.fields["custom_url"].widget = HiddenInput()
   
         # asignar valor al field site_url
         site_domain = self.instance.get_site_domain()
@@ -252,12 +252,16 @@ class SaasUpdateForm(forms.ModelForm):
                 self.fields['data'].required = False
 
         if self.instance.service == 'nextcloud':
-            self.fields["email"].widget = HiddenInput()
             self.fields["blog_id"].widget = HiddenInput()   
+            self.fields["custom_url"].widget = HiddenInput()
+            self.fields["email"].widget = HiddenInput()
             self.fields["email"].required = False
 
 
         if self.instance.service == 'wordpress':           
+            self.fields["is_active"].widget = HiddenInput()
+            self.fields["custom_url"].widget.attrs['readonly'] = True
+
             admin_url = 'http://%s/wp-admin/' % self.instance.get_site_domain()
             help_text = 'Admin URL: <a href="{0}">{0}</a>'.format(admin_url)
             self.fields['site_url'].help_text = mark_safe(help_text)
@@ -266,25 +270,6 @@ class SaasUpdateForm(forms.ModelForm):
                 for field in self.declared_fields:
                     initial = self.fields[field].initial
                     self.fields[field].initial = self.instance.data.get(field, initial)
-
-
-    def clean(self):
-        super().clean()
-        data = {}
-        # Update data fields
-        for field in self.declared_fields:
-            try:
-                data[field] = self.cleaned_data[field]
-            except KeyError:
-                data[field] = self.data[field]
-        # Keep old data fields
-        for field, value in self.instance.data.items():
-            if field not in data:
-                try:
-                    data[field] = self.cleaned_data[field]
-                except KeyError:
-                    data[field] = value
-        self.cleaned_data['data'] = data
 
 
 class NextcloudChangePasswordForm(ChangePasswordForm):
