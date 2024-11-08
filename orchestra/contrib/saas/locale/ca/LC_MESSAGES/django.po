@@ -1,0 +1,403 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-11-08 11:17+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: admin.py:40
+msgid "Related website directive does not exist for this custom URL."
+msgstr "Related website directive does not exist for this custom URL."
+
+#: admin.py:50
+msgid "URL"
+msgstr ""
+
+#: backends/__init__.py:244
+msgid "nextCloud SaaS Disk Quota"
+msgstr ""
+
+#: backends/bscw.py:11
+msgid "BSCW SaaS"
+msgstr ""
+
+#: backends/dokuwikimu.py:20
+msgid "DokuWiki multisite"
+msgstr ""
+
+#: backends/dokuwikimu.py:110
+msgid "DokuWiki MU Traffic"
+msgstr ""
+
+#: backends/drupalmu.py:15
+msgid "Drupal multisite"
+msgstr ""
+
+#: backends/gitlab.py:12
+msgid "GitLab SaaS"
+msgstr ""
+
+#: backends/moodle.py:49
+msgid "Moodle multisite"
+msgstr ""
+
+#: backends/nextcloud.py:15
+msgid "nextCloud SaaS"
+msgstr ""
+
+#: backends/nextcloud.py:55
+msgid "nextCloud SaaS Traffic"
+msgstr ""
+
+#: backends/owncloud.py:104
+msgid "ownCloud SaaS"
+msgstr ""
+
+#: backends/owncloud.py:136
+msgid "ownCloud SaaS Traffic"
+msgstr ""
+
+#: backends/owncloud.py:146
+msgid "ownCloud SaaS Disk Quota"
+msgstr ""
+
+#: backends/phplist.py:32
+msgid "phpList SaaS"
+msgstr ""
+
+#: backends/phplist.py:132
+msgid "phpList SaaS Traffic"
+msgstr ""
+
+#: backends/wordpressmu.py:23
+msgid "Wordpress multisite"
+msgstr ""
+
+#: backends/wordpressmu.py:274
+msgid "Wordpress MU Traffic"
+msgstr ""
+
+#: filters.py:6 models.py:35
+msgid "custom URL"
+msgstr "URL personalitzada"
+
+#: filters.py:11
+msgid "True"
+msgstr ""
+
+#: filters.py:12
+msgid "False"
+msgstr ""
+
+#: forms.py:14
+msgid "Site URL"
+msgstr "URL del lloc"
+
+#: forms.py:48 services/phplist.py:31
+msgid "Site name"
+msgstr "Nom del lloc"
+
+#: forms.py:48
+msgid "Username"
+msgstr "Usuari"
+
+#: forms.py:52 forms.py:64
+msgid "Password"
+msgstr "Contrasenya"
+
+#: forms.py:57 serializers.py:20
+msgid ""
+"Enter a valid password. This value may contain any ascii character except "
+"for  '/\"/\\/ characters."
+msgstr ""
+"Introdueix una contrasenya vàlida. Aquest valor pot contenir qualsevol caràcter ASCII excepte "
+"els caràcters '/\"/\\/."
+
+#: forms.py:61
+msgid ""
+"Passwords are not stored, so there is no way to see this service's password, "
+"but you can change the password using <a href=\"../password/\">this form</a>."
+msgstr ""
+"Les contrasenyes no s'emmagatzemen, per tant no hi ha manera de veure la contrasenya d'aquest servei, "
+"però pots canviar la contrasenya utilitzant <a href=\"../password/\">aquest formulari</a>."
+
+#: forms.py:67
+msgid "Password confirmation"
+msgstr "Confirmació de la contrasenya"
+
+#: forms.py:69
+msgid "Enter the same password as above, for verification."
+msgstr "Introdueix la mateixa contrasenya que la de dalt, per a la verificació."
+
+#: forms.py:80
+#, python-format
+msgid "Suggestion: %s"
+msgstr "Suggeriment: %s"
+
+#: forms.py:87
+msgid "The two password fields didn't match."
+msgstr "Els dos camps de contrasenya no coincideixen."
+
+#: models.py:24
+msgid "service"
+msgstr "servei"
+
+#: models.py:26
+msgid "Name"
+msgstr "Nom"
+
+#: models.py:27
+msgid "Required. 64 characters or fewer. Letters, digits and ./- only."
+msgstr "Requerit. 64 caràcters o menys. Només lletres, xifres i ./-."
+
+#: models.py:30
+msgid "account"
+msgstr "compte"
+
+#: models.py:31
+msgid "active"
+msgstr "actiu"
+
+#: models.py:32
+msgid "Designates whether this service should be treated as active. "
+msgstr "Designa si aquest servei ha de ser tractat com actiu."
+
+#: models.py:33
+msgid "data"
+msgstr ""
+
+#: models.py:34
+msgid "Extra information dependent of each service."
+msgstr "Informació addicional dependent de cada servei."
+
+#: models.py:36
+msgid ""
+"Optional and alternative URL for accessing this service instance. i.e. "
+"<tt>https://wiki.mydomain/doku/</tt><br>A related website will be "
+"automatically configured if needed."
+msgstr ""
+"URL opcional i alternativa per accedir a aquesta instància de servei. És a dir, "
+"<tt>https://wiki.mydomain/doku/</tt><br>Un lloc web relacionat serà "
+"configurat automàticament si és necessari."
+
+#: services/bscw.py:11 services/bscw.py:15 services/gitlab.py:13
+#: services/gitlab.py:23 services/seafile.py:13 services/seafile.py:19
+#: services/wordpress.py:14 services/wordpress.py:32
+msgid "Email"
+msgstr ""
+
+#: services/dokuwiki.py:22
+#, python-format
+msgid "Support for specific URL paths (%s) is not implemented."
+msgstr "El suport per a rutes d'URL específiques (%s) no està implementat."
+
+#: services/gitlab.py:14
+msgid ""
+"Initial email address, changes on the GitLab server are not reflected here."
+msgstr ""
+
+#: services/gitlab.py:19
+msgid "ID of this user used by GitLab, the only attribute that doesn't change."
+msgstr ""
+
+#: services/gitlab.py:24
+msgid "User ID"
+msgstr ""
+
+#: services/helpers.py:18 services/helpers.py:66
+#, python-format
+msgid "Error validating related %s: %s"
+msgstr "Error en validar el %s relacionat: %s"
+
+#: services/helpers.py:33
+#, python-format
+msgid "%s scheme not supported (http/https)"
+msgstr "Esquema %s no suportat (http/https)"
+
+#: services/helpers.py:50
+#, python-format
+msgid "Domain %s does not exist."
+msgstr "El domini %s no existeix."
+
+#: services/helpers.py:54
+#, python-format
+msgid "Domain %s does not belong to account %s, it's from %s."
+msgstr "El domini %s no pertany a l'account %s, és de %s."
+
+#: services/helpers.py:93
+#, python-format
+msgid "Another directive with this URL path exists (%s)."
+msgstr "Ja existeix una altra directiva amb aquesta ruta d'URL (%s)."
+
+#: services/moodle.py:12 services/phplist.py:18
+msgid "Admin username"
+msgstr "Usuari admin"
+
+#: services/options.py:34
+msgid "Software as a Service"
+msgstr ""
+
+#: services/options.py:70
+msgid "Custom URL not allowed for this service."
+msgstr "URL personalitzada no permesa per a aquest servei."
+
+#: services/options.py:82
+msgid "Validate creation execution has failed."
+msgstr "La validació de l'execució de creació ha fallat."
+
+#: services/options.py:85
+msgid "User with this username already exists."
+msgstr "Ja existeix un usuari amb aquest nom d'usuari."
+
+#: services/options.py:87
+msgid "User with this email address already exists."
+msgstr "Ja existeix un usuari amb aquesta adreça de correu electrònic."
+
+#: services/options.py:184
+#, python-format
+msgid "Global database user for PHPList '%(db_user)s' does not exists."
+msgstr ""
+
+#: services/phplist.py:20
+msgid "Database"
+msgstr "Base de dades"
+
+#: services/phplist.py:21
+msgid "Database dedicated to this phpList instance."
+msgstr ""
+
+#: services/phplist.py:24
+msgid "Bounces mailbox"
+msgstr ""
+
+#: services/phplist.py:25
+msgid "Dedicated mailbox used for reciving bounces."
+msgstr ""
+
+#: services/phplist.py:37
+msgid "Admin URL http://{}/admin/"
+msgstr ""
+
+#: services/phplist.py:48
+#, python-brace-format
+msgid "Admin URL <a href={0}>{0}</a>"
+msgstr ""
+
+#: services/seafile.py:14 services/seafile.py:20
+msgid "Quota"
+msgstr ""
+
+#: services/seafile.py:15 services/seafile.py:21
+msgid "Disk quota in MB."
+msgstr ""
+
+#: services/wordpress.py:15
+msgid ""
+"A new user will be created if the above email address is not in the database."
+"<br>The username and password will be mailed to this email address."
+msgstr ""
+"Es crearà un nou usuari si l'adreça de correu electrònic anterior no es troba a la base de dades."
+"<br>El nom d'usuari i la contrasenya seran enviats a aquesta adreça de correu electrònic."
+
+#: services/wordpress.py:28
+msgid ""
+"ID of this blog used by WordPress, the only attribute that doesn't change."
+msgstr ""
+"ID d'aquest blog utilitzat per WordPress, l'únic atribut que no canvia."
+
+#: services/wordpress.py:33
+msgid "Blog ID"
+msgstr ""
+
+#: settings.py:32
+msgid "IP addresses to ignore during traffic accountability."
+msgstr "Adreces IP a ignorar durant la responsabilitat del trànsit."
+
+#: settings.py:41 settings.py:79 settings.py:120 settings.py:138
+#: settings.py:291
+msgid "Whether allow custom URL to be specified or not."
+msgstr "Si es permet especificar una URL personalitzada o no."
+
+#: settings.py:47 settings.py:234 settings.py:251
+#, python-brace-format
+msgid ""
+"Filesystem path for the webserver access logs.<br><tt>LogFormat \"%h %l %u "
+"%t \"%r\" %>s %O \"%{Host}i\"\" host</tt>"
+msgstr ""
+
+#: settings.py:66
+msgid ""
+"Needed for domain mapping when <tt>SAAS_WORDPRESS_ALLOW_CUSTOM_URL</tt> is "
+"enabled."
+msgstr ""
+"Necessari per al mapeig de dominis quan <tt>SAAS_WORDPRESS_ALLOW_CUSTOM_URL</tt> està "
+"habilitat."
+
+#: settings.py:71 settings.py:182
+msgid "Verify SSL certificate on the HTTP requests performed by the backend."
+msgstr "Verificar el certificat SSL a les sol·licituds HTTP realitzades pel backend."
+
+#: settings.py:144 settings.py:149 settings.py:154 settings.py:159
+#: settings.py:297 settings.py:302 settings.py:307 settings.py:312
+msgid "Needed for password changing support."
+msgstr "Necessari per al suport de canvi de contrasenya."
+
+#: settings.py:168
+msgid "Because of max system group name of the bounces mailbox is 32."
+msgstr "Degut a que el nom màxim del grup del sistema per al correu de rebots és de 32 caràcters."
+
+#: settings.py:187
+msgid ""
+"Filesystem path to the phpList source code installed on the server. Used by "
+"<tt>SAAS_PHPLIST_CRONTAB</tt>."
+msgstr ""
+
+#: settings.py:193
+msgid ""
+"System user running phpList on the server.Used by <tt>SAAS_PHPLIST_CRONTAB</"
+"tt>."
+msgstr ""
+
+#: settings.py:200
+msgid ""
+"<tt>processqueue</tt> and <tt>processbounce</tt> phpList cron execution. "
+"Left blank if you don't want crontab to be configured"
+msgstr ""
+
+#: settings.py:322 settings.py:328
+msgid ""
+"Filesystem path to the Moodle source code installed on the server. Used by "
+"<tt>SAAS_MOODLE_CRONTAB</tt>."
+msgstr ""
+
+#: settings.py:334
+msgid ""
+"System user running Moodle on the server.Used by <tt>SAAS_MOODLE_CRONTAB</"
+"tt>."
+msgstr ""
+
+#: settings.py:340
+msgid "Left blank if you don't want crontab to be configured"
+msgstr "Deixa en blanc si no vols que es configuri el crontab."
+
+#: validators.py:12
+#, python-format
+msgid ""
+"Allow custom URL is enabled for '%s', but has no associated "
+"WEBSITES_SAAS_DIRECTIVES"
+msgstr ""
+"Es permet la URL personalitzada per a '%s', però no té associades "
+"les DIRECTIVES_SAAS_WEBSITES."

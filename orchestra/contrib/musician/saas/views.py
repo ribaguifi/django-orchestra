@@ -22,6 +22,8 @@ class SaasNextcloudListView(CustomContextMixin, UserTokenRequiredMixin, ListView
     extra_context = {
         # Translators: This message appears on the page title
         'title': _('Software as a Service'),
+        'verbose_name': _('Nextcloud Service'),
+        'description': _("Members can manage their Nextcloud users in this section."),
     }
 
     def get_queryset(self):
@@ -34,6 +36,8 @@ class SaasWordpressListView(CustomContextMixin, UserTokenRequiredMixin, ListView
     extra_context = {
         # Translators: This message appears on the page title
         'title': _('Software as a Service'),
+        'verbose_name': _('Community WordPress'),
+        'description': _("Pangea's multisite WordPress service. Members can have their WordPress on this community WordPress hosted and maintained by Pangea."),
     }
 
     def get_queryset(self):

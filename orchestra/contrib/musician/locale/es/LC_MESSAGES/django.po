@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-12 10:10+0000\n"
+"POT-Creation-Date: 2024-11-08 09:37+0000\n"
 "PO-Revision-Date: 2021-11-25 12:53+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -30,19 +30,19 @@ msgstr "No hay objetos que coincidan con tu búsqueda"
 msgid "No mailbox found matching the query"
 msgstr "No hay buzones de correo que coincidan con tu búsqueda"
 
-#: forms.py:35 forms.py:104
+#: forms.py:42 forms.py:111
 msgid "The two password fields didn’t match."
 msgstr "Las contraseñas introducidas no coinciden."
 
-#: forms.py:38 forms.py:108
+#: forms.py:45 forms.py:115
 msgid "Password"
 msgstr "Contraseña"
 
-#: forms.py:43 forms.py:113
+#: forms.py:50 forms.py:120
 msgid "Password confirmation"
 msgstr "Confirma la contraseña"
 
-#: forms.py:46 forms.py:116
+#: forms.py:53 forms.py:123
 msgid "Enter the same password as before, for verification."
 msgstr "Introduce la misma contraseña para verificarla"
 
@@ -62,9 +62,9 @@ msgid "Dashboard"
 msgstr "Panel de gestión"
 
 #. Translators: This message appears on the page title
-#: mixins.py:18 templates/musician/dashboard.html:101
-#: templates/musician/dashboard.html:102
-#: templates/musician/websites/website_detail.html:17 views.py:252
+#: mixins.py:18 templates/musician/dashboard.html:106
+#: templates/musician/dashboard.html:107
+#: templates/musician/websites/website_detail.html:17 views.py:259
 msgid "Domains"
 msgstr "Dominios"
 
@@ -73,7 +73,7 @@ msgid "Mails"
 msgstr "Correos"
 
 #. Translators: This message appears on the page title
-#: mixins.py:21 models.py:146 views.py:592
+#: mixins.py:21 models.py:146 views.py:599
 msgid "Databases"
 msgstr "Bases de datos"
 
@@ -81,17 +81,25 @@ msgstr "Bases de datos"
 msgid "SaaS"
 msgstr "SaaS"
 
+#: mixins.py:23
+msgid "Nextcloud"
+msgstr "Nextcloud"
+
+#: mixins.py:24
+msgid "Community WP"
+msgstr "WP Comunitario"
+
 #. Translators: This message appears on the page title
-#: mixins.py:23 websites/views.py:24
+#: mixins.py:25 websites/views.py:24
 msgid "Websites"
 msgstr ""
 
 #. Translators: This message appears on the page title
-#: mixins.py:24 webapps/views.py:25
+#: mixins.py:26 webapps/views.py:25
 msgid "Webapps"
 msgstr ""
 
-#: mixins.py:25
+#: mixins.py:27
 msgid "Users"
 msgstr "Usuarios"
 
@@ -100,7 +108,7 @@ msgid "Description details for databases page."
 msgstr "Consulta la configuración de tus bases de datos."
 
 #. Translators: This message appears on the page title
-#: models.py:234 views.py:392
+#: models.py:234 views.py:399
 msgid "Mail addresses"
 msgstr "Direcciones de correo"
 
@@ -135,6 +143,58 @@ msgstr ""
 "Si tienes algún servicio SaaS (Software as a Service) contratado, aquí "
 "encontrarás sus detalles de configuración."
 
+#: saas/forms.py:16
+msgid "Site URL"
+msgstr ""
+
+#: saas/forms.py:50
+msgid ""
+"ID of this blog used by WordPress, the only attribute that doesn't change."
+msgstr ""
+"ID de este blog utilizado por WordPress, el único atributo que no cambia."
+
+#: saas/forms.py:51 templates/musician/address_list.html:25
+msgid "Email"
+msgstr "Correo electrónico"
+
+#: saas/forms.py:52
+msgid ""
+"A new user will be created if the above email address is not in the database."
+"<br>The username and password will be mailed to this email address."
+msgstr ""
+"Se creará un nuevo usuario si la dirección de correo electrónico anterior no está en la base de datos."
+"<br>El nombre de usuario y la contraseña se enviarán a esta dirección de correo electrónico."
+
+#: saas/forms.py:89
+#, python-format
+msgid "Suggestion: %s"
+msgstr "Sugerencia: %s"
+
+#. Translators: This message appears on the page title
+#: saas/views.py:24 saas/views.py:38 templates/musician/domain_list.html:51
+msgid "Software as a Service"
+msgstr "Software as a Service"
+
+#: saas/views.py:25
+msgid "Nextcloud Service"
+msgstr "Servicio Nextcloud"
+
+#: saas/views.py:26
+msgid "Members can manage their Nextcloud users in this section."
+msgstr "Los miembros pueden gestionar sus usuarios de Nextcloud en esta sección."
+
+#: saas/views.py:39
+msgid "Community WordPress"
+msgstr "WordPress Comunitario"
+
+#: saas/views.py:40
+msgid ""
+"Pangea's multisite WordPress service. Members can have their WordPress on "
+"this community WordPress hosted and maintained by Pangea."
+msgstr ""
+"Servicio de WordPress multisitio de Pangea. "
+"Los socios pueden tener su WordPress en este WordPress comunitario alojado y mantenido por Pangea."
+
 #: templates/auth/login.html:59
 msgid "Log in"
 msgstr "Accede"
@@ -167,6 +227,7 @@ msgstr ""
 #: templates/musician/mailbox_check_delete.html:11
 #: templates/musician/mailing_check_delete.html:8
 #: templates/musician/record_check_delete.html:9
+#: templates/musician/saas_check_delete.html:8
 #: templates/musician/webapps/webappoption_check_delete.html:9
 #: templates/musician/websites/websiteoption_check_delete.html:13
 msgid "WARNING: This action cannot be undone."
@@ -179,8 +240,12 @@ msgstr "AVISO: Esta acción es irreversible."
 #: templates/musician/mailbox_form.html:20
 #: templates/musician/mailing_check_delete.html:9
 #: templates/musician/mailinglist_form.html:30
+#: templates/musician/nextcloud_change_password.html:11
 #: templates/musician/record_check_delete.html:11
 #: templates/musician/record_form.html:16
+#: templates/musician/saas_check_delete.html:9
+#: templates/musician/saas_nextcloud_form.html:30
+#: templates/musician/saas_wordpress_form.html:31
 #: templates/musician/systemuser_change_password.html:11
 #: templates/musician/webapps/webapp_form.html:11
 #: templates/musician/webapps/webapp_option_form.html:18
@@ -200,6 +265,9 @@ msgstr "Cancelar"
 #: templates/musician/mailinglist_form.html:34
 #: templates/musician/record_check_delete.html:10
 #: templates/musician/record_form.html:20
+#: templates/musician/saas_check_delete.html:10
+#: templates/musician/saas_nextcloud_form.html:35
+#: templates/musician/saas_wordpress_form.html:35
 #: templates/musician/webapps/webapp_form.html:15
 #: templates/musician/webapps/webappoption_check_delete.html:10
 #: templates/musician/websites/websiteoption_check_delete.html:14
@@ -210,7 +278,10 @@ msgstr "Borrar"
 #: templates/musician/mailbox_change_password.html:12
 #: templates/musician/mailbox_form.html:21
 #: templates/musician/mailinglist_form.html:31
+#: templates/musician/nextcloud_change_password.html:12
 #: templates/musician/record_form.html:17
+#: templates/musician/saas_nextcloud_form.html:31
+#: templates/musician/saas_wordpress_form.html:32
 #: templates/musician/systemuser_change_password.html:12
 #: templates/musician/webapps/webapp_form.html:12
 #: templates/musician/webapps/webapp_option_form.html:19
@@ -230,17 +301,13 @@ msgstr "Filtrado"
 msgid "Search"
 msgstr ""
 
-#: templates/musician/address_list.html:25
-msgid "Email"
-msgstr "Correo electrónico"
-
 #: templates/musician/address_list.html:26
 msgid "Domain"
 msgstr "Dominio"
 
 #. Translators: This message appears on the page title
 #: templates/musician/address_list.html:27 templates/musician/mail_base.html:22
-#: views.py:478
+#: views.py:485
 msgid "Mailboxes"
 msgstr "Buzones de correo"
 
@@ -262,7 +329,7 @@ msgstr "Perfil"
 
 #. Translators: This message appears on the page title
 #: templates/musician/base.html:71 templates/musician/billing.html:6
-#: views.py:350
+#: views.py:357
 msgid "Billing"
 msgstr "Facturas"
 
@@ -291,6 +358,7 @@ msgstr "Fecha de la factura"
 #: templates/musician/webapps/webapp_detail.html:17
 #: templates/musician/webapps/webapp_detail.html:96
 #: templates/musician/webapps/webapp_list.html:26
+#: templates/musician/websites/website_list.html:72
 msgid "Type"
 msgstr "Tipo"
 
@@ -327,6 +395,8 @@ msgstr "Mostrar historial"
 #: templates/musician/mailbox_list.html:30
 #: templates/musician/mailinglist_list.html:24
 #: templates/musician/saas_list.html:19
+#: templates/musician/saas_nextcloud_list.html:13
+#: templates/musician/saas_wordpress_list.html:13
 #: templates/musician/webapps/webapp_list.html:25
 #: templates/musician/websites/website_detail.html:77
 #: templates/musician/websites/website_list.html:20
@@ -350,13 +420,17 @@ msgstr "Abre el gestor de bases de datos"
 #. Translators: database page when there isn't any database.
 #. Translators: saas page when there isn't any saas.
 #: templates/musician/database_list.html:58
-#: templates/musician/saas_list.html:53
+#: templates/musician/saas_list.html:60
+#: templates/musician/saas_nextcloud_list.html:48
+#: templates/musician/saas_wordpress_list.html:48
 msgid "Ooops! Looks like there is nothing here!"
 msgstr "Mmmh… ¡parece que aquí no hay nada!"
 
 #: templates/musician/domain_detail.html:5
 #: templates/musician/mailinglist_form.html:16
 #: templates/musician/record_form.html:5
+#: templates/musician/saas_nextcloud_form.html:16
+#: templates/musician/saas_wordpress_form.html:16
 #: templates/musician/webapps/webapp_detail.html:5
 #: templates/musician/webapps/webapp_option_form.html:7
 #: templates/musician/websites/website_create_option_form.html:7
@@ -443,11 +517,6 @@ msgstr "direcciones de correo creadas"
 msgid "Mail list"
 msgstr "Lista de correo"
 
-#. Translators: This message appears on the page title
-#: templates/musician/domain_list.html:51 views.py:615
-msgid "Software as a Service"
-msgstr "Software as a Service"
-
 #: templates/musician/domain_list.html:53
 msgid "Nothing installed"
 msgstr "No tienes nada instalado"
@@ -501,6 +570,8 @@ msgstr "Direcciones de correo"
 
 #: templates/musician/mailbox_change_password.html:5
 #: templates/musician/mailbox_form.html:24
+#: templates/musician/nextcloud_change_password.html:5
+#: templates/musician/saas_nextcloud_form.html:34
 #: templates/musician/systemuser_change_password.html:5
 #: templates/musician/webapps/webappuser_change_password.html:5
 msgid "Change password"
@@ -565,6 +636,8 @@ msgstr "Crear lista"
 
 #: templates/musician/mailinglist_list.html:25
 #: templates/musician/saas_list.html:20
+#: templates/musician/saas_nextcloud_list.html:14
+#: templates/musician/saas_wordpress_list.html:14
 #: templates/musician/websites/website_list.html:23
 msgid "Status"
 msgstr "Estado"
@@ -631,7 +704,15 @@ msgstr "Actualiza la contraseña"
 msgid "Add record to"
 msgstr "Agregar registro a"
 
+#: templates/musician/saas_check_delete.html:7
+#, fuzzy
+#| msgid "Are you sure that you want remove the list:"
+msgid "Are you sure that you want remove the SaaS:"
+msgstr "¿Estás seguro/a de que quieres borrar la siguiente lista:"
+
 #: templates/musician/saas_list.html:21
+#: templates/musician/saas_nextcloud_list.html:15
+#: templates/musician/saas_wordpress_list.html:15
 msgid "Service"
 msgstr "Servicio"
 
@@ -639,13 +720,33 @@ msgstr "Servicio"
 msgid "Service info"
 msgstr "Información del servicio"
 
-#: templates/musician/saas_list.html:30
+#: templates/musician/saas_list.html:31
+#: templates/musician/saas_nextcloud_list.html:24
+#: templates/musician/saas_wordpress_list.html:24
 msgid "Installed on"
 msgstr "Instalado en"
 
-#: templates/musician/saas_list.html:37 templates/musician/saas_list.html:39
+#: templates/musician/saas_list.html:38 templates/musician/saas_list.html:40
+#: templates/musician/saas_nextcloud_list.html:31
+#: templates/musician/saas_nextcloud_list.html:33
+#: templates/musician/saas_wordpress_list.html:31
+#: templates/musician/saas_wordpress_list.html:33
 msgid "Open service admin panel"
 msgstr "Abre el panel de administración del servicio"
+
+#: templates/musician/saas_list.html:69
+msgid "New SaaS"
+msgstr "Nuevo SaaS"
+
+#: templates/musician/saas_nextcloud_form.html:20
+#: templates/musician/saas_wordpress_form.html:20
+msgid "Update SaaS"
+msgstr "Actualizar SaaS"
+
+#: templates/musician/saas_nextcloud_form.html:22
+#: templates/musician/saas_wordpress_form.html:22
+msgid "Create SaaS"
+msgstr "Crear SaaS"
 
 #: templates/musician/systemuser_list.html:6
 msgid ""
@@ -694,6 +795,7 @@ msgid "Server"
 msgstr "Servidor"
 
 #: templates/musician/webapps/webapp_detail.html:27
+#: templates/musician/websites/website_list.html:82
 msgid "SFTP user"
 msgstr "Usuario SFTP"
 
@@ -822,6 +924,12 @@ msgstr "Actualizar Opción de WebSite"
 msgid "Url"
 msgstr ""
 
+#: templates/musician/websites/website_list.html:89
+#, fuzzy
+#| msgid "SFTP user"
+msgid "FTP user"
+msgstr "Usuario SFTP"
+
 #: validators.py:28
 #, python-format
 msgid ""
@@ -831,43 +939,43 @@ msgstr ""
 "%s: Los hosts no pueden tener el carácter de subrayado '_'. Considere "
 "proporcionar un registro SRV, CNAME o TXT."
 
-#: views.py:200 views.py:202 views.py:229
+#: views.py:199 views.py:201 views.py:236
 msgid "available"
 msgstr "disponibles"
 
-#: views.py:232
+#: views.py:239
 msgid "Account"
 msgstr "Cuenta"
 
 #. Translators: This message appears on the page title
-#: views.py:277
+#: views.py:284
 msgid "User profile"
 msgstr "Tu perfil"
 
 #. Translators: This message appears on the page title
-#: views.py:364
+#: views.py:371
 msgid "Download bill"
 msgstr "Descarga la factura"
 
 #. Translators: This message appears on the page title
-#: views.py:623
+#: views.py:620
 msgid "Domain details"
 msgstr "Detalles del dominio"
 
 #. Translators: This message appears on the page title
-#: views.py:679
+#: views.py:676
 msgid "Login"
 msgstr "Accede"
 
 #. Translators: This message appears on the page title
-#: views.py:750
+#: views.py:747
 msgid "Webapp users"
 msgstr ""
 
 #. Translators: This message appears on the page title
-#: views.py:768
+#: views.py:765
 msgid "Main users"
-msgstr ""
+msgstr "Usuarios principales"
 
 #: webapps/forms.py:62
 msgid "This option already exist."
@@ -920,72 +1028,69 @@ msgstr ""
 msgid "website details"
 msgstr "Detalles de cada tipo"
 
-msgid "Database"
-msgstr "Bases de datos"
+#~ msgid "Database"
+#~ msgstr "Bases de datos"
 
-msgid "Change password for"
-msgstr "Cambia la contraseña de"
+#~ msgid "Change password for"
+#~ msgstr "Cambia la contraseña de"
 
 #~ msgid "Domains & websites"
 #~ msgstr "Dominios y sitios web"
 
-msgid "Previous"
-msgstr "Previa"
+#~ msgid "Previous"
+#~ msgstr "Previa"
 
-msgid "Next"
-msgstr "Siguiente"
+#~ msgid "Notifications"
+#~ msgstr "Notificaciones"
 
-msgid "Notifications"
-msgstr "Notificaciones"
+#~ msgid "There is no notifications at this time."
+#~ msgstr "No tienes ninguna notificación."
 
-msgid "There is no notifications at this time."
-msgstr "No tienes ninguna notificación."
+#~ msgid "Dashboard page description."
+#~ msgstr ""
+#~ "Este es tu panel de gestión, desde donde podrás consultar la "
+#~ "configuración de los servicios que Pangea te ofrece."
 
-msgid "Dashboard page description."
-msgstr ""
-"Este es tu panel de gestión, desde donde podrás consultar la "
-"configuración de los servicios que Pangea te ofrece."
+#~ msgid "associated to"
+#~ msgstr "asociada a"
 
-msgid "associated to"
-msgstr "asociada a"
+#~ msgid "No users for this database."
+#~ msgstr "No hay usuarias/os de esta base de datos."
 
-msgid "No users for this database."
-msgstr "No hay usuarias/os de esta base de datos."
+#~ msgid "Traffic"
+#~ msgstr "Tráfico"
 
-msgid "Traffic"
-msgstr "Tráfico"
+#~ msgid "Mailbox usage"
+#~ msgstr "Uso de espacio en tu buzón de correo"
 
-msgid "Mailbox usage"
-msgstr "Uso de espacio en tu buzón de correo"
+#~ msgid "Address deleted!"
+#~ msgstr "Has eliminado la dirección de correo"
 
-msgid "Address deleted!"
-msgstr "Has eliminado la dirección de correo"
+#~ msgid "Cannot process your request, please try again later."
+#~ msgstr ""
+#~ "Ahora no podemos procesar tu petición, inténtalo de nuevo un poco más "
+#~ "tarde por favor."
 
-msgid "Cannot process your request, please try again later."
-msgstr ""
-"Ahora no podemos procesar tu petición, inténtalo de nuevo un poco más "
-"tarde por favor."
+#~ msgid "Mailbox deleted!"
+#~ msgstr "Has eliminado el buzón de correo"
 
-msgid "Mailbox deleted!"
-msgstr "Has eliminado el buzón de correo"
+#~ msgid "mail address left"
+#~ msgstr "direcciones de correo por activar"
 
-msgid "mail address left"
-msgstr "direcciones de correo por activar"
+#~ msgid "Aliases"
+#~ msgstr "Alias"
 
-msgid "Aliases"
-msgstr "Alias"
+#~ msgid "databases created"
+#~ msgstr "bases de datos creadas"
 
-msgid "databases created"
-msgstr "bases de datos creadas"
+#~ msgid "size"
+#~ msgstr "tamaño"
 
-msgid "size"
-msgstr "tamaño"
+#~ msgid "traffic"
+#~ msgstr "tráfico"
 
-msgid "traffic"
-msgstr "tráfico"
+#~ msgid "Mailman list traffic"
+#~ msgstr "Listas de Mailman"
 
-msgid "Mailman list traffic"
-msgstr "Listas de Mailman"
-
-msgid "Mailman list Traffic"
-msgstr "Listas de Mailman"
+#~ msgid "Mailman list Traffic"
+#~ msgstr "Listas de Mailman"
