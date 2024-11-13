@@ -4,6 +4,7 @@ from orchestra.forms.widgets import SpanWidget
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from orchestra.utils.python import random_ascii
+from django.core.exceptions import ValidationError
 
 from django.forms.widgets import HiddenInput
 
@@ -92,3 +93,50 @@ class NextcloudChangePasswordForm(ChangePasswordForm):
         password = self.cleaned_data.get("password")
         self.fields['password'] = password
         self.instance.set_password(password)
+
+
+class NextcloudCreateForm(forms.ModelForm):
+    error_messages = {
+        'password_mismatch': _('The two password fields didn’t match.'),
+    }
+    password = forms.CharField(
+        label=_("Password"),
+        strip=False,
+        widget=forms.PasswordInput(attrs={'autocomplete': 'new-password'}),
+    )
+    password2 = forms.CharField(
+        label=_("Password confirmation"),
+        widget=forms.PasswordInput(attrs={'autocomplete': 'new-password'}),
+        strip=False,
+        help_text=_("Enter the same password as before, for verification."),
+    )
+
+    class Meta:
+        fields = ("service", "name", "password", "password2", "account")
+        model = SaaS
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user')
+        super().__init__(*args, **kwargs)
+        self.fields['account'].initial = user
+        self.fields['account'].widget = HiddenInput()
+        self.fields['service'].choices = [("nextcloud","nextCloud")]
+        self.fields['password'].help_text = _("Suggestion: %s") % random_ascii(20)
+        
+
+
+    def clean_password2(self):
+        password = self.cleaned_data.get("password")
+        password2 = self.cleaned_data.get("password2")
+        if password and password2 and password != password2:
+            raise ValidationError(
+                self.error_messages['password_mismatch'],
+                code='password_mismatch',
+            )
+        return  password
+    
+    def clean_password(self):
+        password = self.cleaned_data.get("password")
+        self.fields['password'] = password
+        self.instance.set_password(password)
+    

@@ -12,7 +12,7 @@ from orchestra.contrib.musician.mixins import (CustomContextMixin, ExtendedPagin
                      UserTokenRequiredMixin)
 
 from .forms import ( NextcloudChangePasswordForm, SaasNextcloudUpdateForm,
-                    SaasWordpressUpdateForm )
+                    SaasWordpressUpdateForm, NextcloudCreateForm )
 from orchestra.contrib.saas.models import SaaS
 
 
@@ -88,6 +88,7 @@ class NextcloudChangePasswordView(CustomContextMixin, UserTokenRequiredMixin, Up
     def get_queryset(self):
         return self.model.objects.filter(account=self.request.user)
 
+
 class SaasDeleteView(CustomContextMixin, UserTokenRequiredMixin, DeleteView):
     template_name = "musician/saas_check_delete.html"
     model = SaaS
@@ -95,3 +96,15 @@ class SaasDeleteView(CustomContextMixin, UserTokenRequiredMixin, DeleteView):
 
     def get_queryset(self):
         return self.model.objects.filter(account=self.request.user)
+
+
+class NextcloudCreateView(CustomContextMixin, UserTokenRequiredMixin, CreateView):
+    model = SaaS
+    template_name = "musician/saas_nextcloud_form.html"
+    form_class = NextcloudCreateForm
+    success_url = reverse_lazy("musician:saas-nextcloud-list")
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs

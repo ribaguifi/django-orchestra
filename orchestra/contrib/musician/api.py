@@ -30,7 +30,7 @@ API_PATHS = {
     'mailbox-detail': 'mailboxes/{pk}/',
     'mailbox-password': 'mailboxes/{pk}/set_password/',
     'mailinglist-list': 'lists/',
-    'saas-list': 'saas/',
+    # 'saas-list': 'saas/',
     'website-list': 'websites/',
 
     # other

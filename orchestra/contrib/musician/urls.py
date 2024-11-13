@@ -53,6 +53,7 @@ urlpatterns = [
     path('saas/nextcloud/', views.SaasNextcloudListView.as_view(), name='saas-nextcloud-list'),
     path('saas/nextcloud/<int:pk>/', views.SaasNextcloudUpdateView.as_view(), name='saas-nextcloud-update'),
     path('saas/<int:pk>/nextcloud-change-password/', views.NextcloudChangePasswordView.as_view(), name='nextcloud-password'),
+    path('saas/nextcloud/new/', views.NextcloudCreateView.as_view(), name='saas-nextcloud-create'),
     path('saas/wordpress/', views.SaasWordpressListView.as_view(), name='saas-wordpress-list'),
     path('saas/wordpress/<int:pk>/', views.SaasWordpressUpdateView.as_view(), name='saas-wordpress-update'),
     path('saas/<int:pk>/delete/', views.SaasDeleteView.as_view(), name='saas-delete'),
