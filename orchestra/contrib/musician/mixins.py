@@ -6,6 +6,7 @@ from django.views.generic.base import ContextMixin
 from orchestra import get_version
 
 from . import api
+from .settings import LANGUAGES
 from .auth import SESSION_KEY_TOKEN
 
 
@@ -29,7 +30,8 @@ class CustomContextMixin(ContextMixin):
         context.update({
             'services_menu': services_menu,
             'version': get_version(),
-            'languages': settings.LANGUAGES,
+            # 'languages': settings.LANGUAGES,
+            'languages': LANGUAGES,
         })
 
         return context

@@ -70,3 +70,9 @@ MUSICIAN_WEBSITES_ENABLE_GROUP_DIRECTIVE = Setting('MUSICIAN_WEBSITES_ENABLE_GRO
     ),
     help_text="Valid groups: HTTPD, ModSecurity, SSL, SaaS"
 )
+
+LANGUAGES = [
+    ('en', 'English'),
+    ('es', 'Spanish'),
+    ('ca', 'Catalan'),
+]
