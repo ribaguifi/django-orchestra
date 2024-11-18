@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-11-08 09:37+0000\n"
+"POT-Creation-Date: 2024-11-18 11:01+0000\n"
 "PO-Revision-Date: 2021-11-25 12:53+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -30,19 +30,19 @@ msgstr "No hay objetos que coincidan con tu búsqueda"
 msgid "No mailbox found matching the query"
 msgstr "No hay buzones de correo que coincidan con tu búsqueda"
 
-#: forms.py:42 forms.py:111
+#: forms.py:42 forms.py:111 saas/forms.py:100
 msgid "The two password fields didn’t match."
 msgstr "Las contraseñas introducidas no coinciden."
 
-#: forms.py:45 forms.py:115
+#: forms.py:45 forms.py:115 saas/forms.py:103
 msgid "Password"
 msgstr "Contraseña"
 
-#: forms.py:50 forms.py:120
+#: forms.py:50 forms.py:120 saas/forms.py:108
 msgid "Password confirmation"
 msgstr "Confirma la contraseña"
 
-#: forms.py:53 forms.py:123
+#: forms.py:53 forms.py:123 saas/forms.py:111
 msgid "Enter the same password as before, for verification."
 msgstr "Introduce la misma contraseña para verificarla"
 
@@ -143,57 +143,59 @@ msgstr ""
 "Si tienes algún servicio SaaS (Software as a Service) contratado, aquí "
 "encontrarás sus detalles de configuración."
 
-#: saas/forms.py:16
+#: saas/forms.py:17
 msgid "Site URL"
 msgstr ""
 
-#: saas/forms.py:50
+#: saas/forms.py:51
 msgid ""
 "ID of this blog used by WordPress, the only attribute that doesn't change."
 msgstr ""
 "ID de este blog utilizado por WordPress, el único atributo que no cambia."
 
-#: saas/forms.py:51 templates/musician/address_list.html:25
+#: saas/forms.py:52 templates/musician/address_list.html:25
 msgid "Email"
 msgstr "Correo electrónico"
 
-#: saas/forms.py:52
+#: saas/forms.py:53
 msgid ""
 "A new user will be created if the above email address is not in the database."
 "<br>The username and password will be mailed to this email address."
 msgstr ""
-"Se creará un nuevo usuario si la dirección de correo electrónico anterior no está en la base de datos."
-"<br>El nombre de usuario y la contraseña se enviarán a esta dirección de correo electrónico."
+"Se creará un nuevo usuario si la dirección de correo electrónico anterior no "
+"está en la base de datos.<br>El nombre de usuario y la contraseña se "
+"enviarán a esta dirección de correo electrónico."
 
-#: saas/forms.py:89
+#: saas/forms.py:90 saas/forms.py:124
 #, python-format
 msgid "Suggestion: %s"
 msgstr "Sugerencia: %s"
 
 #. Translators: This message appears on the page title
-#: saas/views.py:24 saas/views.py:38 templates/musician/domain_list.html:51
+#: saas/views.py:26 saas/views.py:40 templates/musician/domain_list.html:51
 msgid "Software as a Service"
 msgstr "Software as a Service"
 
-#: saas/views.py:25
+#: saas/views.py:27
 msgid "Nextcloud Service"
 msgstr "Servicio Nextcloud"
 
-#: saas/views.py:26
+#: saas/views.py:28
 msgid "Members can manage their Nextcloud users in this section."
-msgstr "Los miembros pueden gestionar sus usuarios de Nextcloud en esta sección."
+msgstr ""
+"Los miembros pueden gestionar sus usuarios de Nextcloud en esta sección."
 
-#: saas/views.py:39
+#: saas/views.py:41
 msgid "Community WordPress"
 msgstr "WordPress Comunitario"
 
-#: saas/views.py:40
+#: saas/views.py:42
 msgid ""
 "Pangea's multisite WordPress service. Members can have their WordPress on "
 "this community WordPress hosted and maintained by Pangea."
 msgstr ""
-"Servicio de WordPress multisitio de Pangea. "
-"Los socios pueden tener su WordPress en este WordPress comunitario alojado y mantenido por Pangea."
+"Servicio de WordPress multisitio de Pangea. Los socios pueden tener su "
+"WordPress en este WordPress comunitario alojado y mantenido por Pangea."
 
 #: templates/auth/login.html:59
 msgid "Log in"
@@ -244,7 +246,7 @@ msgstr "AVISO: Esta acción es irreversible."
 #: templates/musician/record_check_delete.html:11
 #: templates/musician/record_form.html:16
 #: templates/musician/saas_check_delete.html:9
-#: templates/musician/saas_nextcloud_form.html:30
+#: templates/musician/saas_nextcloud_form.html:36
 #: templates/musician/saas_wordpress_form.html:31
 #: templates/musician/systemuser_change_password.html:11
 #: templates/musician/webapps/webapp_form.html:11
@@ -266,7 +268,7 @@ msgstr "Cancelar"
 #: templates/musician/record_check_delete.html:10
 #: templates/musician/record_form.html:20
 #: templates/musician/saas_check_delete.html:10
-#: templates/musician/saas_nextcloud_form.html:35
+#: templates/musician/saas_nextcloud_form.html:41
 #: templates/musician/saas_wordpress_form.html:35
 #: templates/musician/webapps/webapp_form.html:15
 #: templates/musician/webapps/webappoption_check_delete.html:10
@@ -280,7 +282,7 @@ msgstr "Borrar"
 #: templates/musician/mailinglist_form.html:31
 #: templates/musician/nextcloud_change_password.html:12
 #: templates/musician/record_form.html:17
-#: templates/musician/saas_nextcloud_form.html:31
+#: templates/musician/saas_nextcloud_form.html:37
 #: templates/musician/saas_wordpress_form.html:32
 #: templates/musician/systemuser_change_password.html:12
 #: templates/musician/webapps/webapp_form.html:12
@@ -571,7 +573,7 @@ msgstr "Direcciones de correo"
 #: templates/musician/mailbox_change_password.html:5
 #: templates/musician/mailbox_form.html:24
 #: templates/musician/nextcloud_change_password.html:5
-#: templates/musician/saas_nextcloud_form.html:34
+#: templates/musician/saas_nextcloud_form.html:40
 #: templates/musician/systemuser_change_password.html:5
 #: templates/musician/webapps/webappuser_change_password.html:5
 msgid "Change password"
@@ -589,6 +591,7 @@ msgstr ""
 "Todos los mensajes <strong>se borrarán y no se podrán recuperar</strong>."
 
 #: templates/musician/mailbox_form.html:9
+#: templates/musician/saas_nextcloud_form.html:28
 msgid "Warning!"
 msgstr "¡Aviso!"
 
@@ -747,6 +750,20 @@ msgstr "Actualizar SaaS"
 #: templates/musician/saas_wordpress_form.html:22
 msgid "Create SaaS"
 msgstr "Crear SaaS"
+
+#: templates/musician/saas_nextcloud_form.html:28
+msgid ""
+"You have reached the limit of Nextcloud users of your subscription so "
+"<strong>extra fees</strong> may apply."
+msgstr ""
+"Has alcanzado el límite de usuarios Nextcloud de tu suscripción, los nuevos "
+"usuarios pueden suponer <strong>costes adicionales</strong>."
+
+#: templates/musician/saas_nextcloud_list.html:57
+#, fuzzy
+#| msgid "SFTP user"
+msgid "New user"
+msgstr "Usuario SFTP"
 
 #: templates/musician/systemuser_list.html:6
 msgid ""

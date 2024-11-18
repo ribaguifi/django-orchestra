@@ -23,6 +23,12 @@
   {% endif %}
 </h1>
 
+{% if extra_user %}
+<div class="alert alert-warning alert-dismissible fade show" role="alert">
+  <strong>{% trans "Warning!" %}</strong> {% trans "You have reached the limit of Nextcloud users of your subscription so <strong>extra fees</strong> may apply." %}
+</div>
+{% endif %}
+
 <form method="post">
   {% csrf_token %}
   {% bootstrap_form form %}

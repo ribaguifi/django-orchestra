@@ -15,6 +15,8 @@ from .forms import ( NextcloudChangePasswordForm, SaasNextcloudUpdateForm,
                     SaasWordpressUpdateForm, NextcloudCreateForm )
 from orchestra.contrib.saas.models import SaaS
 
+from orchestra.contrib.musician.settings import ALLOWED_RESOURCES
+
 
 class SaasNextcloudListView(CustomContextMixin, UserTokenRequiredMixin, ListView):
     model = SaaS
@@ -108,3 +110,16 @@ class NextcloudCreateView(CustomContextMixin, UserTokenRequiredMixin, CreateView
         kwargs = super().get_form_kwargs()
         kwargs['user'] = self.request.user
         return kwargs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({
+            'extra_user': self.is_extra_user(context['profile']),
+        })
+        return context
+    
+    def is_extra_user(self, profile):
+        qs = SaaS.objects.filter(account=profile, service="nextcloud")
+        number_of_users = len(qs)
+        allowed_users = ALLOWED_RESOURCES[profile.type]['nextcloud']
+        return number_of_users >= allowed_users
