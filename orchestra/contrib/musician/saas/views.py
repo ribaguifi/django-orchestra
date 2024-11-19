@@ -4,18 +4,20 @@ from django.urls import reverse_lazy
 
 from django.views.generic.base import RedirectView, TemplateView
 from django.views.generic.detail import DetailView
+from django.views.generic.list import ListView
 from django.views.generic.edit import (CreateView, DeleteView, FormView,
                                        UpdateView)
-from django.views.generic.list import ListView
 
+from orchestra.contrib.saas.models import SaaS
+from orchestra.contrib.resources.models import Resource, ResourceData
+
+from orchestra.contrib.musician.settings import ALLOWED_RESOURCES
+from orchestra.contrib.musician.utils import get_bootstraped_percent_exact
 from orchestra.contrib.musician.mixins import (CustomContextMixin, ExtendedPaginationMixin,
                      UserTokenRequiredMixin)
 
 from .forms import ( NextcloudChangePasswordForm, SaasNextcloudUpdateForm,
                     SaasWordpressUpdateForm, NextcloudCreateForm )
-from orchestra.contrib.saas.models import SaaS
-
-from orchestra.contrib.musician.settings import ALLOWED_RESOURCES
 
 
 class SaasNextcloudListView(CustomContextMixin, UserTokenRequiredMixin, ListView):
@@ -29,8 +31,17 @@ class SaasNextcloudListView(CustomContextMixin, UserTokenRequiredMixin, ListView
     }
 
     def get_queryset(self):
-        return self.model.objects.filter(account=self.request.user, service='nextcloud')
-
+        # return self.model.objects.filter(account=self.request.user, service='nextcloud')
+        qs =  self.model.objects.filter(account=self.request.user, service='nextcloud')
+        disk_resource = Resource.objects.get(name='nextcloud-disk')
+        for Nuser in qs:
+            try:
+                Nuser.usage = Nuser.resource_set.get(resource=disk_resource)
+            except ResourceData.DoesNotExist:
+                Nuser.usage = ResourceData(resource=disk_resource)
+            Nuser.percent = get_bootstraped_percent_exact(Nuser.usage.used, Nuser.usage.allocated)
+        return qs
+    
 
 class SaasWordpressListView(CustomContextMixin, UserTokenRequiredMixin, ListView):
     model = SaaS

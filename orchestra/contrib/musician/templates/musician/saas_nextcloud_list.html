@@ -13,6 +13,7 @@
       <th scope="col">{% trans "Name" %}</th>
       <th scope="col">{% trans "Status" %}</th>
       <th scope="col">{% trans "Service" %}</th>
+      <th scope="col">{% trans "Disk usage" %}</th>
       <th></th>
     </tr>
   </thead>
@@ -31,6 +32,17 @@
         <a class="btn btn-sm btn-link" href="https://{{ saas.get_site_domain|default:'#' }}" target="_blank" rel="noopener noreferrer" title="{% trans 'Open service admin panel' %}">
           <i class="fab fa-{{ saas.service }}"></i> {{ saas.service|capfirst }}
           <span class="sr-only">{% trans "Open service admin panel" %}</span> <i class="fas fa-external-link-alt"></i></a>
+      </td>
+      <td>
+        {% if saas.usage.used %}
+          {{ saas.usage.used|floatformat }}
+        {% else %}
+          0
+        {% endif %}
+        {{ saas.usage.unit }}
+        <div class="progress">
+          <div class="progress-bar bg-secondary" style="width: {{ saas.percent }}%"></div>
+        </div>
       </td>
       <td class="text-right">
         <a class="btn btn-outline-warning" role="button" href="{% url 'musician:saas-nextcloud-update' saas.id %}">
