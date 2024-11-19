@@ -760,10 +760,8 @@ msgstr ""
 "usuarios pueden suponer <strong>costes adicionales</strong>."
 
 #: templates/musician/saas_nextcloud_list.html:57
-#, fuzzy
-#| msgid "SFTP user"
 msgid "New user"
-msgstr "Usuario SFTP"
+msgstr "Nuevo usuario"
 
 #: templates/musician/systemuser_list.html:6
 msgid ""
