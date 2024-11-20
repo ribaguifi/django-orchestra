@@ -53,6 +53,18 @@
           <p class="card-text text-dark">{% trans "Nothing installed" %}</p>
           <a class="stretched-link" href="{% url 'musician:saas-wordpress-list' %}?domain={{ domain.id }}"></a>
       </div>
+      <div class="col-6 col-md-3 col-lg-2 border-right">
+        <h4>{% trans "Website" %}</h4>
+        <p class="card-text"><i class="fas fa-globe fa-3x"></i></p>
+        <p class="card-text text-dark">
+          {{ domain.websites.count }} {% trans "assigned website" %}
+        </p>
+        {% if domain.websites.first %}
+          <a class="stretched-link" href="{% url 'musician:website-detail' domain.websites.first.id %}"></a>
+        {% else %}
+          <a class="stretched-link" href="{% url 'musician:website-list' %}"></a>
+        {% endif %}
+      </div>
       <div class="d-none d-lg-block col-lg-1"></div>
 <!-- 
       <div class="col-6 col-md-3 col-lg-4">

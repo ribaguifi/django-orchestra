@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-11-18 11:01+0000\n"
+"POT-Creation-Date: 2024-11-20 10:33+0000\n"
 "PO-Revision-Date: 2021-11-25 12:53+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -52,54 +52,54 @@ msgstr ""
 "Dirección adicional además de la predeterminada <name>@grups.pangea.org"
 
 #. Translators: This message appears on the page title
-#: lists/views.py:22 mixins.py:20
+#: lists/views.py:22 mixins.py:21
 msgid "Mailing lists"
 msgstr "Listas de correo"
 
 #. Translators: This message appears on the page title
-#: mixins.py:17 views.py:119
+#: mixins.py:18 views.py:119
 msgid "Dashboard"
 msgstr "Panel de gestión"
 
 #. Translators: This message appears on the page title
-#: mixins.py:18 templates/musician/dashboard.html:106
+#: mixins.py:19 templates/musician/dashboard.html:106
 #: templates/musician/dashboard.html:107
 #: templates/musician/websites/website_detail.html:17 views.py:259
 msgid "Domains"
 msgstr "Dominios"
 
-#: mixins.py:19
+#: mixins.py:20
 msgid "Mails"
 msgstr "Correos"
 
 #. Translators: This message appears on the page title
-#: mixins.py:21 models.py:146 views.py:599
+#: mixins.py:22 models.py:146 views.py:599
 msgid "Databases"
 msgstr "Bases de datos"
 
-#: mixins.py:22
+#: mixins.py:23
 msgid "SaaS"
 msgstr "SaaS"
 
-#: mixins.py:23
+#: mixins.py:24
 msgid "Nextcloud"
 msgstr "Nextcloud"
 
-#: mixins.py:24
+#: mixins.py:25
 msgid "Community WP"
 msgstr "WP Comunitario"
 
 #. Translators: This message appears on the page title
-#: mixins.py:25 websites/views.py:24
+#: mixins.py:26 websites/views.py:24
 msgid "Websites"
 msgstr ""
 
 #. Translators: This message appears on the page title
-#: mixins.py:26 webapps/views.py:25
+#: mixins.py:27 webapps/views.py:25
 msgid "Webapps"
 msgstr ""
 
-#: mixins.py:27
+#: mixins.py:28
 msgid "Users"
 msgstr "Usuarios"
 
@@ -172,24 +172,24 @@ msgid "Suggestion: %s"
 msgstr "Sugerencia: %s"
 
 #. Translators: This message appears on the page title
-#: saas/views.py:26 saas/views.py:40 templates/musician/domain_list.html:51
+#: saas/views.py:28 saas/views.py:51 templates/musician/domain_list.html:51
 msgid "Software as a Service"
 msgstr "Software as a Service"
 
-#: saas/views.py:27
+#: saas/views.py:29
 msgid "Nextcloud Service"
 msgstr "Servicio Nextcloud"
 
-#: saas/views.py:28
+#: saas/views.py:30
 msgid "Members can manage their Nextcloud users in this section."
 msgstr ""
 "Los miembros pueden gestionar sus usuarios de Nextcloud en esta sección."
 
-#: saas/views.py:41
+#: saas/views.py:52
 msgid "Community WordPress"
 msgstr "WordPress Comunitario"
 
-#: saas/views.py:42
+#: saas/views.py:53
 msgid ""
 "Pangea's multisite WordPress service. Members can have their WordPress on "
 "this community WordPress hosted and maintained by Pangea."
@@ -410,7 +410,8 @@ msgid "Database users"
 msgstr "Usuarios Base de datos"
 
 #: templates/musician/database_list.html:24
-#: templates/musician/domain_list.html:59
+#: templates/musician/domain_list.html:71
+#: templates/musician/saas_nextcloud_list.html:16
 msgid "Disk usage"
 msgstr "Uso del disco"
 
@@ -423,7 +424,7 @@ msgstr "Abre el gestor de bases de datos"
 #. Translators: saas page when there isn't any saas.
 #: templates/musician/database_list.html:58
 #: templates/musician/saas_list.html:60
-#: templates/musician/saas_nextcloud_list.html:48
+#: templates/musician/saas_nextcloud_list.html:60
 #: templates/musician/saas_wordpress_list.html:48
 msgid "Ooops! Looks like there is nothing here!"
 msgstr "Mmmh… ¡parece que aquí no hay nada!"
@@ -495,7 +496,7 @@ msgid "Your domains"
 msgstr "Tus dominios y sitios web"
 
 #: templates/musician/domain_list.html:20
-#: templates/musician/domain_list.html:105
+#: templates/musician/domain_list.html:117
 msgid "View DNS records"
 msgstr "Ver registros DNS"
 
@@ -523,15 +524,23 @@ msgstr "Lista de correo"
 msgid "Nothing installed"
 msgstr "No tienes nada instalado"
 
-#: templates/musician/domain_list.html:77
+#: templates/musician/domain_list.html:57
+msgid "Website"
+msgstr ""
+
+#: templates/musician/domain_list.html:60
+msgid "assigned website"
+msgstr "website asignado"
+
+#: templates/musician/domain_list.html:89
 msgid "Configuration details"
 msgstr "Detalles de configuración"
 
-#: templates/musician/domain_list.html:84
+#: templates/musician/domain_list.html:96
 msgid "FTP access:"
 msgstr "Acceso FTP:"
 
-#: templates/musician/domain_list.html:87
+#: templates/musician/domain_list.html:99
 #, fuzzy, python-format
 #| msgid ""
 #| "Send an email to <a href=\"mailto:%(support_email)s\">%(support_email)s</"
@@ -542,15 +551,15 @@ msgstr ""
 "Envía un correo a <a href=“mailto:%(support_email)s”>%(support_email)s</a> "
 "indicando tu nombre de usuaria/o y te explicaremos qué hacer."
 
-#: templates/musician/domain_list.html:97
+#: templates/musician/domain_list.html:109
 msgid "No website configured."
 msgstr "No hay ninguna web configurada."
 
-#: templates/musician/domain_list.html:99
+#: templates/musician/domain_list.html:111
 msgid "Root directory:"
 msgstr "Directorio raíz:"
 
-#: templates/musician/domain_list.html:100
+#: templates/musician/domain_list.html:112
 msgid "Type:"
 msgstr "Tipo:"
 
@@ -724,14 +733,14 @@ msgid "Service info"
 msgstr "Información del servicio"
 
 #: templates/musician/saas_list.html:31
-#: templates/musician/saas_nextcloud_list.html:24
+#: templates/musician/saas_nextcloud_list.html:25
 #: templates/musician/saas_wordpress_list.html:24
 msgid "Installed on"
 msgstr "Instalado en"
 
 #: templates/musician/saas_list.html:38 templates/musician/saas_list.html:40
-#: templates/musician/saas_nextcloud_list.html:31
-#: templates/musician/saas_nextcloud_list.html:33
+#: templates/musician/saas_nextcloud_list.html:32
+#: templates/musician/saas_nextcloud_list.html:34
 #: templates/musician/saas_wordpress_list.html:31
 #: templates/musician/saas_wordpress_list.html:33
 msgid "Open service admin panel"
@@ -759,7 +768,7 @@ msgstr ""
 "Has alcanzado el límite de usuarios Nextcloud de tu suscripción, los nuevos "
 "usuarios pueden suponer <strong>costes adicionales</strong>."
 
-#: templates/musician/saas_nextcloud_list.html:57
+#: templates/musician/saas_nextcloud_list.html:69
 msgid "New user"
 msgstr "Nuevo usuario"
 
