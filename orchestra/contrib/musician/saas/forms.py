@@ -89,8 +89,9 @@ class NextcloudChangePasswordForm(ChangePasswordForm):
         super(NextcloudChangePasswordForm, self).__init__(*args, **kwargs)
         self.fields['password'].help_text = _("Suggestion: %s") % random_ascii(20)
 
-    def clean_password(self):
-        password = self.cleaned_data.get("password")
+    def clean_password2(self):
+        super().clean_password2()
+        password = self.cleaned_data.get("password2")
         self.fields['password'] = password
         self.instance.set_password(password)
 
