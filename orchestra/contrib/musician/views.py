@@ -263,6 +263,10 @@ class DomainListView(CustomContextMixin, UserTokenRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         domains = self.orchestra.retrieve_domain_list()
 
+        name = self.request.GET.get('name')
+        if name:
+            domains = domains.filter(name__icontains=name)
+
         support_email = getattr(settings, "USER_SUPPORT_EMAIL", "suport@pangea.org")
         support_email_anchor = format_html(
             "<a href='mailto:{}'>{}</a>",
