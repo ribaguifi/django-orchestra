@@ -26,7 +26,11 @@ class WebappListView(CustomContextMixin, UserTokenRequiredMixin, ListView):
     }
 
     def get_queryset(self):
-        return self.model.objects.filter(account=self.request.user)
+        qs = self.model.objects.filter(account=self.request.user)
+        name = self.request.GET.get('name')
+        if name:
+            qs = qs.filter(name__icontains=name)
+        return qs
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

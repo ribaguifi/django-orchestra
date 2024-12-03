@@ -273,7 +273,6 @@ class DomainListView(CustomContextMixin, UserTokenRequiredMixin, TemplateView):
             'domains': domains,
             "support_email_anchor": support_email_anchor,
         })
-
         return context
 
 
@@ -602,6 +601,10 @@ class DatabaseListView(ServiceListView):
     def get_queryset(self):
         qs = super().get_queryset().order_by("name")
 
+        name = self.request.GET.get('name')
+        if name:
+            qs = qs.filter(name__icontains=name)
+
         # TODO(@slamora): optimize query
         ctype = ContentType.objects.get_for_model(self.model)
         disk_resource = Resource.objects.get(name='disk', content_type=ctype)
@@ -746,6 +749,13 @@ class WebappUserListView(ServiceListView):
         # Translators: This message appears on the page title
         'title': _('Webapp users'),
     }
+
+    def get_queryset(self):
+        qs = self.model.objects.filter(account=self.request.user)
+        name = self.request.GET.get('name')
+        if name:
+            qs = qs.filter(username__icontains=name)
+        return qs
 
 class WebappUserChangePasswordView(CustomContextMixin, UserTokenRequiredMixin, UpdateView):
     template_name = "musician/webapps/webappuser_change_password.html"

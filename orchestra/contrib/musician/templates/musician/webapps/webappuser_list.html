@@ -2,6 +2,17 @@
 {% load bootstrap4 i18n %}
 
 {% block tabcontent %}
+
+<div class="mt-4 search-form">
+  <form method="get" class="form-inline">
+    <div class="form-group mr-sm-2">
+      <label class="sr-only" for="id_name">Name</label>
+      <input type="text" name="name" class="form-control" placeholder="{% trans 'User' %}" title="" id="id_name">
+    </div>
+    <button type="submit" class="btn btn-secondary">{% trans "Search" %}</button>
+  </form>
+</div>
+
 <div class="table-responsive">
 <table class="table service-list">
   <!-- <colgroup>

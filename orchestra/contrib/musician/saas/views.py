@@ -17,7 +17,7 @@ from orchestra.contrib.musician.mixins import (CustomContextMixin, ExtendedPagin
                      UserTokenRequiredMixin)
 
 from .forms import ( NextcloudChangePasswordForm, SaasNextcloudUpdateForm,
-                    SaasWordpressUpdateForm, NextcloudCreateForm )
+                    SaasWordpressUpdateForm, NextcloudCreateForm)
 
 
 class SaasNextcloudListView(CustomContextMixin, UserTokenRequiredMixin, ListView):
@@ -31,9 +31,13 @@ class SaasNextcloudListView(CustomContextMixin, UserTokenRequiredMixin, ListView
     }
 
     def get_queryset(self):
-        # return self.model.objects.filter(account=self.request.user, service='nextcloud')
         qs =  self.model.objects.filter(account=self.request.user, service='nextcloud')
         disk_resource = Resource.objects.get(name='nextcloud-disk')
+
+        name = self.request.GET.get('name')
+        if name:
+            qs = qs.filter(name__icontains=name)
+
         for Nuser in qs:
             try:
                 Nuser.usage = Nuser.resource_set.get(resource=disk_resource)
@@ -41,7 +45,7 @@ class SaasNextcloudListView(CustomContextMixin, UserTokenRequiredMixin, ListView
                 Nuser.usage = ResourceData(resource=disk_resource)
             Nuser.percent = get_bootstraped_percent_exact(Nuser.usage.used, Nuser.usage.allocated)
         return qs
-    
+        
 
 class SaasWordpressListView(CustomContextMixin, UserTokenRequiredMixin, ListView):
     model = SaaS
@@ -54,7 +58,11 @@ class SaasWordpressListView(CustomContextMixin, UserTokenRequiredMixin, ListView
     }
 
     def get_queryset(self):
-        return self.model.objects.filter(account=self.request.user, service='wordpress')
+        qs = self.model.objects.filter(account=self.request.user, service='wordpress')
+        name = self.request.GET.get('name')
+        if name:
+            qs = qs.filter(name__icontains=name)
+        return qs
 
 
 class SaasWordpressUpdateView(CustomContextMixin, UserTokenRequiredMixin, UpdateView):

@@ -14,6 +14,7 @@ from orchestra.contrib.musician.mixins import (CustomContextMixin, ExtendedPagin
 from orchestra.contrib.websites.models import Website, Content, WebsiteDirective
 from .forms import ( WebsiteUpdateForm, WesiteContentCreateForm,
                                                             WesiteDirectiveCreateForm)
+from django.db.models import Q
 
 
 class WebsiteListView(CustomContextMixin, UserTokenRequiredMixin, ListView):
@@ -25,7 +26,11 @@ class WebsiteListView(CustomContextMixin, UserTokenRequiredMixin, ListView):
     }
 
     def get_queryset(self):
-        return self.model.objects.filter(account=self.request.user)
+        qs = self.model.objects.filter(account=self.request.user)
+        name = self.request.GET.get('name')
+        if name:
+            qs = qs.filter(Q(name__icontains=name) | Q(domains__name__icontains=name))
+        return qs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
