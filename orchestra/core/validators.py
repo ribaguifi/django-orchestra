@@ -118,6 +118,14 @@ def validate_hostname(hostname):
             raise ValidationError(_("Not a valid hostname (%s).") % name)
 
 
+def validate_user_nextcloud(value):
+    if len(value) > 64:
+        raise ValidationError(_("Too long for a username."))
+    if len(value) < 3:
+        raise ValidationError(_("Too short for a username."))
+    validators.RegexValidator(r'^[a-zA-Z\d.-]+$', _(f"Enter a valid username ({value})."))(value)
+
+
 def validate_username(value):
     validators.RegexValidator(r'^[\w.-]+$', _("Enter a valid username."))(value)
 

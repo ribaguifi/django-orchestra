@@ -5,6 +5,7 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from orchestra.utils.python import random_ascii
 from django.core.exceptions import ValidationError
+from orchestra.core.validators import validate_user_nextcloud
 
 from django.forms.widgets import HiddenInput
 
@@ -123,21 +124,17 @@ class NextcloudCreateForm(forms.ModelForm):
         self.fields['account'].widget = HiddenInput()
         self.fields['service'].choices = [("nextcloud","nextCloud")]
         self.fields['password'].help_text = _("Suggestion: %s") % random_ascii(20)
-        
-
-
-    def clean_password2(self):
-        password = self.cleaned_data.get("password")
-        password2 = self.cleaned_data.get("password2")
+          
+    def clean(self):
+        cleaned_data = super().clean()
+        password = cleaned_data.get("password")
+        password2 = cleaned_data.get("password2")
+        validate_user_nextcloud(cleaned_data.get("name"))
         if password and password2 and password != password2:
             raise ValidationError(
                 self.error_messages['password_mismatch'],
                 code='password_mismatch',
             )
-        return  password
-    
-    def clean_password(self):
-        password = self.cleaned_data.get("password")
         self.fields['password'] = password
         self.instance.set_password(password)
-    
+        return  cleaned_data
