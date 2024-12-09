@@ -9,10 +9,8 @@ from . import api
 from .utils.apps import isinstalled
 from orchestra.contrib.metrics.views import metrics_view
 
-
 admin.autodiscover()
 api.autodiscover()
-
 
 urlpatterns = [
     # Admin
@@ -31,7 +29,6 @@ urlpatterns = [
 
     # MUSICIAN
     path('panel/', include('orchestra.contrib.musician.urls')),
-
 ]
 
 
