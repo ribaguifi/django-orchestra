@@ -194,7 +194,7 @@ msgid ""
 "this community WordPress hosted and maintained by Pangea."
 msgstr ""
 "Servei de Wordpress multisite de Pangea. Els socis/ies poden tenir el seu WP "
-"en aquest WP comunitari alltijat i mantigut per Pangea."
+"en aquest WP comunitari allotjat i mantingut per Pangea."
 
 #: templates/auth/login.html:59
 msgid "Log in"
