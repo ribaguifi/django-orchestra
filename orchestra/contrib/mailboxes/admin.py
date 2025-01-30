@@ -102,7 +102,10 @@ class MailboxAdmin(ChangePasswordAdminMixin, SelectAccountAdminMixin, ExtendedMo
                     cached_forwards[mbox] = [link]
             cache.set('forwards', cached_forwards)
         try:
-            forwards = cached_forwards[mailbox.name]
+            # tanto lio porque en cache_forward puede haber varios mailbox separados por espacios como key
+            search_mailbox = mailbox.name
+            forwards = [value for key, value in cached_forwards.items() if search_mailbox in key.split()]
+            forwards = [item for sublist in forwards for item in sublist]
         except KeyError:
             forwards = []
         # Get from mailboxes
