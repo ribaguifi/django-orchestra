@@ -47,6 +47,7 @@ class Apache2Controller(ServiceController):
         extra_conf += self.get_redirects(directives)
         extra_conf += self.get_proxies(directives)
         extra_conf += self.get_saas(directives)
+        extra_conf += self.get_errordocuments(directives)
         settings_context = site.get_settings_context()
         for location, directive in settings.WEBSITES_VHOST_EXTRA_DIRECTIVES:
             extra_conf.append((location, directive % settings_context))
@@ -342,6 +343,18 @@ class Apache2Controller(ServiceController):
                 (location, redirect)
             )
         return redirects
+
+
+    def get_errordocuments(self, directives):
+        errordocuments = []
+        for erdocument in directives.get('error-document', []):
+            code, target = erdocument.split(" ", 1)
+            erdocument = "ErrorDocument %s %s" % (code, target)
+            errordocuments.append(
+                (code, erdocument)
+            )
+        return errordocuments
+
 
     def get_proxies(self, directives):
         proxies = []
