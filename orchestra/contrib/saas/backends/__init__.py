@@ -38,6 +38,7 @@ class ApacheTrafficByHost(ServiceMonitor):
             'include_received_bytes': str(self.include_received_bytes),
         }
         self.append(textwrap.dedent("""\
+            import re
             import sys
             from datetime import datetime
             from dateutil import tz
