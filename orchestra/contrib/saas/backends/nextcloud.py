@@ -64,7 +64,7 @@ class ApacheTrafficNextcloud(ServiceMonitor):
     <tt>CustomLog /var/log/apache2/access_nextcloud_nomusuari.log</tt>
     """
     model = 'saas.SaaS'
-    script_executable = '/usr/bin/python'
+    script_executable = '/usr/bin/python3'
     monthly_sum_old_values = True
     abstract = True
     include_received_bytes = True

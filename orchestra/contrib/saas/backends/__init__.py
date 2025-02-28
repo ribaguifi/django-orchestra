@@ -24,7 +24,7 @@ class ApacheTrafficByHost(ServiceMonitor):
     <tt>CustomLog /home/pangea/logs/apache/host_blog.pangea.org.log host</tt>
     """
     model = 'saas.SaaS'
-    script_executable = '/usr/bin/python'
+    script_executable = '/usr/bin/python3'
     monthly_sum_old_values = True
     abstract = True
     include_received_bytes = False
