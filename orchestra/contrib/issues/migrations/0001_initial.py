@@ -6,9 +6,8 @@ import datetime
 from django.conf import settings
 from django.db import migrations, models
 import django.db.models.deletion
-from django.utils.timezone import utc
 import orchestra.models.fields
-
+utc = datetime.timezone.utc
 
 class Migration(migrations.Migration):
 
