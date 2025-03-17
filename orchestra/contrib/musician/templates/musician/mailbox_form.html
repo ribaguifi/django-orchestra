@@ -16,15 +16,13 @@
 <form method="post">
   {% csrf_token %}
   {% bootstrap_form form %}
-  {% buttons %}
   <a class="btn btn-light mr-2" href="{% url 'musician:mailbox-list' %}">{% trans "Cancel" %}</a>
-  <button type="submit" class="btn btn-secondary">{% trans "Save" %}</button>
+  {% bootstrap_button "Save" button_type="submit" button_class="btn-secondary" %}
   {% if form.instance.pk %}
   <div class="float-right">
     <a class="btn btn-outline-warning" href="{% url 'musician:mailbox-password' form.instance.pk %}"><i class="fas fa-key"></i> {% trans "Change password" %}</a>
     <a class="btn btn-danger" href="{% url 'musician:mailbox-delete' form.instance.pk %}">{% trans "Delete" %}</a>
   </div>
   {% endif %}
-  {% endbuttons %}
 </form>
 {% endblock %}

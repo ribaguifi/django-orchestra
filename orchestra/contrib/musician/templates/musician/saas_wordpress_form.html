@@ -27,15 +27,15 @@
   {% csrf_token %}
   {% bootstrap_form form %}
   <!-- TODO: ya veremos si dejamos a los socios update/delete -->
-  <!-- {% buttons %}
+  <!-- 
   <a class="btn btn-light mr-2" href="{% url 'musician:saas-wordpress-list' %}">{% trans "Cancel" %}</a>
-  <button type="submit" class="btn btn-secondary">{% trans "Save" %}</button>
+  {% bootstrap_button "Save" button_type="submit" button_class="btn-secondary" %}
   {% if form.instance.pk %}
     <div class="float-right">
       <a class="btn btn-danger" href="{% url 'musician:saas-delete' view.kwargs.pk %}">{% trans "Delete" %}</a>
     </div>
   {% endif %}
-  {% endbuttons %} -->
+  -->
 </form>
 {% endblock %}
 
