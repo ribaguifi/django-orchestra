@@ -1,4 +1,4 @@
-from celery.task.schedules import crontab
+from celery.schedules import crontab
 
 from orchestra.contrib.tasks import periodic_task
 
@@ -11,3 +11,8 @@ def update_service_orders():
     for service in Service.objects.filter(periodic_update=True):
         updates += service.update_orders(commit=True)
     return updates
+
+
+@periodic_task(run_every=crontab(minute='*'))
+def test_scheduler():
+    return True

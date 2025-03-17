@@ -35,7 +35,8 @@ def get_urls():
         extra_patterns.append(
             url(pattern, wrap(view), name=name)
         )
-    return site_get_urls() + extra_patterns
+    # return site_get_urls() + extra_patterns
+    return extra_patterns+site_get_urls()
 admin.site.get_urls = get_urls
 
 

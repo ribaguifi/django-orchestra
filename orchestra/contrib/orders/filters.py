@@ -117,7 +117,8 @@ class IgnoreOrderListFilter(SimpleListFilter):
     def choices(self, cl):
         """ Enable default selection different than All """
         for lookup, title in self.lookup_choices:
-            title = title._proxy____args[0]
+            # title = title._proxy____args[0]
+            title = title._args[0]
             selected = self.value() == force_str(lookup)
             if not selected and title == "Not ignored" and self.value() is None:
                 selected = True

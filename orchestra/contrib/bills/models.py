@@ -1,3 +1,4 @@
+import decimal
 import datetime
 from dateutil.relativedelta import relativedelta
 
@@ -344,7 +345,7 @@ class Bill(models.Model):
     @cached
     def compute_subtotals(self):
         subtotals = {}
-        lines = self.lines.annotate(totals=F('subtotal') + Sum(Coalesce('sublines__total', 0)))
+        lines = self.lines.annotate(totals=F('subtotal') + Sum(Coalesce('sublines__total', decimal.Decimal(0))))
         for tax, total in lines.values_list('tax', 'totals'):
             try:
                 subtotals[tax] += total
@@ -358,14 +359,14 @@ class Bill(models.Model):
     @cached
     def compute_base(self):
         bases = self.lines.annotate(
-            bases=F('subtotal') + Sum(Coalesce('sublines__total', 0))
+            bases=F('subtotal') + Sum(Coalesce('sublines__total', decimal.Decimal(0)))
         )
         return round(bases.aggregate(Sum('bases'))['bases__sum'] or 0, 2)
 
     @cached
     def compute_tax(self):
         taxes = self.lines.annotate(
-            taxes=(F('subtotal') + Coalesce(Sum('sublines__total'), 0)) * (F('tax')/100)
+            taxes=(F('subtotal') + Coalesce(Sum('sublines__total'), decimal.Decimal(0))) * (F('tax')/100)
         )
         return round(taxes.aggregate(Sum('taxes'))['taxes__sum'] or 0, 2)
 
@@ -379,7 +380,7 @@ class Bill(models.Model):
             return round(total, 2)
         else:
             totals = self.lines.annotate(
-                totals=(F('subtotal') + Sum(Coalesce('sublines__total', 0))) * (1+F('tax')/100)
+                totals=(F('subtotal') + Sum(Coalesce('sublines__total', decimal.Decimal(0)))) * (1+F('tax')/100)
             )
             return round(totals.aggregate(Sum('totals'))['totals__sum'] or 0, 2)
 

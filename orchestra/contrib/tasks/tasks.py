@@ -1,8 +1,9 @@
 from datetime import timedelta
 
-from celery.task.schedules import crontab
+from celery.schedules import crontab
 from django.utils import timezone
-from djcelery.models import TaskState
+
+from orchestra.contrib.djcelery.models import TaskState
 
 from . import periodic_task, settings
 

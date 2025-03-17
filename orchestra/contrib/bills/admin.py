@@ -1,3 +1,5 @@
+import decimal
+
 from django import forms
 from django.urls import re_path as url
 from django.contrib import admin, messages
@@ -193,7 +195,7 @@ class BillLineAdmin(admin.ModelAdmin):
         qs = super().get_queryset(request)
         qs = qs.annotate(
             subline_total=Sum('sublines__total'),
-            computed_total=(F('subtotal') + Sum(Coalesce('sublines__total', 0))) * (1+F('tax')/100),
+            computed_total=(F('subtotal') + Sum(Coalesce('sublines__total', decimal.Decimal(0)))) * (1+F('tax')/100),
         )
         return qs
 
@@ -285,8 +287,8 @@ class BillAdminMixin(AccountAdminMixin):
             models.Count('lines'),
             # FIXME https://code.djangoproject.com/ticket/10060
             approx_total=Coalesce(Sum(
-                (F('lines__subtotal') + Coalesce('lines__sublines__total', 0)) * (1+F('lines__tax')/100),
-            ), 0),
+                (F('lines__subtotal') + Coalesce('lines__sublines__total', decimal.Decimal(0))) * (1+F('lines__tax')/100),
+            ), decimal.Decimal(0)),
         )
         qs = qs.prefetch_related(
             Prefetch('amends', queryset=Bill.objects.filter(is_open=False), to_attr='closed_amends')

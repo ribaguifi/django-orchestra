@@ -3,7 +3,8 @@ import json
 from celery import current_app
 from django.core.management.base import BaseCommand
 from django.utils import timezone
-from djcelery.models import PeriodicTask
+
+from orchestra.contrib.djcelery.models import PeriodicTask
 
 from ...decorators import keep_state
 

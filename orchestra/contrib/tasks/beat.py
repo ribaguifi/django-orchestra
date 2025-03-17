@@ -3,7 +3,7 @@ import json
 from celery import current_app
 from celery.schedules import crontab_parser as CrontabParser
 from django.utils import timezone
-from djcelery.models import PeriodicTask
+from orchestra.contrib.djcelery.models import PeriodicTask
 
 from .decorators import apply_async
 

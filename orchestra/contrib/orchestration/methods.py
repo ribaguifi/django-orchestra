@@ -5,7 +5,7 @@ import sys
 import select
 import textwrap
 
-from celery.datastructures import ExceptionInfo
+from billiard.einfo import ExceptionInfo
 
 from orchestra.settings import ORCHESTRA_SSH_DEFAULT_USER
 from orchestra.utils.sys import sshrun

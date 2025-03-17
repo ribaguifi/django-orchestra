@@ -1,6 +1,6 @@
 from datetime import timedelta
 
-from celery.task.schedules import crontab
+from celery.schedules import crontab
 from django.utils import timezone
 
 from orchestra.contrib.tasks import periodic_task

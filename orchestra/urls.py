@@ -1,5 +1,5 @@
 from django.contrib import admin
-from django.conf.urls import include, url
+from django.urls import include, re_path
 from django.urls import path
 from rest_framework.authtoken.views import obtain_auth_token
 
@@ -14,18 +14,18 @@ api.autodiscover()
 
 urlpatterns = [
     # Admin
-    url(r'^admin/', admin.site.urls),
-    url(r'^admin_tools/', include('admin_tools.urls')),
+    re_path(r'^admin/', admin.site.urls),
+    re_path(r'^admin_tools/', include('admin_tools.urls')),
     # REST API
-    url(r'^api/', include(api.router.urls)),
-    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    url(r'^api-token-auth/', obtain_auth_token, name='api-token-auth'),
-    url(r'^media/(.+)/(.+)/(.+)/(.+)/(.+)$', serve_private_media, name='private-media'),
-#    url(r'search', 'orchestra.views.search', name='search'),
+    re_path(r'^api/', include(api.router.urls)),
+    re_path(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    re_path(r'^api-token-auth/', obtain_auth_token, name='api-token-auth'),
+    re_path(r'^media/(.+)/(.+)/(.+)/(.+)/(.+)$', serve_private_media, name='private-media'),
+#    re_path(r'search', 'orchestra.views.search', name='search'),
 
     # METRICS Prometheus
-    # url(r'^metrics/', include('django_prometheus.urls')),
-    url(r'^custom_metrics/', metrics_view, name='metrics'),
+    # re_path(r'^metrics/', include('django_prometheus.urls')),
+    re_path(r'^custom_metrics/', metrics_view, name='metrics'),
 
     # MUSICIAN
     path('panel/', include('orchestra.contrib.musician.urls')),
@@ -35,5 +35,5 @@ urlpatterns = [
 if isinstalled('debug_toolbar'):
     import debug_toolbar
     urlpatterns.append(
-        url(r'^__debug__/', include(debug_toolbar.urls)),
+        re_path(r'^__debug__/', include(debug_toolbar.urls)),
     )

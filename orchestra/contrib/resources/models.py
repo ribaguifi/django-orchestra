@@ -5,8 +5,8 @@ from django.db import models
 from django.utils import timezone
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
-from djcelery.models import PeriodicTask
 
+from orchestra.contrib.djcelery.models import PeriodicTask
 from orchestra.core import validators
 from orchestra.models import queryset, fields
 from orchestra.models.utils import get_model_field_path

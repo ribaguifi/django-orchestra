@@ -1,6 +1,17 @@
+:root {
+  --darkened-bg-alt: #dce7f7;
+  --body-bg-alt: #dce7f7cf;
+}
+
+
 body {
-    background: #FBFAF9 url(/static/orchestra/images/page-gradient.png) top left repeat-x;
+    background: #FBFAF9 url(../../prettyadmin/img/page-gradient.png) top left repeat-x;
 }
+
+#container {
+    height: auto;
+}
+
 
 #header {
     min-height: 0px;
@@ -8,26 +19,33 @@ body {
     line-height: 0px;
     padding: 0px;
     height: 0px;
+    display: block;
 }
 
 #header #navigation-menu {
     height: 43px;
+    margin-top: 0px;
 }
 
-#header #branding h1 {
+#header #site-title a {
+    padding-right: 14px !important;
+    text-transform: none !important;
+}
+
+#header #site-title h1 {
     margin: 0;
-    padding: 2px 15px;
+/*    padding: 2px 15px;*/
     background: transparent url(/static/orchestra/images/orchestra-logo.png) 5px 2px no-repeat;
-    text-indent: 0;
-    height: 31px;
+/*    text-indent: 0;*/
+/*    height: 31px;*/
     font-size: 16px;
 /*    font-weight: bold;*/
-    padding-left: 45px;
-    line-height: 30px;
-    border-right: 1px solid #ededed;
+    padding-left: 35px;
+/*    line-height: 30px;*/
+/*    border-right: 1px solid #ededed;*/
 }
 
-#branding h1, #branding h1 a:link, #branding h1 a:visited {
+#site-title h1, #site-title h1 a:link, #site-title h1 a:visited {
     color: #555;
 }
 
@@ -41,7 +59,7 @@ body {
   font-size: 60%;
 }
 
-#header #branding:hover a {
+#header #site-title:hover a {
     text-decoration: none;
     color: #9B9B9B;
 }
@@ -61,7 +79,7 @@ body {
     position: absolute;
     background-attachment: scroll; background-clip: border-box; 
     background-color: rgb(255, 255, 255); 
-    background-image: url(/static/admin/img/nav-bg-reverse.gif);
+    background-image: url(../../admin/img/nav-bg-reverse.gif);
     background-origin: padding-box;
     background-position: 0px -8px;
     background-size: auto;
@@ -91,119 +109,64 @@ div.breadcrumbs {
     margin: auto;
     border-bottom: none;
     margin-top: 43px;
-
+    background: var(--header-bg);
 }
 
 #header-breadcrumb {
-    background: #79aec8;
-    padding-bottom: 24px;
+    background: var(--header-bg);
+    padding-bottom: 20px;
 }
 
 .inline-group, .module {
-    border: 1px solid #eee;
+    border: 1px solid var(--hairline-color);
     border-radius: 4px;
-}body {
-    background: #FBFAF9 url(/static/orchestra/images/page-gradient.png) top left repeat-x;
 }
 
-#header {
-    min-height: 0px;
-    background: none;
-    line-height: 0px;
-    padding: 0px;
-    height: 0px;
+
+.dashboard-module {
+    padding: 1px;
 }
 
-#header #navigation-menu {
-    height: 43px;
+.fluent-dashboard-icon img{
+    border-radius: 5px;
 }
 
-#header #branding h1 {
+
+.submit-row:last-of-type {
+    position: sticky;
+    bottom: 0;
+}
+
+#changelist-filter {
     margin: 0;
-    padding: 2px 15px;
-    background: transparent url(/static/orchestra/images/orchestra-logo.png) 5px 2px no-repeat;
-    text-indent: 0;
-    height: 31px;
-    font-size: 16px;
-/*    font-weight: bold;*/
-    padding-left: 45px;
-    line-height: 30px;
-    border-right: 1px solid #ededed;
 }
 
-#branding h1, #branding h1 a:link, #branding h1 a:visited {
-    color: #555;
+
+.inline-link {
+    float:right;
+    padding: 3px 12px;
+    margin-top: -3px;
+    background: var(--object-tools-bg);
+    color: var(--object-tools-fg) !important;
+    font-size: 11px;
+    border-radius: 15px;
 }
 
-.version:before {
-    content: "v";
-    opacity: 0.6;
-    padding-right: 0.25em;
+.submit-row{
+    flex-direction: row-reverse;
+}
+.submit-row a.deletelink {
+    margin-left: unset !important;
+    margin-right: auto;
 }
 
-.version {
-  font-size: 60%;
+
+.flex-container {
+    display: flex;
+    overflow: auto;
+    min-height: 0;
 }
 
-#header #branding:hover a {
-    text-decoration: none;
-    color: #9B9B9B;
-}
-
-#header ul#navigation-menu li.first a {
-    outline: none;
-    background: none;
-    margin: 0;
-    padding: 8px 30px 9px 5px;
-}
-
-#header-breadcrumb {
-    width: 100%;
-    z-index: -1;
-    margin-top: 37px;
-    height: 69px;
-    position: absolute;
-    background-attachment: scroll; background-clip: border-box; 
-    background-color: rgb(255, 255, 255); 
-    background-image: url(/static/admin/img/nav-bg-reverse.gif);
-    background-origin: padding-box;
-    background-position: 0px -8px;
-    background-size: auto;
-    border-bottom-color: rgb(237, 237, 237);
-    border-bottom-style: solid;
-    border-bottom-width: 1px;
-    border-left-color: rgb(153, 153, 153);
-    border-left-style: none;
-    border-left-width: 0px;
-    border-right-color: rgb(153, 153, 153);
-    border-right-style: none;
-    border-right-width: 0px;
-    border-top-color: rgb(153, 153, 153);
-    border-top-style: none;
-    border-top-width: 0px; 
-    color: white;
-    height: 13px;
-    padding-bottom: 10px;
-    padding-top: 10px;
-    background-repeat: repeat-x;
-    padding-left: 0;
-    padding-right: 0;
-}
-
-div.breadcrumbs {
-    max-width: 1350px;
-    margin: auto;
-    border-bottom: none;
-    margin-top: 43px;
-
-}
-
-#header-breadcrumb {
-    background: #79aec8;
-    padding-bottom: 24px;
-}
-
-.inline-group, .module {
-    border: 1px solid #eee;
-    border-radius: 4px;
+.base-svgs {
+    display: none;
 }

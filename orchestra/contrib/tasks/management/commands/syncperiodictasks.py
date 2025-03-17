@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
-from djcelery.app import app
-from djcelery.schedulers import DatabaseScheduler
+from orchestra.contrib.djcelery.app import app
+from orchestra.contrib.djcelery.schedulers import DatabaseScheduler
 
 
 class Command(BaseCommand):

@@ -47,7 +47,7 @@
 {% endif %}
 <ul id="navigation-menu">
     <div style="max-width: 1370px; margin:auto; padding-top:4px;">
-    <div id="branding"><a href="/admin/"></a><h1 id="site-name"><a href="/admin/">{{ ORCHESTRA_SITE_VERBOSE_NAME }}<span class="version">0.0.1a1</span></a></h1></div>
+    <li id="site-title"><h1 id="site-name"><a href="/admin/"><strong>{{ ORCHESTRA_SITE_VERBOSE_NAME }}</strong> </a></h1></li>
     {% for item in menu.children %}{% admin_tools_render_menu_item item forloop.counter %}{% endfor %}
     <li class="menu-item" style="padding-left:15px;padding-top:3px;">
         <div style="position:absolute">
@@ -67,5 +67,6 @@
          <a href="{% url 'admin:password_change' %}" style="color:#555;">Change password</a> / <a href="{% url 'admin:logout' %}" style="color:#555;">Log out</a></span>
     </div>
 </ul>
+
 {% endif %}
 

@@ -6,7 +6,7 @@ from io import StringIO
 from django import forms
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
-from django_iban.validators import IBANValidator, IBAN_COUNTRY_CODE_LENGTH
+from localflavor.generic.validators import IBANValidator, IBAN_COUNTRY_CODE_LENGTH
 from rest_framework import serializers
 
 from orchestra.plugins.forms import PluginDataForm

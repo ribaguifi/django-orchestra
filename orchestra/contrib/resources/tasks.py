@@ -1,6 +1,6 @@
 import datetime
 
-from celery.task.schedules import crontab
+from celery.schedules import crontab
 from django.db import transaction
 from django.utils import timezone
 

@@ -5,8 +5,7 @@ from multiprocessing import Process
 from threading import Thread
 
 from celery import shared_task as celery_shared_task
-from celery import states
-from celery.decorators import periodic_task as celery_periodic_task
+from celery import states, current_app
 from django.core.mail import mail_admins
 from django.utils import timezone
 
@@ -23,7 +22,7 @@ def keep_state(fn):
     """ logs task on djcelery's TaskState model """
     @wraps(fn)
     def wrapper(*args, _task_id=None, _name=None, **kwargs):
-        from djcelery.models import TaskState
+        from orchestra.contrib.djcelery.models import TaskState
         now = timezone.now()
         if _task_id is None:
             _task_id = get_id()
@@ -102,15 +101,26 @@ def task(fn=None, **kwargs):
 def periodic_task(fn=None, **kwargs):
     from . import settings
     # register task
+    app = current_app._get_current_object()
     if fn is None:
         name = kwargs.get('name', None)
         if settings.TASKS_BACKEND in ('thread', 'process'):
             def decorator(fn):
-                return apply_async(celery_periodic_task(**kwargs)(fn), name=name)
+                task = celery_shared_task(**kwargs)(fn)
+                app.conf.beat_schedule[name or task.name] = {
+                    'task': task.name,
+                    'schedule': task.run_every,
+                }
+                return apply_async(task, name=name)
             return decorator
         else:
-            return celery_periodic_task(**kwargs)
-    fn = celery_periodic_task(fn)
+            task = celery_shared_task(**kwargs)
+            app.conf.beat_schedule[name or task.name] = {
+                'task': task.name,
+                'schedule': task.run_every,
+            }
+            return task
+    fn = celery_shared_task(fn)
     if settings.TASKS_BACKEND in ('thread', 'process'):
         name = kwargs.pop('name', None)
         fn = update_wrapper(apply_async(fn, name), fn)

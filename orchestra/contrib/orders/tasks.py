@@ -1,6 +1,6 @@
 import datetime
 
-from celery.task.schedules import crontab
+from celery.schedules import crontab
 from django.apps import apps
 
 from orchestra.contrib.tasks import periodic_task
