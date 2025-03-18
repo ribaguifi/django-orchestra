@@ -25,8 +25,9 @@ class MailboxForm(forms.ModelForm):
         remote_field_mock = AttrDict(**{
             'model': Address,
             'get_related_field': lambda: AttrDict(name='id'),
-            
+            'limit_choices_to': {},
         })
+
         widget = self.fields['addresses'].widget
         self.fields['addresses'].widget = widgets.RelatedFieldWidgetWrapper(
             widget, remote_field_mock, self.modeladmin.admin_site, can_add_related=True)
