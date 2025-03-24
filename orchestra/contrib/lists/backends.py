@@ -273,7 +273,7 @@ class MailmanTraffic(ServiceMonitor):
             def monitor(lists, end_date, months, postlogs):
                 for postlog in postlogs:
                     try:
-                        with open(postlog, 'r') as postlog:
+                        with open(postlog, 'r', encoding="utf-8", errors="ignore") as postlog:
                             recps_dict = {{}}
                             for line in postlog.readlines():
                                 line = line.split()

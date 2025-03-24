@@ -367,7 +367,7 @@ class Exim4Traffic(ServiceMonitor):
                 user_regex = re.compile(r' U=([^ ]+) ')
                 for mainlog in mainlogs:
                     try:
-                        with open(mainlog, 'r') as mainlog:
+                        with open(mainlog, 'r', encoding="utf-8", errors="ignore") as mainlog:
                             for line in mainlog.readlines():
                                 if ' <= ' in line and 'P=local' in line:
                                     username = user_regex.search(line).groups()[0]
@@ -456,7 +456,7 @@ class VsFTPdTraffic(ServiceMonitor):
                 bytes_regex = re.compile(r', ([0-9]+) bytes, ')
                 for vsftplog in vsftplogs:
                     try:
-                        with open(vsftplog, 'r') as vsftplog:
+                        with open(vsftplog, 'r', encoding="utf-8", errors="ignore") as vsftplog:
                             for line in vsftplog.readlines():
                                 if ' bytes, ' in line:
                                     username = user_regex.search(line).groups()[0]

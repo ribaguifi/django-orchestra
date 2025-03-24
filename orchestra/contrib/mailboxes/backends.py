@@ -589,7 +589,7 @@ class PostfixMailscannerTraffic(ServiceMonitor):
                 
                 for maillog in maillogs:
                     try:
-                        with open(maillog, 'r') as maillog:
+                        with open(maillog, 'r', encoding="utf-8", errors="ignore") as maillog:
                             for line in maillog.readlines():
                                 # Only search for Authenticated sendings
                                 if 'sasl_username=' in line:

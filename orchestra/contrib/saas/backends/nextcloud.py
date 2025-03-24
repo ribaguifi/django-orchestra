@@ -119,7 +119,7 @@ class ApacheTrafficNextcloud(ServiceMonitor):
                 include_received = {include_received_bytes}
                 for access_log in access_logs:
                     try:
-                        with open(access_log, 'r') as handler:
+                        with open(access_log, 'r', encoding="utf-8", errors="ignore") as handler:
                             for line in handler.readlines():
                                 line = line.split()
                                 host, __, __, date = line[:4]

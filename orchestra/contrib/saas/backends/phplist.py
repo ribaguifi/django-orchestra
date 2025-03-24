@@ -189,7 +189,7 @@ class PhpListTraffic(ServiceMonitor):
             def monitor(lists, id_to_domain, maillogs):
                 for maillog in maillogs:
                     try:
-                        with open(maillog, 'r') as maillog:
+                        with open(maillog, 'r', encoding="utf-8", errors="ignore") as maillog:
                             for line in maillog.readlines():
                                 if ': message-id=<' in line:
                                     # Sep 15 09:36:51 web postfix/cleanup[8138]: C20FF244283: message-id=<fe94cc3afd20a9dc634cc9d9ed03fee0@u-romani.lists.pangea.org>
