@@ -1,5 +1,5 @@
-import collections
 import copy
+from collections.abc import Iterable
 
 from orchestra.utils.python import AttrDict
 
@@ -46,7 +46,7 @@ class Operation():
 
     @classmethod
     def create_for_action(cls, instances, action):
-        if not isinstance(instances, collections.Iterable):
+        if not isinstance(instances, Iterable):
             instances = [instances]
         operations = []
         for instance in instances:
