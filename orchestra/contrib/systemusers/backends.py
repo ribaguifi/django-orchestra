@@ -413,7 +413,7 @@ class VsFTPdTraffic(ServiceMonitor):
     model = 'systemusers.SystemUser'
     resource = ServiceMonitor.TRAFFIC
     verbose_name = _('VsFTPd traffic')
-    script_executable = '/usr/bin/python'
+    script_executable = '/usr/bin/python3'
     monthly_sum_old_values = True
     doc_settings = (settings,
         ('SYSTEMUSERS_FTP_LOG_PATH',)
@@ -475,7 +475,7 @@ class VsFTPdTraffic(ServiceMonitor):
                 
                 for username, opts in users.items():
                     __, object_id, size = opts
-                    print object_id, size
+                    print(object_id, size)
             """).format(**context)
         )
     
