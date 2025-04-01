@@ -74,7 +74,7 @@ class AtLeastOneRequiredInlineFormSet(BaseInlineFormSet):
 
 
 class EnhaceSearchMixin(object):
-    def lookup_allowed(self, lookup, value):
+    def lookup_allowed(self, lookup, value, *args, **kwargs):
         """ allows any lookup """
         if 'password' in lookup:
             return False
