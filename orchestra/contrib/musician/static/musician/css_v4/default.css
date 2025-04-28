@@ -7,19 +7,6 @@ a:hover {
     color: rgba(0, 0, 0, .7);
 }
 
-
-.nav-link {
-    display: block;
-    padding: 0.5rem 1rem;
-    color: #8db823;
-    text-decoration: none;
-    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
-}
-
-.nav-link:hover, .nav-link:focus {
-    color: #5c7817;
-}
-
 .btn-arrow-left {
     color: #eee;
     background: #D3D0DA;
