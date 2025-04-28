@@ -7,7 +7,7 @@ from orchestra.contrib.domains.models import Domain
 class MailingUpdateForm(forms.ModelForm):
     class Meta:
         model = List
-        fields = ("is_active", "name", "address_name", "address_domain")
+        fields = ("name", "address_name", "address_domain")
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user')
