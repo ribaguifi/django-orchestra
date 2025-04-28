@@ -8,22 +8,22 @@
         var actionCheckboxes = $(this);
         var list_editable_changed = false;
         var showQuestion = function() {
-                $(options.acrossClears).hide();
-                $(options.acrossQuestions).show();
-                $(options.allContainer).hide();
+            $(options.acrossClears).hide().addClass('hidden');
+            $(options.acrossQuestions).show().removeClass('hidden');
+            $(options.allContainer).hide().addClass('hidden');
             },
             showClear = function() {
-                $(options.acrossClears).show();
-                $(options.acrossQuestions).hide();
+                $(options.acrossClears).show().removeClass('hidden');
+                $(options.acrossQuestions).hide().addClass('hidden');
                 $(options.actionContainer).toggleClass(options.selectedClass);
-                $(options.allContainer).show();
-                $(options.counterContainer).hide();
+                $(options.allContainer).show().removeClass('hidden');
+                $(options.counterContainer).hide().addClass('hidden');
             },
             reset = function() {
-                $(options.acrossClears).hide();
-                $(options.acrossQuestions).hide();
-                $(options.allContainer).hide();
-                $(options.counterContainer).show();
+                $(options.acrossClears).hide().addClass('hidden');
+                $(options.acrossQuestions).hide().addClass('hidden');
+                $(options.allContainer).hide().addClass('hidden');
+                $(options.counterContainer).show().removeClass('hidden');
             },
             clearAcross = function() {
                 reset();
