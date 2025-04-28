@@ -63,7 +63,7 @@
 
   {% for resource, usage in resource_usage.items %}
   <div class="card resource-usage resource-{{ resource }} cursor-pointer">
-    <div class="card-body" data-toggle="collapse" data-target="#collapse-{{ resource }}">
+    <div class="card-body" data-bs-toggle="collapse" data-bs-target="#collapse-{{ resource }}">
       <h5 class="card-title">{{ usage.verbose_name }}</h5>
       <div class="text-center">
         {% if usage.data and usage.data.used %}
@@ -102,7 +102,7 @@
 
   <!-- card domains -->
   <div class="card resource-usage resource-domains cursor-pointer" >
-    <div class="card-body" data-toggle="collapse" data-target="#collapse-domains">
+    <div class="card-body" data-bs-toggle="collapse" data-bs-target="#collapse-domains">
       <h5 class="card-title">{% trans "Domains" %}</h5>
       <div class="text-center">{{ domains|length }} {% trans "Domains" %}</div>
     </div>

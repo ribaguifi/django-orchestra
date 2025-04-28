@@ -36,7 +36,7 @@
   </thead>
   <tbody>
     {% for website in object_list %}
-    <tr class="fila-principal cursor-pointer" data-toggle="collapse" data-target=".detalles{{ website.id }}">
+    <tr class="fila-principal cursor-pointer" data-bs-toggle="collapse" data-bs-target=".detalles{{ website.id }}">
       <td>{{ website.name }}</td>
       <td>
         {% for domain in website.domains.all %}

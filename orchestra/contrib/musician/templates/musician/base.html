@@ -61,7 +61,7 @@
 
       {# <!-- user profile menu --> #}
       <div id="user-profile-menu" class="mt-5 pt-1 dropdown dropright">
-        <button type="button" class="btn nav-link text-light w-100" data-toggle="dropdown">
+        <button type="button" class="btn nav-link text-light w-100" data-bs-toggle="dropdown">
           <img id="user-avatar" class="float-right" width="64" height="64" src="{% static "musician/images/default-profile-picture.png" %}" alt="user-profile-picture"/>
             <strong>{{ profile.username }}</strong><br/>
             <i class="fas fa-cog"></i> {% trans "Settings" %}
@@ -76,7 +76,7 @@
 
       <div class="sidebar-logout">
         <ul class="nav flex-row">
-          <li class="nav-item btn btn-outline-primary btn-sm" data-toggle="modal" data-target="#helpModal">
+          <li class="nav-item btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#helpModal">
             <a class="nav-link text-light" href="#">
               <i class="far fa-question-circle"></i>
             </a>
@@ -92,7 +92,7 @@
 
       <div class="mt-4 pr-3 pb-2 text-light d-block text-right">
           <div class="dropdown">
-            <a class="btn p-0 text-light" id="dropdownMenu3" data-toggle="dropdown" aria-haspopup="true"
+            <a class="btn p-0 text-light" id="dropdownMenu3" data-bs-toggle="dropdown" aria-haspopup="true"
               aria-expanded="false">
               <i class="fas fa-globe"></i> {% trans "Language" %}
             </a>
@@ -111,7 +111,7 @@
           {% for message in messages %}
             <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show" role="alert">
               {{ message }}
-              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>
@@ -126,11 +126,12 @@
   <div class="modal fade" id="helpModal" tabindex="-1" role="dialog" aria-labelledby="helpModal" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Do you need help?</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
         <div class="modal-body">
-          <span class="text-center m-auto">Do you need help? Write to <a href="mailto:suport@pangea.org" target="_blank">suport@pangea.org</a></span>
-          <button type="button" class="close m-0 pb-1" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
+          <span class="text-center m-auto">Write to <a href="mailto:suport@pangea.org" target="_blank">suport@pangea.org</a></span>
         </div>
       </div>
     </div>
