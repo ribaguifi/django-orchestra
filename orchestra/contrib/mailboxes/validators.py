@@ -13,7 +13,7 @@ from . import settings
 
 def validate_emailname(value):
     msg = _("'%s' is not a correct email name." % value)
-    if '@' in value:
+    if any(char.isupper() for char in value) or '@' in value:
         raise ValidationError(msg)
     value += '@localhost'
     try:
