@@ -78,6 +78,9 @@ class MailForm(forms.ModelForm):
     class Meta:
         model = Address
         fields = ("name", "domain", "mailboxes", "forward")
+        help_texts = {
+            'mailboxes': _('Hold down "Control" or "Command" on a Mac to select more than one or to deselect.'),
+        }
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user')
@@ -122,7 +125,7 @@ class MailboxCreateForm(forms.ModelForm):
         strip=False,
         help_text=_("Enter the same password as before, for verification."),
     )
-    addresses = forms.ModelMultipleChoiceField(queryset=Address.objects.none(), required=False)
+    addresses = forms.ModelMultipleChoiceField(queryset=Address.objects.none(), required=False,  help_text=_('Hold down "Control" or "Command" on a Mac to select more than one or to deselect.'))
 
     class Meta:
         fields = ("name", "password", "password2", "addresses")
@@ -159,7 +162,7 @@ class MailboxCreateForm(forms.ModelForm):
 
 
 class MailboxUpdateForm(forms.ModelForm):
-    addresses = forms.MultipleChoiceField(required=False)
+    addresses = forms.MultipleChoiceField(required=False, help_text=_('Hold down "Control" or "Command" on a Mac to select more than one or to deselect.'))
 
     class Meta:
         fields = ('addresses',)

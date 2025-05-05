@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-03 11:03+0000\n"
+"POT-Creation-Date: 2025-05-05 10:46+0000\n"
 "PO-Revision-Date: 2021-11-25 12:53+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -30,21 +30,29 @@ msgstr "No trobem cap objecte que coincideixi amb la teva consulta"
 msgid "No mailbox found matching the query"
 msgstr "No trobem cap bústia que coincideixi amb la teva consulta"
 
-#: forms.py:42 forms.py:111 saas/forms.py:101
+#: forms.py:42 forms.py:114 saas/forms.py:102
 msgid "The two password fields didn’t match."
 msgstr "Les contrasenyes introduïdes no coincideixen."
 
-#: forms.py:45 forms.py:115 saas/forms.py:104
+#: forms.py:45 forms.py:118 saas/forms.py:105
 msgid "Password"
 msgstr "Contrasenya"
 
-#: forms.py:50 forms.py:120 saas/forms.py:109
+#: forms.py:50 forms.py:123 saas/forms.py:110
 msgid "Password confirmation"
 msgstr "Confirma la contrasenya"
 
-#: forms.py:53 forms.py:123 saas/forms.py:112
+#: forms.py:53 forms.py:126 saas/forms.py:113
 msgid "Enter the same password as before, for verification."
 msgstr "Introdueix la mateixa contrasenya per verificar-la."
+
+#: forms.py:82
+msgid ""
+"Hold down \"Control\" or \"Command\" on a Mac to select more than one or to "
+"deselect."
+msgstr ""
+"Mantén premuda la tecla 'Control' o 'Comando' en un Mac per seleccionar més "
+"d'un o des-seleccionar."
 
 #: lists/forms.py:17 lists/forms.py:31
 msgid "Additional address besides the default <name>@grups.pangea.org"
@@ -72,7 +80,7 @@ msgid "Mails"
 msgstr "Correus"
 
 #. Translators: This message appears on the page title
-#: mixins.py:22 models.py:146 views.py:598
+#: mixins.py:22 models.py:146 views.py:602
 msgid "Databases"
 msgstr "Bases de dades"
 
@@ -107,7 +115,7 @@ msgid "Description details for databases page."
 msgstr "Consulta la configuració de les teves bases de dades."
 
 #. Translators: This message appears on the page title
-#: models.py:234 views.py:398
+#: models.py:234 views.py:402
 msgid "Mail addresses"
 msgstr "Adreces de correu"
 
@@ -141,21 +149,21 @@ msgstr ""
 "Si tens algun servei SaaS (Software as a Service) contractat, aquí trobaràs "
 "els seus detalls de configuració."
 
-#: saas/forms.py:17
+#: saas/forms.py:18
 msgid "Site URL"
 msgstr ""
 
-#: saas/forms.py:51
+#: saas/forms.py:52
 msgid ""
 "ID of this blog used by WordPress, the only attribute that doesn't change."
 msgstr ""
 "ID d'aquest blog utilitzat per WordPress, l'únic atribut que no canvia."
 
-#: saas/forms.py:52 templates/musician/address_list.html:25
+#: saas/forms.py:53 templates/musician/address_list.html:25
 msgid "Email"
 msgstr "Correu electrònic"
 
-#: saas/forms.py:53
+#: saas/forms.py:54
 msgid ""
 "A new user will be created if the above email address is not in the database."
 "<br>The username and password will be mailed to this email address."
@@ -164,13 +172,13 @@ msgstr ""
 "base de dades.<br>El nom d'usuari i la contrasenya s'enviaran a aquesta "
 "adreça de correu electrònic."
 
-#: saas/forms.py:90 saas/forms.py:125
+#: saas/forms.py:91 saas/forms.py:126
 #, python-format
 msgid "Suggestion: %s"
 msgstr "Suggerimet: %s"
 
 #. Translators: This message appears on the page title
-#: saas/views.py:28 saas/views.py:55 templates/musician/domain_list.html:49
+#: saas/views.py:28 saas/views.py:55 templates/musician/domain_list.html:55
 msgid "Software as a Service"
 msgstr "Software as a Service"
 
@@ -208,7 +216,7 @@ msgstr "Has oblidat la teva contrasenya? Fes click aquí per recuperar-la"
 msgid "Forgot your password?"
 msgstr "Has oblidat la teva contrasenya?"
 
-#: templates/auth/login.html:83
+#: templates/auth/login.html:81
 #, python-format
 msgid ""
 "Send an email to <a href=\"mailto:%(support_email)s\">%(support_email)s</a> "
@@ -235,24 +243,24 @@ msgstr "AVÍS: Aquesta acció es irreversible."
 
 #: templates/musician/address_check_delete.html:9
 #: templates/musician/address_form.html:11
-#: templates/musician/mailbox_change_password.html:11
+#: templates/musician/mailbox_change_password.html:10
 #: templates/musician/mailbox_check_delete.html:13
-#: templates/musician/mailbox_form.html:20
+#: templates/musician/mailbox_form.html:17
 #: templates/musician/mailing_check_delete.html:9
-#: templates/musician/mailinglist_form.html:30
-#: templates/musician/nextcloud_change_password.html:11
+#: templates/musician/mailinglist_form.html:29
+#: templates/musician/nextcloud_change_password.html:10
 #: templates/musician/record_check_delete.html:11
-#: templates/musician/record_form.html:16
+#: templates/musician/record_form.html:15
 #: templates/musician/saas_check_delete.html:9
-#: templates/musician/saas_nextcloud_form.html:36
+#: templates/musician/saas_nextcloud_form.html:35
 #: templates/musician/saas_wordpress_form.html:31
-#: templates/musician/systemuser_change_password.html:11
+#: templates/musician/systemuser_change_password.html:10
 #: templates/musician/webapps/webapp_form.html:11
-#: templates/musician/webapps/webapp_option_form.html:18
+#: templates/musician/webapps/webapp_option_form.html:17
 #: templates/musician/webapps/webappoption_check_delete.html:11
-#: templates/musician/webapps/webappuser_change_password.html:11
-#: templates/musician/websites/website_create_option_form.html:17
-#: templates/musician/websites/website_form.html:26
+#: templates/musician/webapps/webappuser_change_password.html:10
+#: templates/musician/websites/website_create_option_form.html:16
+#: templates/musician/websites/website_form.html:25
 #: templates/musician/websites/websiteoption_check_delete.html:15
 msgid "Cancel"
 msgstr "Cancel·lar"
@@ -260,13 +268,13 @@ msgstr "Cancel·lar"
 #: templates/musician/address_check_delete.html:10
 #: templates/musician/address_form.html:15
 #: templates/musician/mailbox_check_delete.html:12
-#: templates/musician/mailbox_form.html:25
+#: templates/musician/mailbox_form.html:22
 #: templates/musician/mailing_check_delete.html:10
-#: templates/musician/mailinglist_form.html:34
+#: templates/musician/mailinglist_form.html:33
 #: templates/musician/record_check_delete.html:10
-#: templates/musician/record_form.html:20
+#: templates/musician/record_form.html:19
 #: templates/musician/saas_check_delete.html:10
-#: templates/musician/saas_nextcloud_form.html:41
+#: templates/musician/saas_nextcloud_form.html:40
 #: templates/musician/saas_wordpress_form.html:35
 #: templates/musician/webapps/webapp_form.html:15
 #: templates/musician/webapps/webappoption_check_delete.html:10
@@ -274,29 +282,13 @@ msgstr "Cancel·lar"
 msgid "Delete"
 msgstr "Esborrar"
 
-#: templates/musician/address_form.html:12
-#: templates/musician/mailbox_change_password.html:12
-#: templates/musician/mailbox_form.html:21
-#: templates/musician/mailinglist_form.html:31
-#: templates/musician/nextcloud_change_password.html:12
-#: templates/musician/record_form.html:17
-#: templates/musician/saas_nextcloud_form.html:37
-#: templates/musician/saas_wordpress_form.html:32
-#: templates/musician/systemuser_change_password.html:12
-#: templates/musician/webapps/webapp_form.html:12
-#: templates/musician/webapps/webapp_option_form.html:19
-#: templates/musician/webapps/webappuser_change_password.html:12
-#: templates/musician/websites/website_create_option_form.html:18
-#: templates/musician/websites/website_form.html:27
-msgid "Save"
-msgstr "Desar"
-
 #: templates/musician/address_list.html:7
 msgid "Filter by domain"
 msgstr "Filtrat per domini"
 
 #: templates/musician/address_list.html:10
 #: templates/musician/database_list.html:15
+#: templates/musician/domain_list.html:14
 #: templates/musician/mailinglist_list.html:18
 #: templates/musician/saas_nextcloud_list.html:15
 #: templates/musician/saas_wordpress_list.html:15
@@ -307,12 +299,13 @@ msgid "Search"
 msgstr ""
 
 #: templates/musician/address_list.html:26
+#: templates/musician/domain_list.html:12
 msgid "Domain"
 msgstr "Domini"
 
 #. Translators: This message appears on the page title
 #: templates/musician/address_list.html:27 templates/musician/mail_base.html:22
-#: views.py:484
+#: views.py:488
 msgid "Mailboxes"
 msgstr "Bústies de correu"
 
@@ -334,7 +327,7 @@ msgstr "Perfil"
 
 #. Translators: This message appears on the page title
 #: templates/musician/base.html:71 templates/musician/billing.html:6
-#: views.py:356
+#: views.py:360
 msgid "Billing"
 msgstr "Factures"
 
@@ -418,7 +411,7 @@ msgid "Database users"
 msgstr "Usuaris Base de dades"
 
 #: templates/musician/database_list.html:34
-#: templates/musician/domain_list.html:69
+#: templates/musician/domain_list.html:75
 #: templates/musician/saas_nextcloud_list.html:26
 msgid "Disk usage"
 msgstr "Ús del disc"
@@ -502,73 +495,37 @@ msgstr "Qualsevol subdomini relacionat."
 msgid "Your domains"
 msgstr "Els teus dominis i llocs web"
 
-#: templates/musician/domain_list.html:18
-#: templates/musician/domain_list.html:115
+#: templates/musician/domain_list.html:29
 msgid "View DNS records"
 msgstr "Veure registres DNS"
 
-#: templates/musician/domain_list.html:22
-msgid "view configuration"
-msgstr "veure la configuració"
-
-#: templates/musician/domain_list.html:29
+#: templates/musician/domain_list.html:35
 msgid "Expiration date"
 msgstr "Data de venciment"
 
-#: templates/musician/domain_list.html:36
+#: templates/musician/domain_list.html:42
 msgid "Mail"
 msgstr "Correu"
 
-#: templates/musician/domain_list.html:39
+#: templates/musician/domain_list.html:45
 msgid "mail addresses created"
 msgstr "adreces de correu creades"
 
-#: templates/musician/domain_list.html:44
+#: templates/musician/domain_list.html:50
 msgid "Mail list"
 msgstr "Llista de correu"
 
-#: templates/musician/domain_list.html:51
+#: templates/musician/domain_list.html:57
 msgid "Nothing installed"
 msgstr "No tens res instal·lat"
 
-#: templates/musician/domain_list.html:55
+#: templates/musician/domain_list.html:61
 msgid "Website"
 msgstr ""
 
-#: templates/musician/domain_list.html:58
+#: templates/musician/domain_list.html:64
 msgid "assigned website"
 msgstr "website assignat"
-
-#: templates/musician/domain_list.html:87
-msgid "Configuration details"
-msgstr "Detalls de configuració"
-
-#: templates/musician/domain_list.html:94
-msgid "FTP access:"
-msgstr "Accés FTP:"
-
-#: templates/musician/domain_list.html:97
-#, fuzzy, python-format
-#| msgid ""
-#| "Send an email to <a href=\"mailto:%(support_email)s\">%(support_email)s</"
-#| "a> including your username and we will provide instructions."
-msgid ""
-"E-mail us at %(support_email_anchor)s to get details concerning FTP access."
-msgstr ""
-"Envia un correu a <a href=\"mailto:%(support_email)s\">%(support_email)s</a> "
-"indicant el teu nom d’usuari/a i t’explicarem què fer."
-
-#: templates/musician/domain_list.html:107
-msgid "No website configured."
-msgstr "No hi ha cap web configurada."
-
-#: templates/musician/domain_list.html:109
-msgid "Root directory:"
-msgstr "Directori arrel:"
-
-#: templates/musician/domain_list.html:110
-msgid "Type:"
-msgstr "Tipus:"
 
 #: templates/musician/mail_base.html:6
 #: templates/musician/mailinglist_list.html:6
@@ -587,9 +544,9 @@ msgid "Addresses"
 msgstr "Adreces de correu"
 
 #: templates/musician/mailbox_change_password.html:5
-#: templates/musician/mailbox_form.html:24
+#: templates/musician/mailbox_form.html:21
 #: templates/musician/nextcloud_change_password.html:5
-#: templates/musician/saas_nextcloud_form.html:40
+#: templates/musician/saas_nextcloud_form.html:39
 #: templates/musician/systemuser_change_password.html:5
 #: templates/musician/webapps/webappuser_change_password.html:5
 msgid "Change password"
@@ -872,6 +829,10 @@ msgstr ""
 msgid "Add new option"
 msgstr "Afegir nova Opcio"
 
+#: templates/musician/webapps/webapp_form.html:12
+msgid "Save"
+msgstr "Desar"
+
 #: templates/musician/webapps/webapp_list.html:37
 msgid "Version"
 msgstr ""
@@ -986,32 +947,32 @@ msgid "Account"
 msgstr "Compte"
 
 #. Translators: This message appears on the page title
-#: views.py:283
+#: views.py:287
 msgid "User profile"
 msgstr "El teu perfil"
 
 #. Translators: This message appears on the page title
-#: views.py:370
+#: views.py:374
 msgid "Download bill"
 msgstr "Descarrega la factura"
 
 #. Translators: This message appears on the page title
-#: views.py:623
+#: views.py:627
 msgid "Domain details"
 msgstr "Detalls del domini"
 
 #. Translators: This message appears on the page title
-#: views.py:679
+#: views.py:683
 msgid "Login"
 msgstr "Accés"
 
 #. Translators: This message appears on the page title
-#: views.py:750
+#: views.py:754
 msgid "Webapp users"
 msgstr ""
 
 #. Translators: This message appears on the page title
-#: views.py:775
+#: views.py:779
 msgid "Main users"
 msgstr "Usuari principal"
 
@@ -1067,6 +1028,35 @@ msgstr ""
 #| msgid "Type details"
 msgid "website details"
 msgstr "Detalls de cada tipus"
+
+#~ msgid "view configuration"
+#~ msgstr "veure la configuració"
+
+#~ msgid "Configuration details"
+#~ msgstr "Detalls de configuració"
+
+#~ msgid "FTP access:"
+#~ msgstr "Accés FTP:"
+
+#, fuzzy, python-format
+#~| msgid ""
+#~| "Send an email to <a href=\"mailto:%(support_email)s\">%(support_email)s</"
+#~| "a> including your username and we will provide instructions."
+#~ msgid ""
+#~ "E-mail us at %(support_email_anchor)s to get details concerning FTP "
+#~ "access."
+#~ msgstr ""
+#~ "Envia un correu a <a href=\"mailto:%(support_email)s\">%(support_email)s</"
+#~ "a> indicant el teu nom d’usuari/a i t’explicarem què fer."
+
+#~ msgid "No website configured."
+#~ msgstr "No hi ha cap web configurada."
+
+#~ msgid "Root directory:"
+#~ msgstr "Directori arrel:"
+
+#~ msgid "Type:"
+#~ msgstr "Tipus:"
 
 #~ msgid "Database"
 #~ msgstr "Bases de dades"
