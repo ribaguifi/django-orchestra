@@ -1,0 +1,31 @@
+{% extends "musician/base.html" %}
+{% load django_bootstrap5 i18n %}
+
+{% block content %}
+
+<h1 class="mb-4">des-bloquear IP</h1>
+
+{% if mensaje %}
+    <div class="alert alert-info">{{ mensaje }}</div>
+{% endif %}
+
+<p>Añade la IP pubica a consultar si esta baneada, en caso de estar baneada se desbaneara</p>
+
+<form method="post" class="card p-4">
+    {% csrf_token %}
+    {% bootstrap_form form %}
+    <button type="submit" class="btn btn-danger mt-3">des-bloquear esta IP</button>
+</form>
+
+<script>
+  fetch('https://api.ipify.org?format=json')
+      .then(res => res.json())
+      .then(data => {
+          const ipInput = document.getElementById("id_ip");
+          if (ipInput) {
+              ipInput.value = data.ip;
+          }
+      });
+</script>
+
+{% endblock %}

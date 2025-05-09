@@ -41,7 +41,7 @@ from .auth import logout as auth_logout
 from .forms import (LoginForm, MailboxChangePasswordForm, MailboxCreateForm,
                     MailboxSearchForm, MailboxUpdateForm, MailForm,
                     RecordCreateForm, RecordUpdateForm, WebappUsersChangePasswordForm,
-                    SystemUsersChangePasswordForm)
+                    SystemUsersChangePasswordForm, BannedForm)
 from .mixins import (CustomContextMixin, ExtendedPaginationMixin,
                      UserTokenRequiredMixin)
 from .models import Address as AddressService
@@ -788,3 +788,29 @@ class SystemUserChangePasswordView(CustomContextMixin, UserTokenRequiredMixin, U
     def get_queryset(self):
         return self.model.objects.filter(account=self.request.user)
 
+
+
+
+class BannedView(CustomContextMixin, UserTokenRequiredMixin, TemplateView):
+    template_name = "musician/banned.html"
+    extra_context = {
+        # Translators: This message appears on the page title
+        'title': _('Im banned'),
+    }
+
+    def get(self, request):
+        form = BannedForm()
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request):
+        form = BannedForm(request.POST)
+        mensaje = ''
+        if form.is_valid():
+            ip = form.cleaned_data['ip']
+            # try:
+            #     # Ejecuta el script personalizado (ejemplo: bloquear IP con iptables)
+            #     subprocess.run(['sudo', 'iptables', '-A', 'INPUT', '-s', ip, '-j', 'DROP'], check=True)
+            #     mensaje = f"IP {ip} bloqueada con éxito."
+            # except subprocess.CalledProcessError as e:
+            #     mensaje = f"Error al bloquear IP: {e}"
+        return render(request, self.template_name, {'form': form, 'mensaje': mensaje})

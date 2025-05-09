@@ -76,4 +76,6 @@ urlpatterns = [
     path('webapps/<int:pk>/add-option/', views.WebappAddOptionView.as_view(), name='webapp-add-option'),
     path('webapps/<int:pk>/option/<int:option_pk>/delete/', views.WebappDeleteOptionView.as_view(), name='webapp-delete-option'),
     path('webapps/<int:pk>/option/<int:option_pk>/update/', views.WebappUpdateOptionView.as_view(), name='webapp-update-option'),
+
+    path('banned/', views.BannedView.as_view(), name='banned'),
 ]

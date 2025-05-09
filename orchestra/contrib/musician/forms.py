@@ -212,3 +212,7 @@ class SystemUsersChangePasswordForm(ChangePasswordForm):
         fields = ("password",)
         model = SystemUser
 
+
+
+class BannedForm(forms.Form):
+    ip = forms.GenericIPAddressField(label=_("Public IP"), protocol='IPv4')
