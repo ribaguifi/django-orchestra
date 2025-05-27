@@ -3,18 +3,19 @@
 
 {% block content %}
 
-<h1 class="mb-4">des-bloquear IP</h1>
+<h1 class="mb-4">{% trans 'Unblock IP' %}</h1>
 
 {% if mensaje %}
     <div class="alert alert-info">{{ mensaje }}</div>
 {% endif %}
 
-<p>Añade la IP pubica a consultar si esta baneada, en caso de estar baneada se desbaneara</p>
+<!-- <p>Añade la IP pubica a consultar si esta baneada, en caso de estar baneada se desbaneara</p> -->
+ <p>{% blocktrans %}Provide your public IP address to verify whether it's banned. If it is, it will be unblocked.{% endblocktrans %}</p>
 
-<form method="post" class="card p-4">
-    {% csrf_token %}
-    {% bootstrap_form form %}
-    <button type="submit" class="btn btn-danger mt-3">des-bloquear esta IP</button>
+<form method="post">
+  {% csrf_token %}
+  {% bootstrap_form form %}
+  {% bootstrap_button "Unblock IP" button_type="submit" button_class="btn-secondary" %}
 </form>
 
 <script>
@@ -27,5 +28,6 @@
           }
       });
 </script>
+
 
 {% endblock %}

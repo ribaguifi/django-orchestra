@@ -17,3 +17,4 @@ class WebsitesConfig(AppConfig):
 #                ct.model_class().add_to_class('content_set', relation)
             from .models import Website
             services.register(Website, icon='Applications-internet.png')
+        from . import signals

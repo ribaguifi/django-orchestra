@@ -16,6 +16,7 @@ from orchestra.contrib.mailboxes.models import Address, Mailbox
 from orchestra.contrib.systemusers.models import WebappUsers, SystemUser
 from orchestra.contrib.saas.models import SaaS
 from orchestra.contrib.musician.validators import ValidateZoneMixin
+from orchestra.contrib.websites.models import BannedIP
 
 from . import api
 
@@ -213,6 +214,7 @@ class SystemUsersChangePasswordForm(ChangePasswordForm):
         model = SystemUser
 
 
-
-class BannedForm(forms.Form):
-    ip = forms.GenericIPAddressField(label=_("Public IP"), protocol='IPv4')
+class BannedForm(forms.ModelForm):
+    class Meta:
+        model = BannedIP
+        fields = ('ip',)

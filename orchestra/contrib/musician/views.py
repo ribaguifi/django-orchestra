@@ -3,6 +3,7 @@ import smtplib
 from typing import Any
 
 from django.conf import settings
+from django.contrib import messages
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ImproperlyConfigured
 from django.core.mail import mail_managers
@@ -35,6 +36,7 @@ from orchestra.contrib.lists.models import List
 from orchestra.contrib.mailboxes.models import Address, Mailbox
 from orchestra.contrib.resources.models import Resource, ResourceData
 from orchestra.contrib.systemusers.models import WebappUsers, SystemUser
+from orchestra.contrib.websites.models import BannedIP
 from orchestra.utils.html import html_to_pdf
 
 from .auth import logout as auth_logout
@@ -789,28 +791,19 @@ class SystemUserChangePasswordView(CustomContextMixin, UserTokenRequiredMixin, U
         return self.model.objects.filter(account=self.request.user)
 
 
-
-
-class BannedView(CustomContextMixin, UserTokenRequiredMixin, TemplateView):
+class BannedView(CustomContextMixin, UserTokenRequiredMixin, CreateView):
     template_name = "musician/banned.html"
+    model = BannedIP
+    form_class = BannedForm
     extra_context = {
         # Translators: This message appears on the page title
         'title': _('Im banned'),
     }
 
-    def get(self, request):
-        form = BannedForm()
-        return render(request, self.template_name, {'form': form})
+    def get_success_url(self):
+        return reverse_lazy("musician:banned")
 
-    def post(self, request):
-        form = BannedForm(request.POST)
-        mensaje = ''
-        if form.is_valid():
-            ip = form.cleaned_data['ip']
-            # try:
-            #     # Ejecuta el script personalizado (ejemplo: bloquear IP con iptables)
-            #     subprocess.run(['sudo', 'iptables', '-A', 'INPUT', '-s', ip, '-j', 'DROP'], check=True)
-            #     mensaje = f"IP {ip} bloqueada con éxito."
-            # except subprocess.CalledProcessError as e:
-            #     mensaje = f"Error al bloquear IP: {e}"
-        return render(request, self.template_name, {'form': form, 'mensaje': mensaje})
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.info(self.request, _('If the submitted IP address is blocked by our firewall, it will be unblocked.'))
+        return response

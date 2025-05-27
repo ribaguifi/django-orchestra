@@ -175,3 +175,8 @@ class Content(models.Model):
             return
         else:
             return '%s://%s%s' % (self.website.get_protocol(), domain, self.path)
+
+
+class BannedIP(models.Model):
+    ip = models.GenericIPAddressField(_("Public IP"), protocol='IPv4')
+

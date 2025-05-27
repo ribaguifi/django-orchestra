@@ -26,6 +26,7 @@ class CustomContextMixin(ContextMixin):
             {'icon': 'fas fa-globe', 'pattern_name': 'musician:website-list', 'title': _('Websites')},
             {'icon': 'fas fa-folder', 'pattern_name': 'musician:webapp-list', 'title': _('Webapps'), 'indent': True},
             {'icon': 'fas fa-user', 'pattern_name': 'musician:systemuser-list', 'title': _('Users'), 'indent': True},
+            {'icon': 'fas fa-fire', 'pattern_name': 'musician:banned', 'title': _('Firewall')},
         ]
         context.update({
             'services_menu': services_menu,
