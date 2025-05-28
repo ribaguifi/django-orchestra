@@ -14,7 +14,7 @@
 <form method="post">
   {% csrf_token %}
   {% bootstrap_form form %}
-  {% bootstrap_button "Unblock IP" button_type="submit" button_class="btn-secondary" %}
+  {% bootstrap_button _("Unblock IP") button_type="submit" button_class="btn-secondary" %}
 </form>
 
 <script>
