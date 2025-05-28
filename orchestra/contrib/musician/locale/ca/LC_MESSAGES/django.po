@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-05 10:46+0000\n"
+"POT-Creation-Date: 2025-05-28 11:46+0000\n"
 "PO-Revision-Date: 2021-11-25 12:53+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -30,23 +30,23 @@ msgstr "No trobem cap objecte que coincideixi amb la teva consulta"
 msgid "No mailbox found matching the query"
 msgstr "No trobem cap bústia que coincideixi amb la teva consulta"
 
-#: forms.py:42 forms.py:114 saas/forms.py:102
+#: forms.py:43 forms.py:115 saas/forms.py:102
 msgid "The two password fields didn’t match."
 msgstr "Les contrasenyes introduïdes no coincideixen."
 
-#: forms.py:45 forms.py:118 saas/forms.py:105
+#: forms.py:46 forms.py:119 saas/forms.py:105
 msgid "Password"
 msgstr "Contrasenya"
 
-#: forms.py:50 forms.py:123 saas/forms.py:110
+#: forms.py:51 forms.py:124 saas/forms.py:110
 msgid "Password confirmation"
 msgstr "Confirma la contrasenya"
 
-#: forms.py:53 forms.py:126 saas/forms.py:113
+#: forms.py:54 forms.py:127 saas/forms.py:113
 msgid "Enter the same password as before, for verification."
 msgstr "Introdueix la mateixa contrasenya per verificar-la."
 
-#: forms.py:82
+#: forms.py:83 forms.py:129 forms.py:166
 msgid ""
 "Hold down \"Control\" or \"Command\" on a Mac to select more than one or to "
 "deselect."
@@ -64,14 +64,14 @@ msgid "Mailing lists"
 msgstr "Llistes de correu"
 
 #. Translators: This message appears on the page title
-#: mixins.py:18 views.py:119
+#: mixins.py:18 views.py:121
 msgid "Dashboard"
 msgstr "Panell de gestió"
 
 #. Translators: This message appears on the page title
 #: mixins.py:19 templates/musician/dashboard.html:106
 #: templates/musician/dashboard.html:107
-#: templates/musician/websites/website_detail.html:17 views.py:259
+#: templates/musician/websites/website_detail.html:17 views.py:261
 msgid "Domains"
 msgstr "Dominis"
 
@@ -80,7 +80,7 @@ msgid "Mails"
 msgstr "Correus"
 
 #. Translators: This message appears on the page title
-#: mixins.py:22 models.py:146 views.py:602
+#: mixins.py:22 models.py:146 views.py:604
 msgid "Databases"
 msgstr "Bases de dades"
 
@@ -110,12 +110,16 @@ msgstr ""
 msgid "Users"
 msgstr "Usuaris"
 
+#: mixins.py:29
+msgid "Firewall"
+msgstr "Tallafoc"
+
 #: models.py:147
 msgid "Description details for databases page."
 msgstr "Consulta la configuració de les teves bases de dades."
 
 #. Translators: This message appears on the page title
-#: models.py:234 views.py:402
+#: models.py:234 views.py:404
 msgid "Mail addresses"
 msgstr "Adreces de correu"
 
@@ -305,7 +309,7 @@ msgstr "Domini"
 
 #. Translators: This message appears on the page title
 #: templates/musician/address_list.html:27 templates/musician/mail_base.html:22
-#: views.py:488
+#: views.py:490
 msgid "Mailboxes"
 msgstr "Bústies de correu"
 
@@ -317,6 +321,17 @@ msgstr "Redirecció"
 msgid "New mail address"
 msgstr "Nova adreça de correu"
 
+#: templates/musician/banned.html:6
+msgid "Unblock IP"
+msgstr "Desbloquejar IP"
+
+#: templates/musician/banned.html:12
+msgid ""
+"Provide your public IP address to verify whether it's banned. If it is, it "
+"will be unblocked."
+msgstr ""
+"Proporcioni la seva adreça IP pública per verificar si està bloquejada. Si ho està, es desbloquejarà."
+
 #: templates/musician/base.html:67
 msgid "Settings"
 msgstr "Configuració"
@@ -327,7 +342,7 @@ msgstr "Perfil"
 
 #. Translators: This message appears on the page title
 #: templates/musician/base.html:71 templates/musician/billing.html:6
-#: views.py:360
+#: views.py:362
 msgid "Billing"
 msgstr "Factures"
 
@@ -938,43 +953,54 @@ msgstr ""
 "%s: Els hosts no poden tenir el caràcter d'èmfasi '_'. Considera "
 "proporcionar un registre SRV, CNAME o TXT."
 
-#: views.py:199 views.py:201 views.py:236
+#: views.py:201 views.py:203 views.py:238
 msgid "available"
 msgstr "disponibles"
 
-#: views.py:239
+#: views.py:241
 msgid "Account"
 msgstr "Compte"
 
 #. Translators: This message appears on the page title
-#: views.py:287
+#: views.py:289
 msgid "User profile"
 msgstr "El teu perfil"
 
 #. Translators: This message appears on the page title
-#: views.py:374
+#: views.py:376
 msgid "Download bill"
 msgstr "Descarrega la factura"
 
 #. Translators: This message appears on the page title
-#: views.py:627
+#: views.py:629
 msgid "Domain details"
 msgstr "Detalls del domini"
 
 #. Translators: This message appears on the page title
-#: views.py:683
+#: views.py:685
 msgid "Login"
 msgstr "Accés"
 
 #. Translators: This message appears on the page title
-#: views.py:754
+#: views.py:756
 msgid "Webapp users"
 msgstr ""
 
 #. Translators: This message appears on the page title
-#: views.py:779
+#: views.py:781
 msgid "Main users"
 msgstr "Usuari principal"
+
+#. Translators: This message appears on the page title
+#: views.py:800
+msgid "Im banned"
+msgstr ""
+
+#: views.py:808
+msgid ""
+"If the submitted IP address is blocked by our firewall, it will be unblocked."
+msgstr ""
+"Si l'adreça IP enviada està bloquejada pel nostre tallafoc, es desbloquejarà."
 
 #: webapps/forms.py:62
 msgid "This option already exist."

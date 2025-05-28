@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-12 08:32+0000\n"
+"POT-Creation-Date: 2025-05-28 11:54+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -42,7 +42,7 @@ msgstr ""
 msgid "Apache 2"
 msgstr ""
 
-#: backends/apache.py:440
+#: backends/apache.py:453
 msgid "Apache 2 Traffic"
 msgstr ""
 
@@ -182,8 +182,8 @@ msgid ""
 "Select the protocol(s) for this website<br><tt>HTTPS only</tt> performs a "
 "redirection from <tt>http</tt> to <tt>https</tt>."
 msgstr ""
-"Selecciona el protocolo(s) para este website<br><tt>HTTPS only</tt> establece una "
-"redirección de <tt>http</tt> a <tt>https</tt>."
+"Selecciona el protocolo(s) para este website<br><tt>HTTPS only</tt> "
+"establece una redirección de <tt>http</tt> a <tt>https</tt>."
 
 #: models.py:38
 msgid "Target Server"
@@ -208,6 +208,10 @@ msgstr "aplicación web"
 #: models.py:151
 msgid "path"
 msgstr "Ruta"
+
+#: models.py:181
+msgid "Public IP"
+msgstr "IP Pública"
 
 #: settings.py:24
 msgid "HTTP and HTTPS"
