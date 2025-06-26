@@ -497,7 +497,8 @@ class Apache2Traffic(ServiceMonitor):
                                 second = substr(date, 19, 2)
                                 line_date = year month day hour minute second
                                 if ( line_date > ini && line_date < end)
-                                    sum += $NF
+                                    # sum += $NF
+                                    sum += $10
                             } END {
                                 print sum
                             }' || [[ $? == 1 ]] && true
