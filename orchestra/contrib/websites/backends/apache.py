@@ -70,7 +70,7 @@ class Apache2Controller(ServiceController):
             {% if server_alias %}
                 ServerAlias {{ server_alias_lines }}{% endif %}\
             {% if access_log %}
-                CustomLog {{ access_log }} common{% endif %}\
+                CustomLog {{ access_log }} combined{% endif %}\
             {% if error_log %}
                 ErrorLog {{ error_log }}{% endif %}
             {% if suexec_needed %}
@@ -89,7 +89,7 @@ class Apache2Controller(ServiceController):
             {% if server_alias %}
                 ServerAlias {{ server_alias|join:' ' }}{% endif %}\
             {% if access_log %}
-                CustomLog {{ access_log }} common{% endif %}\
+                CustomLog {{ access_log }} combined{% endif %}\
             {% if error_log %}
                 ErrorLog {{ error_log }}{% endif %}
                 RewriteEngine On
