@@ -135,6 +135,7 @@ class Apache2Controller(ServiceController):
                 [[ $(a2dissite %(site_unique_name)s) =~ "already disabled" ]] || UPDATED_APACHE=1\
                 """) % context
             )
+            
 
     def delete(self, site):
         context = self.get_context(site)

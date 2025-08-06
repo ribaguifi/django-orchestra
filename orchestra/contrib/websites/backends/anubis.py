@@ -59,6 +59,36 @@ class Apache2ControllerAnubis(Apache2Controller):
             """)
         ).render(Context(context))
 
+    def render_virtual_host_redirect_to_anubis(self, site, context):
+        if context['server_name'] and site.active and site.extra_firewall:
+            self.append(textwrap.dedent("""\
+                read -r -d '' anubis_conf << 'EOF' || true
+                # %(banner)s
+                
+                # These headers need to be set or else Anubis will
+                # throw an "admin misconfiguration" error.
+                RequestHeader set "X-Real-Ip" expr=%%{REMOTE_ADDR}
+                RequestHeader set X-Forwarded-Proto "https"
+                RequestHeader set "X-Http-Version" "%%{SERVER_PROTOCOL}s"
+
+                ProxyPreserveHost On
+                ProxyRequests Off
+                ProxyVia Off
+
+                ProxyPass / unix:/run/anubis/%(site_unique)s/%(site_unique)s.sock|http://localhost/
+                ProxyPassReverse / unix:/run/anubis/%(site_unique)s/%(site_unique)s.sock|http://localhost/
+                EOF
+                {
+                    echo -e "${anubis_conf}" | diff -N -I'^\s*#' %(sites_override)s -
+                } || {
+                    echo -e "${anubis_conf}" > %(sites_override)s
+                    UPDATED_APACHE=1
+                }""") % context
+            )
+        else:
+            self.append(textwrap.dedent(""" rm %(sites_override)s || true }""") % context
+            )
+
     def save(self, site):
         context = self.get_context(site)
         if context['server_name']:
@@ -89,10 +119,10 @@ class Apache2ControllerAnubis(Apache2Controller):
                 [[ $(a2dissite %(site_unique_name)s) =~ "already disabled" ]] || UPDATED_APACHE=1\
                 """) % context
             )
+        self.render_virtual_host_redirect_to_anubis(site, context)
 
 
     def prepare(self):
-        pass
         super(Apache2ControllerAnubis, self).prepare()
         # Coordinate apache restart with php backend in order not to overdo it
         self.append(textwrap.dedent("""
@@ -138,6 +168,7 @@ class Apache2ControllerAnubis(Apache2Controller):
 
     def get_context(self, site):
         base_apache_conf = settings.WEBSITES_BASE_APACHE_CONF
+        sites_override = os.path.join(base_apache_conf, 'sites-override')
         sites_available = os.path.join(base_apache_conf, 'sites-available')
         sites_enabled = os.path.join(base_apache_conf, 'sites-enabled')
         server_name, server_alias = self.get_server_names(site)
@@ -146,12 +177,14 @@ class Apache2ControllerAnubis(Apache2Controller):
             'site_name': f"{site.name}_anubis",
             'listen': settings.WEBSITES_ANUBIS_LISTEN,
             'site_unique_name': f"{site.unique_name}_anubis",
+            'site_unique': f"{site.unique_name}",
             'user': self.get_username(site),
             'group': self.get_groupname(site),
             'server_name': server_name,
             'server_alias': server_alias,
             'sites_enabled': "%s_anubis.conf" % os.path.join(sites_enabled, site.unique_name),
             'sites_available': "%s_anubis.conf" % os.path.join(sites_available, site.unique_name),
+            'sites_override': "%s_redirect_anubis.conf" % os.path.join(sites_override, site.unique_name),
             'access_log': site.get_www_access_log_path(),
             'error_log': site.get_www_error_log_path(),
             'banner': self.get_banner(),
