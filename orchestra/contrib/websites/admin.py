@@ -63,7 +63,7 @@ class WebsiteAdmin(SelectAccountAdminMixin, ExtendedModelAdmin):
         'name', 'display_domains', 'display_webapps', 'account_link', 'target_server', 'display_active'
     )
     list_filter = (
-        'protocol', IsActiveListFilter, HasWebAppsListFilter, HasDomainsFilter, 'target_server'
+        'protocol', IsActiveListFilter, HasWebAppsListFilter, HasDomainsFilter, 'target_server', 'extra_firewall',
     )
     change_readonly_fields = ('name',)
     inlines = (ContentInline, WebsiteDirectiveInline)
@@ -71,7 +71,7 @@ class WebsiteAdmin(SelectAccountAdminMixin, ExtendedModelAdmin):
     fieldsets = (
         (None, {
             'classes': ('extrapretty',),
-            'fields': ('account_link', 'name', 'protocol', 'target_server', 'domains', 'is_active', 'comments'),
+            'fields': ('account_link', 'name', 'protocol', 'target_server', 'domains', 'is_active', 'extra_firewall', 'comments'),
         }),
     )
     form = WebsiteAdminForm

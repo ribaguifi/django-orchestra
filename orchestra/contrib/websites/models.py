@@ -38,7 +38,8 @@ class Website(models.Model):
         verbose_name=_("Target Server"), related_name='websites')
     is_active = models.BooleanField(_("active"), default=True)
     comments = models.TextField(default="", blank=True)
-    extra_firewall = models.BooleanField(_("block IA"), default=False)
+    extra_firewall = models.BooleanField(_("block IA"), default=False,
+        help_text=_("Active Anubis firewall to block IA crawlers and bots"))
 
     class Meta:
         unique_together = ('name', 'account', 'target_server')
