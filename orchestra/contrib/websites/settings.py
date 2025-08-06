@@ -38,6 +38,9 @@ WEBSITES_DEFAULT_IPS = Setting('WEBSITES_DEFAULT_IPS',
     default=('*',)
 )
 
+WEBSITES_ANUBIS_LISTEN = Setting('WEBSITES_ANUBIS_LISTEN',
+    default='*:8001'
+)
 
 WEBSITES_DOMAIN_MODEL = Setting('WEBSITES_DOMAIN_MODEL',
     'domains.Domain',

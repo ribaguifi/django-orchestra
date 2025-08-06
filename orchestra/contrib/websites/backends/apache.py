@@ -66,6 +66,7 @@ class Apache2Controller(ServiceController):
         return Template(textwrap.dedent("""\
             <VirtualHost{% for ip in ips %} {{ ip }}:{{ port }}{% endfor %}>
                 IncludeOptional /etc/apache2/site[s]-override/{{ site_unique_name }}.con[f]
+                IncludeOptional /etc/apache2/site[s]-override/{{ site_unique_name }}_redirect_anubis.con[f]
                 ServerName {{ server_name }}\
             {% if server_alias %}
                 ServerAlias {{ server_alias_lines }}{% endif %}\
@@ -431,6 +432,163 @@ class Apache2Controller(ServiceController):
         }
         if not context['ips']:
             raise ValueError("WEBSITES_DEFAULT_IPS is empty.")
+        return context
+
+    def set_content_context(self, content, context):
+        content_context = {
+            'type': content.webapp.type,
+            'location': normurlpath(content.path),
+            'app_name': content.webapp.name,
+            'app_path': content.webapp.get_path(),
+        }
+        context.update(content_context)
+
+
+class Apache2ControllerAnubis(Apache2Controller):
+    """
+    Apache backend to anubis
+    """
+    verbose_name = _("Apache 2 Anubis")
+
+    def get_extra_conf(self, site, context, ssl=False):
+        extra_conf = self.get_content_directives(site, context)
+        directives = site.get_directives()
+
+        extra_conf += self.get_security(directives)
+        extra_conf += self.get_redirects(directives)
+        extra_conf += self.get_proxies(directives)
+        extra_conf += self.get_errordocuments(directives)
+        settings_context = site.get_settings_context()
+        for location, directive in settings.WEBSITES_VHOST_EXTRA_DIRECTIVES:
+            extra_conf.append((location, directive % settings_context))
+        # Order extra conf directives based on directives (longer first)
+        extra_conf = sorted(extra_conf, key=lambda a: len(a[0]), reverse=True)
+        return '\n'.join([conf for location, conf in extra_conf])
+
+    def render_virtual_host(self, site, context):
+        context.update({
+            'vhost_set_fcgid': False,
+            'server_alias_lines': ' \\\n                '.join(context['server_alias']),
+        })
+        context['extra_conf'] = self.get_extra_conf(site, context)
+        return Template(textwrap.dedent("""\
+            <VirtualHost {{ listen }}>
+                IncludeOptional /etc/apache2/site[s]-override/{{ site_unique_name }}.con[f]
+                ServerName {{ server_name }}\
+            {% if server_alias %}
+                ServerAlias {{ server_alias_lines }}{% endif %}\
+            {% if access_log %}
+                CustomLog {{ access_log }} combined{% endif %}\
+            {% if error_log %}
+                ErrorLog {{ error_log }}{% endif %}
+
+                SetEnvIf X-Forwarded-Proto "https" HTTPS=on
+                                        
+            {% for line in extra_conf.splitlines %}
+                {{ line | safe }}{% endfor %}
+            </VirtualHost>
+            """)
+        ).render(Context(context))
+
+    def save(self, site):
+        context = self.get_context(site)
+        if context['server_name']:
+            apache_conf = '# %(banner)s\n' % context
+            apache_conf += self.render_virtual_host(site, context)
+            context['apache_conf'] = apache_conf.strip()
+            self.append(textwrap.dedent("""
+                # Generate Apache config for site %(site_name)s
+                read -r -d '' apache_conf << 'EOF' || true
+                %(apache_conf)s
+                EOF
+                {
+                    echo -e "${apache_conf}" | diff -N -I'^\s*#' %(sites_available)s -
+                } || {
+                    echo -e "${apache_conf}" > %(sites_available)s
+                    UPDATED_APACHE=1
+                }""") % context
+            )
+        if context['server_name'] and site.active:
+            self.append(textwrap.dedent("""
+                # Enable site %(site_name)s
+                [[ $(a2ensite %(site_unique_name)s) =~ "already enabled" ]] || UPDATED_APACHE=1\
+                """) % context
+            )
+        else:
+            self.append(textwrap.dedent("""
+                # Disable site %(site_name)s
+                [[ $(a2dissite %(site_unique_name)s) =~ "already disabled" ]] || UPDATED_APACHE=1\
+                """) % context
+            )
+
+
+    def prepare(self):
+        pass
+        super(Apache2ControllerAnubis, self).prepare()
+        # Coordinate apache restart with php backend in order not to overdo it
+        self.append(textwrap.dedent("""
+            BACKEND="Apache2ControllerAnubis"
+            echo "$BACKEND" >> /dev/shm/reload.apache2
+
+            function coordinate_apache_reload () {
+                # Coordinate Apache reload with other concurrent backends (e.g. PHPController)
+                is_last=0
+                counter=0
+                while ! mv /dev/shm/reload.apache2 /dev/shm/reload.apache2.locked; do
+                    if [[ $counter -gt 4 ]]; then
+                        echo "[ERROR]: Apache reload synchronization deadlocked!" >&2
+                        exit 10
+                    fi
+                    counter=$(($counter+1))
+                    sleep 0.1;
+                done
+                state="$(grep -v -E "^$BACKEND($|\s)" /dev/shm/reload.apache2.locked)" || is_last=1
+                [[ $is_last -eq 0 ]] && {
+                    echo "$state" | grep -v ' RELOAD$' || is_last=1
+                }
+                if [[ $is_last -eq 1 ]]; then
+                    echo "[DEBUG]: Last backend to run, update: $UPDATED_APACHE, state: '$state'"
+                    if [[ $UPDATED_APACHE -eq 1 || "$state" =~ .*RELOAD$ ]]; then
+                        if service apache2 status > /dev/null; then
+                            service apache2 reload
+                        else
+                            service apache2 start
+                        fi
+                    fi
+                    rm /dev/shm/reload.apache2.locked
+                else
+                    echo "$state" > /dev/shm/reload.apache2.locked
+                    if [[ $UPDATED_APACHE -eq 1 ]]; then
+                        echo -e "[DEBUG]: Apache will be reloaded by another backend:\\n${state}"
+                        echo "$BACKEND RELOAD" >> /dev/shm/reload.apache2.locked
+                    fi
+                    mv /dev/shm/reload.apache2.locked /dev/shm/reload.apache2
+                fi
+            }""")
+        )
+
+    def get_context(self, site):
+        base_apache_conf = settings.WEBSITES_BASE_APACHE_CONF
+        sites_available = os.path.join(base_apache_conf, 'sites-available')
+        sites_enabled = os.path.join(base_apache_conf, 'sites-enabled')
+        server_name, server_alias = self.get_server_names(site)
+        context = {
+            'site': site,
+            'site_name': f"{site.name}_anubis",
+            'listen': settings.WEBSITES_ANUBIS_LISTEN,
+            'site_unique_name': f"{site.unique_name}_anubis",
+            'user': self.get_username(site),
+            'group': self.get_groupname(site),
+            'server_name': server_name,
+            'server_alias': server_alias,
+            'sites_enabled': "%s_anubis.conf" % os.path.join(sites_enabled, site.unique_name),
+            'sites_available': "%s_anubis.conf" % os.path.join(sites_available, site.unique_name),
+            'access_log': site.get_www_access_log_path(),
+            'error_log': site.get_www_error_log_path(),
+            'banner': self.get_banner(),
+        }
+        if not context['listen']:
+            raise ValueError("WEBSITES_ANUBIS_LISTEN is empty.")
         return context
 
     def set_content_context(self, content, context):
