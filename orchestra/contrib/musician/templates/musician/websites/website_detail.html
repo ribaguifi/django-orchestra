@@ -32,6 +32,15 @@
       <th scope="row">{% trans "Protocol" %}:</th>
       <td>{{ object.protocol }}</td>
     </tr>
+    <tr>
+      <th scope="row">{% trans "Extra firewall" %}: 
+        <p><i style="font-weight: normal;">{% trans "Anubis firewall to block IA crawlers and bots" %}</i></p>
+      </th>
+      <td class="text-{{website.extra_firewall|yesno:'success,danger'}}">
+        <i class="fa fa-{{ website.extra_firewall|yesno:'check,times' }}"></i>
+        <span class="sr-only">{{ website.extra_firewall|yesno }}</span>
+      </td>
+    </tr>
   </tbody>
 </table>
 <a class="btn btn-primary mt-4 mb-4" href="{% url 'musician:website-update' object.pk %}">{% trans "Edit options" %}</a></td>
