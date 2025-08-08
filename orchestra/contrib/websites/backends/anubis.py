@@ -91,7 +91,7 @@ class Apache2ControllerAnubis(Apache2Controller):
 
     def save(self, site):
         context = self.get_context(site)
-        if context['server_name']:
+        if context['server_name'] and site.active and site.extra_firewall:
             apache_conf = '# %(banner)s\n' % context
             apache_conf += self.render_virtual_host(site, context)
             context['apache_conf'] = apache_conf.strip()
@@ -107,7 +107,6 @@ class Apache2ControllerAnubis(Apache2Controller):
                     UPDATED_APACHE=1
                 }""") % context
             )
-        if context['server_name'] and site.active and site.extra_firewall:
             self.append(textwrap.dedent("""
                 # Enable site %(site_name)s
                 [[ $(a2ensite %(site_unique_name)s) =~ "already enabled" ]] || UPDATED_APACHE=1\
@@ -117,6 +116,7 @@ class Apache2ControllerAnubis(Apache2Controller):
             self.append(textwrap.dedent("""
                 # Disable site %(site_name)s
                 [[ $(a2dissite %(site_unique_name)s) =~ "already disabled" ]] || UPDATED_APACHE=1\
+                rm %(sites_available)s || true
                 """) % context
             )
         self.render_virtual_host_redirect_to_anubis(site, context)
