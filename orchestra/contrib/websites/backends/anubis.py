@@ -86,9 +86,7 @@ class Apache2ControllerAnubis(Apache2Controller):
                 }""") % context
             )
         else:
-            self.append(textwrap.dedent("""\
-                rm %(sites_override)s %(sites_available)s || true 
-                }""") % context
+            self.append(textwrap.dedent(""" rm %(sites_override)s %(sites_available)s || true """) % context
             )
 
     def save(self, site):
