@@ -86,7 +86,9 @@ class Apache2ControllerAnubis(Apache2Controller):
                 }""") % context
             )
         else:
-            self.append(textwrap.dedent(""" rm %(sites_override)s || true }""") % context
+            self.append(textwrap.dedent("""\
+                rm %(sites_override)s %(sites_available)s || true 
+                }""") % context
             )
 
     def save(self, site):
@@ -116,7 +118,6 @@ class Apache2ControllerAnubis(Apache2Controller):
             self.append(textwrap.dedent("""
                 # Disable site %(site_name)s
                 [[ $(a2dissite %(site_unique_name)s) =~ "already disabled" ]] || UPDATED_APACHE=1\
-                rm %(sites_available)s || true
                 """) % context
             )
         self.render_virtual_host_redirect_to_anubis(site, context)
