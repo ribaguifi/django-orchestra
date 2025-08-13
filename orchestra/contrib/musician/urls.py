@@ -6,6 +6,7 @@ Describe the paths where the views are accesible.
 """
 from django.urls import path
 from django.views.generic import RedirectView
+from django.contrib.auth import views as auth_views
 
 from . import views
 
@@ -13,6 +14,11 @@ app_name = 'musician'
 
 urlpatterns = [
     path('', RedirectView.as_view(pattern_name='musician:dashboard', permanent=False), name='index'),
+
+    path('password_reset/', views.MyPasswordResetView.as_view(), name='password_reset'),
+    path('password_reset/done/', auth_views.PasswordResetDoneView.as_view(), name='password_reset_done'),
+    path('reset/<uidb64>/<token>/', views.MyPasswordResetConfirmView.as_view(), name='password_reset_confirm'),
+    path('reset/done/', auth_views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
 
     path('auth/login/', views.LoginView.as_view(), name='login'),
     path('auth/logout/', views.LogoutView.as_view(), name='logout'),

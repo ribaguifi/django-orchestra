@@ -64,27 +64,10 @@
             </div>
             <!--/#login-content-->
             <div id="login-footer">
-                <a href="#password_reset" data-bs-toggle="modal" data-bs-target="#forgotPasswordModal">{% trans "Forgot your password? Click here to recover" %}</a>
+                <a href="{% url 'musician:password_reset' %}" >{% trans "Forgot your password? Click here to recover" %}</a>
             </div>
         </div><!-- /#login-wrapper -->
     </div><!-- /.jumbotron -->
-
-  <!-- Modal -->
-  <div class="modal fade" id="forgotPasswordModal" tabindex="-1" role="dialog" aria-labelledby="forgotPasswordModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="forgotPasswordModalLabel">{% trans "Forgot your password?" %}</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-            {% blocktrans trimmed with support_email="suport@pangea.org" %}
-            Send an email to <a href="mailto:{{ support_email }}">{{ support_email }}</a> including your username and we will provide instructions.
-            {% endblocktrans %}
-        </div>
-      </div>
-    </div>
-  </div>
 
   {% block script %}
   {{ block.super }}

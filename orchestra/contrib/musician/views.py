@@ -37,6 +37,7 @@ from orchestra.contrib.mailboxes.models import Address, Mailbox
 from orchestra.contrib.resources.models import Resource, ResourceData
 from orchestra.contrib.systemusers.models import WebappUsers, SystemUser
 from orchestra.contrib.websites.models import BannedIP
+from django.contrib.auth.views import PasswordResetConfirmView, PasswordResetView
 from orchestra.utils.html import html_to_pdf
 
 from .auth import logout as auth_logout
@@ -746,6 +747,14 @@ class LogoutView(RedirectView):
     def post(self, request, *args, **kwargs):
         """Logout may be done via POST."""
         return self.get(request, *args, **kwargs)
+
+
+class MyPasswordResetView(PasswordResetView):
+    success_url = reverse_lazy("musician:password_reset_done")
+
+
+class MyPasswordResetConfirmView(PasswordResetConfirmView):
+    success_url = reverse_lazy("musician:password_reset_complete")
 
 
 class WebappUserListView(ServiceListView):
