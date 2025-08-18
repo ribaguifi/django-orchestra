@@ -37,6 +37,7 @@ urlpatterns = [
     
     path('profile/', views.ProfileView.as_view(), name='profile'),
     path('profile/setLang/<code>', views.profile_set_language, name='profile-set-lang'),
+    path('profile/<int:pk>/change-password/', views.ProfileChangePasswordView.as_view(), name='profile-password'),
     
     path('address/', views.AddressListView.as_view(), name='address-list'),
     path('address/new/', views.MailCreateView.as_view(), name='address-create'),

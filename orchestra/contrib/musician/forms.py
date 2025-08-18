@@ -10,13 +10,14 @@ from django.contrib.auth.hashers import make_password
 from orchestra.forms.widgets import SpanWidget
 from orchestra.forms import widgets
 from django.utils.safestring import mark_safe
+from orchestra.contrib.musician.validators import ValidateZoneMixin
 
 from orchestra.contrib.domains.models import Domain, Record
 from orchestra.contrib.mailboxes.models import Address, Mailbox
 from orchestra.contrib.systemusers.models import WebappUsers, SystemUser
 from orchestra.contrib.saas.models import SaaS
-from orchestra.contrib.musician.validators import ValidateZoneMixin
 from orchestra.contrib.websites.models import BannedIP
+from orchestra.contrib.accounts.models import Account
 
 from . import api
 
@@ -213,6 +214,10 @@ class SystemUsersChangePasswordForm(ChangePasswordForm):
         fields = ("password",)
         model = SystemUser
 
+class ProfileChangePasswordForm(ChangePasswordForm):
+    class Meta:
+        fields = ("password",)
+        model = Account
 
 class BannedForm(forms.ModelForm):
     class Meta:

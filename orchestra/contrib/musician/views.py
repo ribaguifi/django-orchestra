@@ -29,6 +29,7 @@ from django.urls import reverse
 from django.db.models import Q
 
 from orchestra import get_version
+from orchestra.contrib.accounts.models import Account
 from orchestra.contrib.bills.models import Bill
 from orchestra.contrib.databases.models import Database
 from orchestra.contrib.domains.models import Domain, Record
@@ -44,7 +45,7 @@ from .auth import logout as auth_logout
 from .forms import (LoginForm, MailboxChangePasswordForm, MailboxCreateForm,
                     MailboxSearchForm, MailboxUpdateForm, MailForm,
                     RecordCreateForm, RecordUpdateForm, WebappUsersChangePasswordForm,
-                    SystemUsersChangePasswordForm, BannedForm)
+                    SystemUsersChangePasswordForm, BannedForm, ProfileChangePasswordForm)
 from .mixins import (CustomContextMixin, ExtendedPaginationMixin,
                      UserTokenRequiredMixin)
 from .models import Address as AddressService
@@ -325,6 +326,15 @@ def profile_set_language(request, code):
         response = HttpResponseNotFound('Languague not found')
         return response
 
+class ProfileChangePasswordView(CustomContextMixin, UserTokenRequiredMixin, UpdateView):
+    template_name = "musician/profile_change_password.html"
+    model = Account
+    form_class = ProfileChangePasswordForm
+    success_url = reverse_lazy("musician:profile")
+
+    def get_queryset(self):
+        return self.model.objects.filter(username=self.request.user)
+    
 
 class ServiceListView(CustomContextMixin, ExtendedPaginationMixin, UserTokenRequiredMixin, ListView):
     """Base list view to all services"""
