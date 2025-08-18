@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-08-07 11:13+0000\n"
+"POT-Creation-Date: 2025-08-18 08:03+0000\n"
 "PO-Revision-Date: 2021-11-25 12:53+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -65,14 +65,14 @@ msgid "Mailing lists"
 msgstr "Listas de correo"
 
 #. Translators: This message appears on the page title
-#: mixins.py:18 views.py:121
+#: mixins.py:18 views.py:122
 msgid "Dashboard"
 msgstr "Panel de gestión"
 
 #. Translators: This message appears on the page title
 #: mixins.py:19 templates/musician/dashboard.html:106
 #: templates/musician/dashboard.html:107
-#: templates/musician/websites/website_detail.html:17 views.py:261
+#: templates/musician/websites/website_detail.html:17 views.py:262
 msgid "Domains"
 msgstr "Dominios"
 
@@ -81,7 +81,7 @@ msgid "Mails"
 msgstr "Correos"
 
 #. Translators: This message appears on the page title
-#: mixins.py:22 models.py:146 views.py:604
+#: mixins.py:22 models.py:146 views.py:605
 msgid "Databases"
 msgstr "Bases de datos"
 
@@ -120,7 +120,7 @@ msgid "Description details for databases page."
 msgstr "Consulta la configuración de tus bases de datos."
 
 #. Translators: This message appears on the page title
-#: models.py:234 views.py:404
+#: models.py:234 views.py:405
 msgid "Mail addresses"
 msgstr "Direcciones de correo"
 
@@ -217,19 +217,6 @@ msgstr "Accede"
 msgid "Forgot your password? Click here to recover"
 msgstr "¿Olvidaste tu contraseña? Haz clic aquí para recuperarla"
 
-#: templates/auth/login.html:77
-msgid "Forgot your password?"
-msgstr "¿Olvidaste tu contraseña?"
-
-#: templates/auth/login.html:81
-#, python-format
-msgid ""
-"Send an email to <a href=\"mailto:%(support_email)s\">%(support_email)s</a> "
-"including your username and we will provide instructions."
-msgstr ""
-"Envía un correo a <a href=“mailto:%(support_email)s”>%(support_email)s</a> "
-"indicando tu nombre de usuaria/o y te explicaremos qué hacer."
-
 #: templates/musician/address_check_delete.html:7
 #, python-format
 msgid "Are you sure that you want remove the address: \"%(address_name)s\"?"
@@ -311,7 +298,7 @@ msgstr "Dominio"
 
 #. Translators: This message appears on the page title
 #: templates/musician/address_list.html:27 templates/musician/mail_base.html:22
-#: views.py:490
+#: views.py:491
 msgid "Mailboxes"
 msgstr "Buzones de correo"
 
@@ -345,7 +332,7 @@ msgstr "Perfil"
 
 #. Translators: This message appears on the page title
 #: templates/musician/base.html:71 templates/musician/billing.html:6
-#: views.py:362
+#: views.py:363
 msgid "Billing"
 msgstr "Facturas"
 
@@ -568,6 +555,7 @@ msgstr "Direcciones de correo"
 #: templates/musician/saas_nextcloud_form.html:39
 #: templates/musician/systemuser_change_password.html:5
 #: templates/musician/webapps/webappuser_change_password.html:5
+#: templates/registration/password_reset_confirm.html:21
 msgid "Change password"
 msgstr "Cambia la contraseña"
 
@@ -954,10 +942,62 @@ msgid "Url"
 msgstr ""
 
 #: templates/musician/websites/website_list.html:99
-#, fuzzy
-#| msgid "SFTP user"
 msgid "FTP user"
 msgstr "Usuario SFTP"
+
+#: templates/registration/password_reset_complete.html:15
+msgid "Password changed"
+msgstr "Contraseña cambiada"
+
+#: templates/registration/password_reset_complete.html:17
+msgid "Your password has been successfully reset. You can now "
+msgstr "Tu contraseña ha sido restablecida con éxito. Ya puedes"
+
+#: templates/registration/password_reset_complete.html:18
+msgid "log in"
+msgstr "iniciar sesión"
+
+#: templates/registration/password_reset_confirm.html:15
+msgid "Set new password"
+msgstr "Establecer nueva contraseña"
+
+#: templates/registration/password_reset_confirm.html:25
+msgid "The reset link is not valid or has expired. Please request a new one."
+msgstr "El enlace de restablecimiento no es válido o ha expirado. Solicita uno nuevo."
+
+#: templates/registration/password_reset_confirm.html:29
+msgid "Request new link"
+msgstr "Solicitar nuevo enlace"
+
+#: templates/registration/password_reset_done.html:15
+msgid "Managing delivery"
+msgstr "Gestionando envio"
+
+#: templates/registration/password_reset_done.html:17
+msgid ""
+"If the email belongs to a member account, you will receive a link to reset "
+"your password."
+msgstr "Si el correo pertenece a una cuenta de socio, recibirás un enlace para restablecer tu contraseña."
+
+#: templates/registration/password_reset_form.html:15
+msgid "Restore password"
+msgstr "Restablecer contraseña"
+
+#: templates/registration/password_reset_form.html:18
+msgid ""
+"Enter the email of the partner account and we will send you a link to "
+"restore your password."
+msgstr ""
+"Ingresa el correo electrónico de la cuenta de socio y te enviaremos un enlace para "
+"restablecer tu contraseña."
+
+#: templates/registration/password_reset_form.html:24
+msgid "Send link"
+msgstr "Enviar enlace"
+
+#: templates/registration/password_reset_form.html:28
+msgid "Back to login"
+msgstr "Volver al inicio de sesión"
 
 #: validators.py:28
 #, python-format
@@ -968,50 +1008,50 @@ msgstr ""
 "%s: Los hosts no pueden tener el carácter de subrayado '_'. Considere "
 "proporcionar un registro SRV, CNAME o TXT."
 
-#: views.py:201 views.py:203 views.py:238
+#: views.py:202 views.py:204 views.py:239
 msgid "available"
 msgstr "disponibles"
 
-#: views.py:241
+#: views.py:242
 msgid "Account"
 msgstr "Cuenta"
 
 #. Translators: This message appears on the page title
-#: views.py:289
+#: views.py:290
 msgid "User profile"
 msgstr "Tu perfil"
 
 #. Translators: This message appears on the page title
-#: views.py:376
+#: views.py:377
 msgid "Download bill"
 msgstr "Descarga la factura"
 
 #. Translators: This message appears on the page title
-#: views.py:629
+#: views.py:630
 msgid "Domain details"
 msgstr "Detalles del dominio"
 
 #. Translators: This message appears on the page title
-#: views.py:685
+#: views.py:686
 msgid "Login"
 msgstr "Accede"
 
 #. Translators: This message appears on the page title
-#: views.py:756
+#: views.py:765
 msgid "Webapp users"
 msgstr ""
 
 #. Translators: This message appears on the page title
-#: views.py:781
+#: views.py:790
 msgid "Main users"
 msgstr "Usuarios principales"
 
 #. Translators: This message appears on the page title
-#: views.py:800
+#: views.py:809
 msgid "Im banned"
 msgstr ""
 
-#: views.py:808
+#: views.py:817
 msgid ""
 "If the submitted IP address is blocked by our firewall, it will be unblocked."
 msgstr ""
@@ -1068,6 +1108,17 @@ msgstr ""
 #: websites/views.py:47
 msgid "website details"
 msgstr "Detalles de cada tipo"
+
+#~ msgid "Forgot your password?"
+#~ msgstr "¿Olvidaste tu contraseña?"
+
+#, python-format
+#~ msgid ""
+#~ "Send an email to <a href=\"mailto:%(support_email)s\">%(support_email)s</"
+#~ "a> including your username and we will provide instructions."
+#~ msgstr ""
+#~ "Envía un correo a <a href=“mailto:%(support_email)s”>%(support_email)s</"
+#~ "a> indicando tu nombre de usuaria/o y te explicaremos qué hacer."
 
 #~ msgid "view configuration"
 #~ msgstr "ver la configuración"
