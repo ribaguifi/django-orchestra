@@ -81,6 +81,14 @@ class BatchDomainCreationAdminForm(forms.ModelForm):
             self.instance.extra_names = extra_names
 
 
+class BatchDomainAdminForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(BatchDomainAdminForm, self).__init__(*args, **kwargs)
+        if self.instance.pk:
+            if not self.instance.is_top:
+                self.fields['dnssec'].widget = forms.HiddenInput()
+
+
 class RecordForm(forms.ModelForm):
     class Meta:
         fields = ('ttl', 'type', 'value')

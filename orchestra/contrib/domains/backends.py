@@ -148,6 +148,13 @@ class Bind9MasterDomainController(ServiceController):
                 ips.append(server)
         return OrderedSet(sorted(ips))
     
+    def get_dnssec_conf(self):
+        return textwrap.dedent("""\
+			// Opciones para DNSSEC
+			    inline-signing yes; 
+			    dnssec-policy custom;
+            """ )
+
     def get_context(self, domain):
         slaves = self.get_slaves(domain)
         context = {
@@ -158,7 +165,8 @@ class Bind9MasterDomainController(ServiceController):
             'slaves': '; '.join(slaves) or 'none',
             'also_notify': '; '.join(slaves) + ';' if slaves else '',
             'conf_path': self.CONF_PATH,
-            'dns2136_address_match_list': domain.dns2136_address_match_list
+            'dns2136_address_match_list': domain.dns2136_address_match_list,
+            'dnssec': self.get_dnssec_conf() if domain.dnssec else ''
         }
         context['conf'] = textwrap.dedent("""\
             zone "%(name)s" {
@@ -169,6 +177,7 @@ class Bind9MasterDomainController(ServiceController):
                 also-notify { %(also_notify)s };
                 allow-update { %(dns2136_address_match_list)s };
                 notify yes;
+                %(dnssec)s
             };""") % context
         return context
 

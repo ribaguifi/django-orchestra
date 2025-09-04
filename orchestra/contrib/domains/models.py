@@ -69,6 +69,8 @@ class Domain(models.Model):
         blank=True,
         help_text="A bind-9 'address_match_list' that will be granted permission to perform "
                   "dns2136 updates. Chiefly used to enable Let's Encrypt self-service validation.")
+    dnssec = models.BooleanField(_("DNSsec"), default=False, 
+        help_text=_("If selected, the area will be configured with DNSSEC"))
 
     objects = DomainQuerySet.as_manager()
 
