@@ -52,7 +52,6 @@ class Command(BaseCommand):
                 "country": contact.country,
                 "email": billing_email,
                 "phone": billing_phone,
-                # "province": contact.province  # TODO(@slamora): map provinces???
                 # "terms": "custom",    # TODO(@slamora): defaults to custom, which is the desired value?
             }
         }
