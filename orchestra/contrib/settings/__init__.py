@@ -89,8 +89,6 @@ class Setting(object):
             message="Enter a valid integer.",
             code='invalid_integer'
         )
-        import pdb
-        pdb.set_trace()
         return integer_validator(value)
 
     @classmethod
