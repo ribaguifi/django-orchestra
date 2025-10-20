@@ -1,6 +1,7 @@
 import swagger_client
 from django.core.management.base import BaseCommand
 from orchestra.contrib.b2brouter import settings
+from orchestra.contrib.b2brouter.models import B2BContact
 from orchestra.contrib.bills.models import BillContact
 from orchestra.contrib.contacts.models import Contact
 from swagger_client.rest import ApiException
@@ -17,11 +18,59 @@ class Command(BaseCommand):
         self.remote_contacts = self.fetch_remote_contacts()
 
         qs = self.retrieve_local_contacts()
+        qs = qs.select_related("b2bcontact")
+
+        updated_count = 0
+        created_count = 0
+        failed_count = 0
+
         for contact in qs:
-            contact.taxcode = f"{contact.country}{contact.vat}"
-            print(contact.taxcode)
-            update = contact.taxcode in self.remote_contacts
-            self.sync_remote_contact(contact, update=update)
+            status = B2BContact.Status.SYNCED
+            message = ""
+            # Check if the contact is already synced
+            try:
+                update = contact.b2bcontact is not None
+                remote_id = contact.b2bcontact.remote_id
+                if remote_id is None:
+                    raise B2BContact.DoesNotExist()
+            except B2BContact.DoesNotExist:
+                if contact.taxcode in self.remote_contacts:
+                    remote_id = self.remote_contacts[contact.taxcode].id
+                    update = True
+                else:
+                    update = False
+                    remote_id = None
+
+            # Sync the contact
+            try:
+                self.stdout.write(f"Syncing contact {contact}...{remote_id or ''}: {'update' if update else 'create'}")
+                remote_id = self.sync_remote_contact(contact, remote_id=remote_id, update=update)
+                updated_count += int(update)
+                created_count += int(not update)
+                # TODO(@slamora): handle warning --> multiple contacts
+            except ApiException as e:
+                self.stdout.write(f"  Failed to sync contact {contact}: {e}")
+                failed_count += 1
+                status = B2BContact.Status.ERROR
+                message = e.body if hasattr(e, "body") else str(e)
+
+            # Link local contact to remote contact
+            try:
+                if status == B2BContact.Status.ERROR:
+                    print("BOOM")
+                B2BContact.objects.update_or_create(remote_id=remote_id, orchestra_contact=contact, defaults={
+                    "status": status,
+                    "message": message
+                })
+            except Exception as e:
+                self.stdout.write(f"  Failed to link contact {contact} to remote ID {remote_id}: {e}")
+                continue
+
+        self.stdout.write(self.style.SUCCESS("Contacts sync completed."))
+        self.stdout.write(f"Updated contacts: {updated_count}")
+        self.stdout.write(f"Created contacts: {created_count}")
+        self.stdout.write(f"Failed contacts: {failed_count}")
+        self.stdout.write(f"Total processed contacts: {updated_count + created_count + failed_count}")
 
     def retrieve_local_contacts(self):
         # TODO(@slamora): filter only active accounts???
@@ -39,14 +88,13 @@ class Command(BaseCommand):
 
         self.api = api_instance
 
-    def sync_remote_contact(self, contact, update=False):
+    def sync_remote_contact(self, contact, remote_id, update=False):
         try:
             contact_info = contact.account.contacts.get(email_usages=["BILLING"])
         except Contact.DoesNotExist:
-            print(f"  No billing contact found for account {contact.account}. Skipping.")
-            return None
+            raise ApiException(f"No billing contact found for account {contact.account}. Skipping.")
         except Contact.MultipleObjectsReturned:
-            print(f"  Multiple billing contacts found for account {contact.account}. Using the first one.")
+            self.stdout.write(f"Multiple billing contacts found for account {contact.account}. Using the first one.")
             contact_info = contact.account.contacts.filter(email_usages=["BILLING"]).first()
 
         billing_email = contact_info.email
@@ -65,25 +113,29 @@ class Command(BaseCommand):
                 "country": contact.country,
                 "email": billing_email,
                 "phone": billing_phone,
-                # "terms": "custom",    # TODO(@slamora): defaults to custom, which is the desired value?
+                "terms": "60",
             }
         }
 
         if update:
-            contact_id = self.remote_contacts[contact.taxcode].id
             try:
-                api_response = self.api.put_contact(id=contact_id, format="json", body=body)
-                return api_response
+                api_response = self.api.put_contact(id=remote_id, format="json", body=body)
+                return remote_id
             except ApiException as e:
-                print("Exception when calling ContactsApi->update_contact: %s\n" % e)
-                return None
+                # print("Exception when calling ContactsApi->update_contact: %s\n" % e)
+                raise
         else:
             try:
                 api_response = self.api.create_contact(account=settings.B2BROUTER_ACCOUNT_ID, format="json", body=body)
-                return api_response
+                return api_response.id
             except ApiException as e:
-                print("Exception when calling ContactsApi->create_contact: %s\n" % e)
-                return None
+                # print("Exception when calling ContactsApi->create_contact: %s\n" % e)
+                # # TODO(@slamora): handle specific errors (e.g., duplicated TIN)
+                # # {"errors":["Tax Identifier Number Duplicated"]}
+                # if e.status == 422 and "Tax Identifier Number Duplicated" in str(e.body):
+                #     print(f"  Contact with TIN {contact.vat} already exists remotely. Skipping.")
+                #     # TODO(@slamora): fetch the remote contact ID and link it?
+                raise
 
     def fetch_remote_contacts(self):
         response = []
