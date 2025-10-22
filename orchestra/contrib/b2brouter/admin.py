@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.utils import timezone
+from django.db.models import Q
 from orchestra.contrib.b2brouter.models import B2BContact
 
 from orchestra.contrib.b2brouter.management.commands.sync_contacts import Command
@@ -9,10 +10,39 @@ from django.utils.html import format_html
 @admin.register(B2BContact)
 class B2BContactAdmin(admin.ModelAdmin):
     list_display = ("pk", "orchestra_contact_link", "remote_id", "status", "last_synced_at", "message")
-    search_fields = ("pk", "orchestra_contact__name", "orchestra_contact__vat", "remote_id")
+    search_fields = ("remote_id",)
     list_filter = ("status",)
 
     actions = ["sync_push_to_remote"]
+
+    def get_search_results(self, request, queryset, search_term):
+        """
+        Custom search implementation to handle OneToOneField relationships.
+        Allows searching by remote_id, contact name, and VAT number.
+        """
+        if not search_term:
+            return queryset, False
+
+        # Split search term into individual words for more flexible searching
+        search_terms = search_term.strip().split()
+
+        # Build the query for multiple fields
+        search_query = Q()
+
+        for term in search_terms:
+            term_query = (
+                Q(remote_id__icontains=term) |
+                Q(orchestra_contact__name__icontains=term) |
+                Q(orchestra_contact__vat__icontains=term) |
+                Q(orchestra_contact__account__username__icontains=term)
+            )
+            search_query &= term_query
+
+        # Apply the search query
+        filtered_queryset = queryset.filter(search_query)
+
+        # Return the filtered queryset and indicate that search was used
+        return filtered_queryset, True
 
     def orchestra_contact_link(self, obj):
         url = reverse('admin:accounts_account_change', args=[obj.orchestra_contact.account.pk])
