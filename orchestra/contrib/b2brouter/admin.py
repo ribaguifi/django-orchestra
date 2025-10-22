@@ -7,6 +7,10 @@ from orchestra.contrib.b2brouter.management.commands.sync_contacts import Comman
 from django.urls import reverse
 from django.utils.html import format_html
 
+from orchestra.contrib.accounts.models import Account
+from orchestra.contrib.bills.models import BillContact
+from orchestra.contrib.b2brouter.settings import B2BROUTER_API_URL
+
 @admin.register(B2BContact)
 class B2BContactAdmin(admin.ModelAdmin):
     list_display = ("pk", "orchestra_contact_link", "remote_id", "status", "last_synced_at", "message")
@@ -74,3 +78,22 @@ class B2BContactAdmin(admin.ModelAdmin):
 
         queryset.update(last_synced_at=timezone.now())
         self.message_user(request, f"Synced {updated} contacts to remote. Failed: {failed}.")
+
+
+def b2bcontact_link(obj):
+    """Custom column defined in your app."""
+    try:
+        b2bcontact = obj.billcontact.b2bcontact
+    except (BillContact.DoesNotExist, B2BContact.DoesNotExist):
+        return "N/A"
+
+    url = f"{B2BROUTER_API_URL}/contacts/{b2bcontact.remote_id}"
+    return format_html("<a href='{}' target='_blank'>{}</a>", url, b2bcontact.remote_id)
+
+b2bcontact_link.short_description = "B2B contact ID"
+
+# monkey patch Account admin to add B2B contact link
+if Account in admin.site._registry:
+    account_admin = admin.site._registry[Account]
+    account_admin.list_display = list(account_admin.list_display) + [b2bcontact_link]
+    setattr(account_admin.__class__, 'b2bcontact_link', staticmethod(b2bcontact_link))
