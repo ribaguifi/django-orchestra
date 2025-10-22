@@ -1,3 +1,4 @@
+import re
 import swagger_client
 from django.core.management.base import BaseCommand
 from orchestra.contrib.b2brouter import settings
@@ -6,6 +7,26 @@ from orchestra.contrib.bills.models import BillContact
 from orchestra.contrib.contacts.models import Contact
 from swagger_client.rest import ApiException
 
+
+def taxcode(contact):
+    """
+    Generate a tax code with country prefix and zero-padded numeric part.
+    Handles formats with letters both before and after the numeric sequence.
+    """
+    normalized_vat = contact.vat.strip().upper().replace("-", "")
+    normalized_vat = re.sub(r"[\s\-.]", "", normalized_vat)
+
+    # Extract parts: optional leading letters, digits, optional trailing letters
+    match = re.match(r'([A-Z]*)(\d+)([A-Z]*)', normalized_vat)
+    if not match:
+        raise ValueError(f"Invalid VAT format: {contact.vat}")
+        # return normalized_vat
+
+    prefix, numeric, suffix = match.groups()
+    padded_numeric = numeric.zfill(8)
+    tax_code = f"{contact.country.upper()}{prefix}{padded_numeric}{suffix}"
+
+    return tax_code
 
 class Command(BaseCommand):
     help = "Sync contacts (push local info to remote)."
@@ -34,8 +55,8 @@ class Command(BaseCommand):
                 if remote_id is None:
                     raise B2BContact.DoesNotExist()
             except B2BContact.DoesNotExist:
-                if contact.taxcode in self.remote_contacts:
-                    remote_id = self.remote_contacts[contact.taxcode].id
+                if taxcode(contact) in self.remote_contacts:
+                    remote_id = self.remote_contacts[taxcode(contact)].id
                     update = True
                 else:
                     update = False
@@ -55,10 +76,10 @@ class Command(BaseCommand):
                 message = e.body if hasattr(e, "body") else str(e)
 
             # Link local contact to remote contact
+            # TODO(@slamora): refactor, create or retrieve B2BContact first to allow storing sync errors or warnings
             try:
-                if status == B2BContact.Status.ERROR:
-                    print("BOOM")
-                B2BContact.objects.update_or_create(remote_id=remote_id, orchestra_contact=contact, defaults={
+                B2BContact.objects.update_or_create(orchestra_contact=contact, defaults={
+                    "remote_id": remote_id,
                     "status": status,
                     "message": message
                 })
