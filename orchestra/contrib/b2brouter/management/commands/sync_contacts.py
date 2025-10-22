@@ -23,8 +23,7 @@ def taxcode(contact):
         # return normalized_vat
 
     prefix, numeric, suffix = match.groups()
-    padded_numeric = numeric.zfill(8)
-    tax_code = f"{contact.country.upper()}{prefix}{padded_numeric}{suffix}"
+    tax_code = f"{contact.country.upper()}{prefix}{numeric}{suffix}"
 
     return tax_code
 
@@ -32,7 +31,11 @@ class Command(BaseCommand):
     help = "Sync contacts (push local info to remote)."
 
     def add_arguments(self, parser):
-        pass
+        parser.add_argument(
+            "--all",
+            action="store_true",
+            help="Sync all contacts, including those already synced successfully.",
+        )
 
     def handle(self, *args, **options):
         self.init_api()
@@ -40,6 +43,10 @@ class Command(BaseCommand):
 
         qs = self.retrieve_local_contacts()
         qs = qs.select_related("b2bcontact")
+
+        if not options.get("all", False):
+            # Filter only contacts that are pending or have errors
+            qs = qs.filter(b2bcontact__status__in=[B2BContact.Status.PENDING, B2BContact.Status.ERROR]) | qs.filter(b2bcontact__isnull=True)
 
         updated_count = 0
         created_count = 0
@@ -70,10 +77,15 @@ class Command(BaseCommand):
                 created_count += int(not update)
                 # TODO(@slamora): handle warning --> multiple contacts
             except ApiException as e:
-                self.stdout.write(f"  Failed to sync contact {contact}: {e}")
                 failed_count += 1
                 status = B2BContact.Status.ERROR
                 message = e.body if hasattr(e, "body") else str(e)
+                self.stdout.write(f"  Failed to sync contact {contact}: {message}")
+            except Contact.DoesNotExist:
+                failed_count += 1
+                status = B2BContact.Status.ERROR
+                message = f"No billing contact found for account {contact.account}. Skipping."
+                self.stdout.write(f"  Failed to sync contact {contact}: {message}")
 
             # Link local contact to remote contact
             # TODO(@slamora): refactor, create or retrieve B2BContact first to allow storing sync errors or warnings
@@ -113,7 +125,7 @@ class Command(BaseCommand):
         try:
             contact_info = contact.account.contacts.get(email_usages=["BILLING"])
         except Contact.DoesNotExist:
-            raise ApiException(f"No billing contact found for account {contact.account}. Skipping.")
+            raise # ApiException(f"No billing contact found for account {contact.account}. Skipping.")
         except Contact.MultipleObjectsReturned:
             self.stdout.write(f"Multiple billing contacts found for account {contact.account}. Using the first one.")
             contact_info = contact.account.contacts.filter(email_usages=["BILLING"]).first()
