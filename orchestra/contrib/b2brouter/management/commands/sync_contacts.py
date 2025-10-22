@@ -19,16 +19,22 @@ def taxcode(contact):
     # Extract parts: optional leading letters, digits, optional trailing letters
     match = re.match(r'([A-Z]*)(\d+)([A-Z]*)', normalized_vat)
     if not match:
-        raise ValueError(f"Invalid VAT format: {contact.vat}")
-        # return normalized_vat
+        # raise ValueError(f"Invalid VAT format: {contact.vat}")
+        return normalized_vat
 
     prefix, numeric, suffix = match.groups()
     tax_code = f"{contact.country.upper()}{prefix}{numeric}{suffix}"
 
     return tax_code
 
+
 class Command(BaseCommand):
     help = "Sync contacts (push local info to remote)."
+
+    # Payment methods mapping Orchestra <-> B2BRouter
+    PAYMENT_METHODS = {
+        "SEPADirectDebit": 59,
+    }
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -84,7 +90,7 @@ class Command(BaseCommand):
             except Contact.DoesNotExist:
                 failed_count += 1
                 status = B2BContact.Status.ERROR
-                message = f"No billing contact found for account {contact.account}. Skipping."
+                message = f"No billing contact found for account '{contact.account}'."
                 self.stdout.write(f"  Failed to sync contact {contact}: {message}")
 
             # Link local contact to remote contact
@@ -125,7 +131,7 @@ class Command(BaseCommand):
         try:
             contact_info = contact.account.contacts.get(email_usages=["BILLING"])
         except Contact.DoesNotExist:
-            raise # ApiException(f"No billing contact found for account {contact.account}. Skipping.")
+            raise
         except Contact.MultipleObjectsReturned:
             self.stdout.write(f"Multiple billing contacts found for account {contact.account}. Using the first one.")
             contact_info = contact.account.contacts.filter(email_usages=["BILLING"]).first()
@@ -149,6 +155,13 @@ class Command(BaseCommand):
                 "terms": "60",
             }
         }
+
+        # Include payment info if available
+        # TODO(@slamora): optimize query
+        paymentsource = contact.account.paymentsources.filter(method__in=self.PAYMENT_METHODS.keys(), is_active=True).order_by("-pk").first()
+        if paymentsource:
+            body["client"]["bank_account_number"] = paymentsource.data.get("iban")
+            body["client"]["payment_method"] = self.PAYMENT_METHODS.get(paymentsource.method)
 
         if update:
             try:
