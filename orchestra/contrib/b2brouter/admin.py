@@ -59,16 +59,12 @@ class B2BContactAdmin(admin.ModelAdmin):
         failed = 0
         updated = 0
         for b2bcontact in queryset:
-            # Here you would call the sync logic, for example:
-            # contact.sync_to_remote()
-            contact = b2bcontact.orchestra_contact
-
-            c = Command()
-            c.init_api()
+            cmd = Command()
+            cmd.init_api()
 
             update = b2bcontact.remote_id is not None
             try:
-                c.sync_remote_contact(contact, remote_id=b2bcontact.remote_id, update=update)
+                cmd.sync_remote_contact(b2bcontact, update=update)
             except Exception as e:
                 b2bcontact.message = e.body if hasattr(e, 'body') else str(e)
                 b2bcontact.save()
@@ -85,7 +81,12 @@ def b2bcontact_link(obj):
     try:
         b2bcontact = obj.billcontact.b2bcontact
     except (BillContact.DoesNotExist, B2BContact.DoesNotExist):
-        return "N/A"
+        return "-"
+
+    if not b2bcontact.remote_id:
+        if b2bcontact.message:
+            return format_html("<span class='error' style='cursor:help' title='{}'>sync {}</span>", b2bcontact.message, b2bcontact.status)
+        return "-"
 
     url = f"{B2BROUTER_API_URL}/contacts/{b2bcontact.remote_id}"
     return format_html("<a href='{}' target='_blank'>{}</a>", url, b2bcontact.remote_id)
