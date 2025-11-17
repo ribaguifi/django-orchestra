@@ -49,8 +49,13 @@ class B2BContactAdmin(admin.ModelAdmin):
         return filtered_queryset, True
 
     def orchestra_contact_link(self, obj):
+        def bill_contact_representation(contact):
+            return contact.name or f"{contact.country}{contact.vat}"
+
         url = reverse('admin:accounts_account_change', args=[obj.orchestra_contact.account.pk])
-        return format_html('<a href="{}">{}</a>', url, obj.orchestra_contact)
+        contact = bill_contact_representation(obj.orchestra_contact)
+
+        return format_html('<a href="{}">{}</a>', url, contact)
     orchestra_contact_link.allow_tags = True
     orchestra_contact_link.short_description = "Bill Contact"
 
