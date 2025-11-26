@@ -1,12 +1,16 @@
 import re
-import swagger_client
+
 from django.core.management.base import BaseCommand
+
+import swagger_client
+from swagger_client.rest import ApiException
+
 from orchestra.contrib.b2brouter import settings
-from orchestra.contrib.b2brouter.models import B2BContact
+from orchestra.contrib.b2brouter.api import get_api_configuration
 from orchestra.contrib.b2brouter.exceptions import B2BSyncError
+from orchestra.contrib.b2brouter.models import B2BContact
 from orchestra.contrib.bills.models import BillContact
 from orchestra.contrib.contacts.models import Contact
-from swagger_client.rest import ApiException
 
 
 def taxcode(contact):
@@ -18,7 +22,7 @@ def taxcode(contact):
     normalized_vat = re.sub(r"[\s\-.]", "", normalized_vat)
 
     # Extract parts: optional leading letters, digits, optional trailing letters
-    match = re.match(r'([A-Z]*)(\d+)([A-Z]*)', normalized_vat)
+    match = re.match(r"([A-Z]*)(\d+)([A-Z]*)", normalized_vat)
     if not match:
         # raise ValueError(f"Invalid VAT format: {contact.vat}")
         return normalized_vat
@@ -57,7 +61,12 @@ class Command(BaseCommand):
         qs = qs.select_related("b2bcontact")
 
         if not self.sync_all:
-            qs = qs.filter(b2bcontact__status__in=[B2BContact.Status.PENDING, B2BContact.Status.ERROR]) | qs.filter(b2bcontact__isnull=True)
+            qs = qs.filter(
+                b2bcontact__status__in=[
+                    B2BContact.Status.PENDING,
+                    B2BContact.Status.ERROR,
+                ]
+            ) | qs.filter(b2bcontact__isnull=True)
 
         updated_count = 0
         created_count = 0
@@ -86,7 +95,9 @@ class Command(BaseCommand):
             # Sync the contact
             try:
                 if self.verbosity >= 1:
-                    self.stdout.write(f"Syncing contact {contact}...{b2bcontact.remote_id or ''}: {'update' if update else 'create'}")
+                    self.stdout.write(
+                        f"Syncing contact {contact}...{b2bcontact.remote_id or ''}: {'update' if update else 'create'}"
+                    )
                 self.sync_remote_contact(b2bcontact, update=update)
                 updated_count += int(update)
                 created_count += int(not update)
@@ -109,10 +120,7 @@ class Command(BaseCommand):
         return qs
 
     def init_api(self):
-        # Configure API key authorization: api_key
-        configuration = swagger_client.Configuration()
-        configuration.api_key["X-B2B-API-Key"] = settings.B2BROUTER_API_KEY
-        configuration.host = settings.B2BROUTER_API_URL
+        configuration = get_api_configuration()
 
         # create an instance of the API class
         api_instance = swagger_client.ContactsApi(swagger_client.ApiClient(configuration))
@@ -155,7 +163,11 @@ class Command(BaseCommand):
 
         # Include payment info if available
         # TODO(@slamora): optimize query
-        paymentsource = contact.account.paymentsources.filter(method__in=self.PAYMENT_METHODS.keys(), is_active=True).order_by("-pk").first()
+        paymentsource = (
+            contact.account.paymentsources.filter(method__in=self.PAYMENT_METHODS.keys(), is_active=True)
+            .order_by("-pk")
+            .first()
+        )
         if paymentsource:
             body["client"]["bank_account_number"] = paymentsource.data.get("iban")
             body["client"]["payment_method"] = self.PAYMENT_METHODS.get(paymentsource.method)
@@ -167,7 +179,7 @@ class Command(BaseCommand):
                 api_response = self.api.create_contact(account=settings.B2BROUTER_ACCOUNT_ID, format="json", body=body)
                 b2bcontact.remote_id = api_response.id
         except ApiException as e:
-            message = e.body if hasattr(e, 'body') else str(e)
+            message = e.body if hasattr(e, "body") else str(e)
             b2bcontact.status = B2BContact.Status.ERROR
             b2bcontact.message = message
             raise B2BSyncError(f"Failed to {'update' if update else 'create'} contact {contact}: {message}")
