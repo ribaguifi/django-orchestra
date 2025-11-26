@@ -27,3 +27,24 @@ class B2BContact(models.Model):
 
     class Meta:
         unique_together = (("orchestra_contact", "remote_id"),)
+
+
+class B2BInvoice(models.Model):
+    orchestra_bill = models.OneToOneField(
+        'bills.Bill',
+        on_delete=models.CASCADE,
+        primary_key=True,
+    )
+    remote_id = models.BigIntegerField(null=True)
+
+    first_synced_at = models.DateTimeField(auto_now_add=True)
+    last_synced_at = models.DateTimeField(auto_now=True)
+
+    status = models.CharField(max_length=20, default=B2BContact.Status.SYNCED)
+    message = models.TextField(blank=True, default="")
+
+    def __str__(self):
+        return f"Invoice({self.orchestra_bill} - {self.remote_id})"
+
+    class Meta:
+        unique_together = (("orchestra_bill", "remote_id"),)
