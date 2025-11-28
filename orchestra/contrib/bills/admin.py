@@ -345,10 +345,11 @@ class BillAdmin(BillAdminMixin, ExtendedModelAdmin):
         actions.manage_lines, actions.view_bill, actions.download_bills, actions.send_bills,
         actions.close_bills, actions.amend_bills, actions.close_send_download_bills,
     ]
+    from orchestra.contrib.b2brouter.admin import sync_bills
     actions = [
         actions.manage_lines, actions.download_bills, actions.close_bills, actions.send_bills,
         actions.amend_bills, actions.bill_report, actions.service_report,
-        actions.close_send_download_bills, list_accounts,
+        actions.close_send_download_bills, list_accounts, sync_bills,
     ]
     change_readonly_fields = ('account_link', 'type', 'is_open', 'amend_of_link')
     readonly_fields = (
@@ -493,3 +494,4 @@ insertattr(AccountAdmin, 'inlines', BillContactInline)
 insertattr(AccountAdmin, 'list_display', has_bill_contact)
 insertattr(AccountAdmin, 'list_filter', HasBillContactListFilter)
 insertattr(AccountAdmin, 'list_select_related', 'billcontact')
+
