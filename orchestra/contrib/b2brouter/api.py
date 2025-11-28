@@ -2,9 +2,10 @@ import swagger_client
 from swagger_client.rest import ApiException
 
 from orchestra.contrib.b2brouter import settings
-from orchestra.contrib.contacts.models import Contact
 from orchestra.contrib.b2brouter.exceptions import B2BSyncError
-from orchestra.contrib.b2brouter.models import B2BContact
+from orchestra.contrib.b2brouter.models import B2BContact, B2BInvoice
+from orchestra.contrib.b2brouter.serializers import BillSerializer
+from orchestra.contrib.contacts.models import Contact
 
 # Payment methods mapping Orchestra <-> B2BRouter
 PAYMENT_METHODS = {
@@ -77,7 +78,11 @@ def sync_remote_contact(bill_contact, update=False):
 
     # Include payment info if available
     # TODO(@slamora): optimize query
-    paymentsource = bill_contact.account.paymentsources.filter(method__in=PAYMENT_METHODS.keys(), is_active=True).order_by("-pk").first()
+    paymentsource = (
+        bill_contact.account.paymentsources.filter(method__in=PAYMENT_METHODS.keys(), is_active=True)
+        .order_by("-pk")
+        .first()
+    )
     if paymentsource:
         body["client"]["bank_account_number"] = paymentsource.data.get("iban")
         body["client"]["payment_method"] = PAYMENT_METHODS.get(paymentsource.method)
@@ -90,10 +95,36 @@ def sync_remote_contact(bill_contact, update=False):
             api_response = api_instance.create_contact(account=settings.B2BROUTER_ACCOUNT_ID, format="json", body=body)
             b2bcontact.remote_id = api_response.id
     except ApiException as e:
-        message = e.body if hasattr(e, 'body') else str(e)
+        message = e.body if hasattr(e, "body") else str(e)
         b2bcontact.status = B2BContact.Status.ERROR
         b2bcontact.message = message
         raise B2BSyncError(f"Failed to {'update' if update else 'create'} contact {bill_contact}: {message}")
 
     b2bcontact.save()
     return b2bcontact.remote_id
+
+
+def sync_remote_invoice(instance):
+    try:
+        remote_invoice = instance.b2binvoice
+        update = remote_invoice.remote_id is not None
+    except B2BInvoice.DoesNotExist:
+        remote_invoice = B2BInvoice(orchestra_bill=instance)
+        update = False
+
+    # print(f"Syncing remote invoice for Bill ID {instance.id}, update={update}")
+    invoice_data = BillSerializer(instance).data
+    payload = {
+        "send_after_import": False,
+        "ack": False,
+        "invoice": invoice_data,
+    }
+
+    api_instance = get_invoice_api_instance()
+    if update:
+        response = api_instance.put_invoice(format="json", id=remote_invoice.remote_id, body=payload)
+    else:
+        response = api_instance.create_invoice(account=settings.B2BROUTER_ACCOUNT_ID, format="json", body=payload)
+        remote_invoice.remote_id = response.id
+
+    remote_invoice.save()
