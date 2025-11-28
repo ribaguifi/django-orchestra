@@ -1,13 +1,14 @@
-from orchestra.contrib.b2brouter.models import B2BContact
 from orchestra.contrib.b2brouter import api
+from orchestra.contrib.b2brouter.models import B2BContact
+
 
 # TODO serialize Bill to b2brouter invoice format
 class BillSerializer(object):
     # TODO(@slamora): complete series & vat_percent mapping
     SERIES_MAPPING = {
-        'FEE': 'S',
+        "FEE": "S",
     }
-    SERIES_MAPPING_DEFAULT = 'F'
+    SERIES_MAPPING_DEFAULT = "F"
 
     SEPA_DIRECT_DEBIT_PAYMENT_METHOD = 59  # UBL: 59
 
@@ -16,7 +17,7 @@ class BillSerializer(object):
 
     @property
     def data(self):
-        if not hasattr(self, '_data'):
+        if not hasattr(self, "_data"):
             self._data = self.to_representation()
         return self._data
 
@@ -24,15 +25,15 @@ class BillSerializer(object):
         instance = self.instance
 
         return {
-                "type": "IssuedInvoice",
-                "series_code": self.get_series(),
-                "number": instance.number,
-                "contact_id": self.get_contact_id(),
-                # TODO(@slamora): is this the desired date?
-                "date": instance.created_on.isoformat(),
-                "due_date": instance.get_due_date(),
-                "payment_method": self.SEPA_DIRECT_DEBIT_PAYMENT_METHOD,
-                "invoice_lines_attributes": self.get_lines_attributes(),
+            "type": "IssuedInvoice",
+            "series_code": self.get_series(),
+            "number": instance.get_number_without_series(),
+            "contact_id": self.get_contact_id(),
+            # TODO(@slamora): is this the desired date?
+            "date": instance.created_on.isoformat(),
+            "due_date": instance.get_due_date(),
+            "payment_method": self.SEPA_DIRECT_DEBIT_PAYMENT_METHOD,
+            "invoice_lines_attributes": self.get_lines_attributes(),
         }
 
     def get_contact_id(self):
@@ -49,7 +50,7 @@ class BillSerializer(object):
         return self.SERIES_MAPPING.get(self.instance.type, self.SERIES_MAPPING_DEFAULT)
 
     def get_vat_percent(self):
-        if self.instance.type == 'FEE':
+        if self.instance.type == "FEE":
             return 0
         return 21
 
@@ -66,4 +67,5 @@ class BillSerializer(object):
                 "invoicing_period_end": item.order_billed_until.isoformat() if item.order_billed_until else None,
             }
             lines.append(line)
+        return lines
         return lines
