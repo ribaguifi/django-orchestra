@@ -7,17 +7,27 @@ from django.utils.html import format_html
 from django.utils.translation import gettext as _
 
 from orchestra.contrib.accounts.models import Account
+from orchestra.contrib.b2brouter.api import (
+    pull_from_remote_invoice,
+    sync_remote_invoice,
+)
 from orchestra.contrib.b2brouter.exceptions import B2BSyncError
 from orchestra.contrib.b2brouter.management.commands.sync_contacts import Command
 from orchestra.contrib.b2brouter.models import B2BContact
 from orchestra.contrib.b2brouter.settings import B2BROUTER_API_URL
-from orchestra.contrib.b2brouter.signals import sync_remote_invoice
 from orchestra.contrib.bills.models import Bill, BillContact
 
 
 @admin.register(B2BContact)
 class B2BContactAdmin(admin.ModelAdmin):
-    list_display = ("pk", "orchestra_contact_link", "remote_id", "status", "last_synced_at", "message")
+    list_display = (
+        "pk",
+        "orchestra_contact_link",
+        "remote_id",
+        "status",
+        "last_synced_at",
+        "message",
+    )
     search_fields = ("remote_id",)
     list_filter = ("status",)
 
@@ -56,7 +66,9 @@ class B2BContactAdmin(admin.ModelAdmin):
         def bill_contact_representation(contact):
             return contact.name or f"{contact.country}{contact.vat}"
 
-        url = reverse("admin:accounts_account_change", args=[obj.orchestra_contact.account.pk])
+        url = reverse(
+            "admin:accounts_account_change", args=[obj.orchestra_contact.account.pk]
+        )
         contact = bill_contact_representation(obj.orchestra_contact)
 
         return format_html('<a href="{}">{}</a>', url, contact)
@@ -83,7 +95,9 @@ class B2BContactAdmin(admin.ModelAdmin):
                 updated += 1
 
         queryset.update(last_synced_at=timezone.now())
-        self.message_user(request, f"Synced {updated} contacts to remote. Failed: {failed}.")
+        self.message_user(
+            request, f"Synced {updated} contacts to remote. Failed: {failed}."
+        )
 
 
 def b2bcontact_link(obj):
@@ -134,11 +148,38 @@ def sync_bills(modeladmin, request, queryset):
             )
             continue
 
-    messages.success(request, _("Selected bills have been synchronized with the external system."))
+    messages.success(
+        request, _("Selected bills have been synchronized with the external system.")
+    )
 
 
 sync_bills.tool_description = _("Sync Bills")
 sync_bills.url_name = "sync_bills"
+
+
+@transaction.atomic
+def sync_pull_bills(modeladmin, request, queryset):
+    """Pull selected bills from external system"""
+
+    for bill in queryset:
+        modeladmin.log_change(request, bill, "Pulled from external system")
+        try:
+            pull_from_remote_invoice(bill)
+        except B2BSyncError as e:
+            messages.error(
+                request,
+                _("Failed to pull bill %(bill)s: %(error)s")
+                % {
+                    "bill": bill.number,
+                    "error": str(e),
+                },
+            )
+            continue
+
+    messages.success(
+        request, _("Selected bills have been pulled from the external system.")
+    )
+
 
 # TODO(@slamora): FIX monkey patching Bill admin to add sync_bills action
 # if Bill in admin.site._registry:
