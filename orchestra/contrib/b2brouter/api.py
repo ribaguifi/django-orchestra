@@ -1,5 +1,4 @@
-import swagger_client
-from swagger_client.rest import ApiException
+from b2brouter_client import ApiErrorException, B2BRouterClient
 
 from orchestra.contrib.b2brouter import settings
 from orchestra.contrib.b2brouter.exceptions import B2BSyncError
@@ -13,24 +12,12 @@ PAYMENT_METHODS = {
 }
 
 
-def get_api_configuration():
-    # Configure API key authorization: api_key
-    configuration = swagger_client.Configuration()
-    configuration.api_key["X-B2B-API-Key"] = settings.B2BROUTER_API_KEY
-    configuration.host = settings.B2BROUTER_API_URL
-    return configuration
-
-
-def get_contact_api_instance():
-    configuration = get_api_configuration()
-    api_instance = swagger_client.ContactsApi(swagger_client.ApiClient(configuration))
-    return api_instance
-
-
-def get_invoice_api_instance():
-    configuration = get_api_configuration()
-    api_instance = swagger_client.InvoicesApi(swagger_client.ApiClient(configuration))
-    return api_instance
+def get_api_client():
+    client = B2BRouterClient(
+        api_key=settings.B2BROUTER_API_KEY,
+        api_base=settings.B2BROUTER_API_URL,
+    )
+    return client
 
 
 def sync_remote_contact(bill_contact, update=False):
@@ -49,10 +36,14 @@ def sync_remote_contact(bill_contact, update=False):
         contact_info = bill_contact.account.contacts.get(email_usages=["BILLING"])
     except Contact.DoesNotExist:
         b2bcontact.status = B2BContact.Status.ERROR
-        b2bcontact.message = f"No billing contact found for account '{bill_contact.account}'."
+        b2bcontact.message = (
+            f"No billing contact found for account '{bill_contact.account}'."
+        )
         raise B2BSyncError(b2bcontact.message)
     except Contact.MultipleObjectsReturned:
-        contact_info = bill_contact.account.contacts.filter(email_usages=["BILLING"]).first()
+        contact_info = bill_contact.account.contacts.filter(
+            email_usages=["BILLING"]
+        ).first()
         b2bcontact.status = B2BContact.Status.WARNING
         b2bcontact.message = f"Multiple billing contacts found; using the first one: {contact_info.email}"
 
@@ -79,7 +70,9 @@ def sync_remote_contact(bill_contact, update=False):
     # Include payment info if available
     # TODO(@slamora): optimize query
     paymentsource = (
-        bill_contact.account.paymentsources.filter(method__in=PAYMENT_METHODS.keys(), is_active=True)
+        bill_contact.account.paymentsources.filter(
+            method__in=PAYMENT_METHODS.keys(), is_active=True
+        )
         .order_by("-pk")
         .first()
     )
@@ -87,18 +80,22 @@ def sync_remote_contact(bill_contact, update=False):
         body["client"]["bank_account_number"] = paymentsource.data.get("iban")
         body["client"]["payment_method"] = PAYMENT_METHODS.get(paymentsource.method)
 
-    api_instance = get_contact_api_instance()
+    client = get_api_client()
     try:
         if update:
-            api_response = api_instance.put_contact(id=b2bcontact.remote_id, format="json", body=body)
+            api_response = client.contacts.update(id=b2bcontact.remote_id, body=body)
         else:
-            api_response = api_instance.create_contact(account=settings.B2BROUTER_ACCOUNT_ID, format="json", body=body)
+            api_response = client.contacts.create(
+                account=settings.B2BROUTER_ACCOUNT_ID, body=body
+            )
             b2bcontact.remote_id = api_response.id
-    except ApiException as e:
+    except ApiErrorException as e:
         message = e.body if hasattr(e, "body") else str(e)
         b2bcontact.status = B2BContact.Status.ERROR
         b2bcontact.message = message
-        raise B2BSyncError(f"Failed to {'update' if update else 'create'} contact {bill_contact}: {message}")
+        raise B2BSyncError(
+            f"Failed to {'update' if update else 'create'} contact {bill_contact}: {message}"
+        )
 
     b2bcontact.save()
     return b2bcontact.remote_id
@@ -120,11 +117,32 @@ def sync_remote_invoice(instance):
         "invoice": invoice_data,
     }
 
-    api_instance = get_invoice_api_instance()
+    client = get_api_client()
     if update:
-        response = api_instance.put_invoice(format="json", id=remote_invoice.remote_id, body=payload)
+        response = client.invoices.update(id=remote_invoice.remote_id, body=payload)
     else:
-        response = api_instance.create_invoice(account=settings.B2BROUTER_ACCOUNT_ID, format="json", body=payload)
+        response = client.invoices.create(
+            account=settings.B2BROUTER_ACCOUNT_ID, body=payload
+        )
         remote_invoice.remote_id = response.id
 
     remote_invoice.save()
+
+
+def pull_from_remote_invoice(instance):
+    b2binvoice = instance.b2binvoice
+    client = get_api_client()
+    try:
+        response = client.invoices.retrieve(id=b2binvoice.remote_id)
+    except ApiErrorException as e:
+        message = e.body if hasattr(e, "body") else str(e)
+        raise B2BSyncError(f"Failed to pull invoice {b2binvoice.remote_id}: {message}")
+
+    # TODO(@slamora): update the local Bill instance based on the response data
+    # For example:
+    # bill = b2binvoice.orchestra_bill
+    # bill.status = response.status
+    # bill.total_amount = response.total_amount
+    # bill.save()
+
+    print(f"Pulled remote invoice data for Bill ID {instance.id}: {response}")

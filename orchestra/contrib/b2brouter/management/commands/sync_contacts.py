@@ -2,11 +2,10 @@ import re
 
 from django.core.management.base import BaseCommand
 
-import swagger_client
-from swagger_client.rest import ApiException
+from b2brouter_client import ApiErrorException
 
 from orchestra.contrib.b2brouter import settings
-from orchestra.contrib.b2brouter.api import get_api_configuration
+from orchestra.contrib.b2brouter.api import get_api_client
 from orchestra.contrib.b2brouter.exceptions import B2BSyncError
 from orchestra.contrib.b2brouter.models import B2BContact
 from orchestra.contrib.bills.models import BillContact
@@ -112,7 +111,9 @@ class Command(BaseCommand):
             self.stdout.write(f"Updated contacts: {updated_count}")
             self.stdout.write(f"Created contacts: {created_count}")
             self.stdout.write(f"Failed contacts: {failed_count}")
-            self.stdout.write(f"Total processed contacts: {updated_count + created_count + failed_count}")
+            self.stdout.write(
+                f"Total processed contacts: {updated_count + created_count + failed_count}"
+            )
 
     def retrieve_local_contacts(self):
         # TODO(@slamora): filter only active accounts???
@@ -120,12 +121,7 @@ class Command(BaseCommand):
         return qs
 
     def init_api(self):
-        configuration = get_api_configuration()
-
-        # create an instance of the API class
-        api_instance = swagger_client.ContactsApi(swagger_client.ApiClient(configuration))
-
-        self.api = api_instance
+        self.api = get_api_client()
 
     def sync_remote_contact(self, b2bcontact, update=False):
         contact = b2bcontact.orchestra_contact
@@ -134,10 +130,14 @@ class Command(BaseCommand):
             contact_info = contact.account.contacts.get(email_usages=["BILLING"])
         except Contact.DoesNotExist:
             b2bcontact.status = B2BContact.Status.ERROR
-            b2bcontact.message = f"No billing contact found for account '{contact.account}'."
+            b2bcontact.message = (
+                f"No billing contact found for account '{contact.account}'."
+            )
             raise B2BSyncError(b2bcontact.message)
         except Contact.MultipleObjectsReturned:
-            contact_info = contact.account.contacts.filter(email_usages=["BILLING"]).first()
+            contact_info = contact.account.contacts.filter(
+                email_usages=["BILLING"]
+            ).first()
             b2bcontact.status = B2BContact.Status.WARNING
             b2bcontact.message = f"Multiple billing contacts found; using the first one: {contact_info.email}"
 
@@ -164,25 +164,35 @@ class Command(BaseCommand):
         # Include payment info if available
         # TODO(@slamora): optimize query
         paymentsource = (
-            contact.account.paymentsources.filter(method__in=self.PAYMENT_METHODS.keys(), is_active=True)
+            contact.account.paymentsources.filter(
+                method__in=self.PAYMENT_METHODS.keys(), is_active=True
+            )
             .order_by("-pk")
             .first()
         )
         if paymentsource:
             body["client"]["bank_account_number"] = paymentsource.data.get("iban")
-            body["client"]["payment_method"] = self.PAYMENT_METHODS.get(paymentsource.method)
+            body["client"]["payment_method"] = self.PAYMENT_METHODS.get(
+                paymentsource.method
+            )
 
         try:
             if update:
-                api_response = self.api.put_contact(id=b2bcontact.remote_id, format="json", body=body)
+                api_response = self.api.put_contact(
+                    id=b2bcontact.remote_id, format="json", body=body
+                )
             else:
-                api_response = self.api.create_contact(account=settings.B2BROUTER_ACCOUNT_ID, format="json", body=body)
+                api_response = self.api.create_contact(
+                    account=settings.B2BROUTER_ACCOUNT_ID, format="json", body=body
+                )
                 b2bcontact.remote_id = api_response.id
-        except ApiException as e:
+        except ApiErrorException as e:
             message = e.body if hasattr(e, "body") else str(e)
             b2bcontact.status = B2BContact.Status.ERROR
             b2bcontact.message = message
-            raise B2BSyncError(f"Failed to {'update' if update else 'create'} contact {contact}: {message}")
+            raise B2BSyncError(
+                f"Failed to {'update' if update else 'create'} contact {contact}: {message}"
+            )
 
         b2bcontact.save()
 
@@ -203,7 +213,7 @@ class Command(BaseCommand):
                 offset += limit
                 if offset >= total_count:
                     break
-            except ApiException as e:
+            except ApiErrorException as e:
                 print("Exception when calling ContactsApi->get_contacts: %s\n" % e)
                 raise
 
