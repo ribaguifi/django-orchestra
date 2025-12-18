@@ -3,6 +3,14 @@ from orchestra.contrib.b2brouter.models import B2BContact
 
 
 class BillLineSerializer(object):
+    TAXES_CATEGORY_MAPPING = {
+        0: "E",  # Exempt
+        4: "AAA",  # Super low rate
+        10: "AA",  # Low rate
+        21: "S",  # Standard rate
+    }
+    TAXES_CATEGORY_DEFAULT = "S"
+
     def __init__(self, bill_line, position):
         self.instance = bill_line
         self.instance.position = position
@@ -20,8 +28,7 @@ class BillLineSerializer(object):
             "quantity": str(instance.quantity),
             "price": str(instance.rate),
             "description": instance.description,
-            # TODO(@slamora): serialize 'taxes_attributes'
-            # "taxes_attributes": str(instance.tax),
+            "taxes_attributes": self.get_taxes_attributes(),
             "invoicing_period_start": (
                 instance.start_on.isoformat() if instance.start_on else None
             ),
@@ -35,6 +42,19 @@ class BillLineSerializer(object):
         data.update(discount_charge_data)
 
         return data
+
+    def get_taxes_attributes(self):
+        tax_percent = self.instance.tax
+        tax_category = self.TAXES_CATEGORY_DEFAULT
+
+        # search comparing values because tax_percent is Decimal
+        for percent, category in self.TAXES_CATEGORY_MAPPING.items():
+            if tax_percent == percent:
+                tax_category = category
+                break
+
+        tax_percent = str(tax_percent)
+        return [{"name": "IVA", "category": tax_category, "percent": tax_percent}]
 
     def get_discount_and_charge(self):
         discount_amount = 0
@@ -69,12 +89,6 @@ class BillLineSerializer(object):
 
 
 class BillSerializer(object):
-    # TODO(@slamora): complete series & vat_percent mapping
-    SERIES_MAPPING = {
-        "FEE": "S",
-    }
-    SERIES_MAPPING_DEFAULT = "F"
-
     SEPA_DIRECT_DEBIT_PAYMENT_METHOD = 59  # UBL: 59
 
     def __init__(self, bill):
@@ -114,12 +128,7 @@ class BillSerializer(object):
             return remote_id
 
     def get_series(self):
-        return self.SERIES_MAPPING.get(self.instance.type, self.SERIES_MAPPING_DEFAULT)
-
-    def get_vat_percent(self):
-        if self.instance.type == "FEE":
-            return 0
-        return 21
+        return self.instance.get_series_code()
 
     def get_lines_attributes(self):
         lines = []

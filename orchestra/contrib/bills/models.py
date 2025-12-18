@@ -26,15 +26,25 @@ from . import settings
 
 class BillContact(models.Model):
     account = models.OneToOneField(
-        "accounts.Account", verbose_name=_("account"), related_name="billcontact", on_delete=models.CASCADE
+        "accounts.Account",
+        verbose_name=_("account"),
+        related_name="billcontact",
+        on_delete=models.CASCADE,
     )
     name = models.CharField(
-        _("name"), max_length=256, blank=True, help_text=_("Account full name will be used when left blank.")
+        _("name"),
+        max_length=256,
+        blank=True,
+        help_text=_("Account full name will be used when left blank."),
     )
     address = models.TextField(_("address"))
-    city = models.CharField(_("city"), max_length=128, default=settings.BILLS_CONTACT_DEFAULT_CITY)
+    city = models.CharField(
+        _("city"), max_length=128, default=settings.BILLS_CONTACT_DEFAULT_CITY
+    )
     zipcode = models.CharField(
-        _("zip code"), max_length=10, validators=[RegexValidator(r"^[0-9A-Z]{3,10}$", _("Enter a valid zipcode."))]
+        _("zip code"),
+        max_length=10,
+        validators=[RegexValidator(r"^[0-9A-Z]{3,10}$", _("Enter a valid zipcode."))],
     )
     country = models.CharField(
         _("country"),
@@ -111,10 +121,18 @@ class Bill(models.Model):
 
     number = models.CharField(_("number"), max_length=16, unique=True, blank=True)
     account = models.ForeignKey(
-        "accounts.Account", verbose_name=_("account"), related_name="%(class)s", on_delete=models.CASCADE
+        "accounts.Account",
+        verbose_name=_("account"),
+        related_name="%(class)s",
+        on_delete=models.CASCADE,
     )
     amend_of = models.ForeignKey(
-        "self", null=True, blank=True, verbose_name=_("amend of"), related_name="amends", on_delete=models.SET_NULL
+        "self",
+        null=True,
+        blank=True,
+        verbose_name=_("amend of"),
+        related_name="amends",
+        on_delete=models.SET_NULL,
     )
     type = models.CharField(_("type"), max_length=16, choices=TYPES)
     created_on = models.DateField(_("created on"), auto_now_add=True)
@@ -208,9 +226,13 @@ class Bill(models.Model):
         if self.amend_of_id:
             errors = {}
             if self.type not in self.AMEND_MAP.values():
-                errors["amend_of"] = _("Type %s is not an amendment.") % self.get_type_display()
+                errors["amend_of"] = (
+                    _("Type %s is not an amendment.") % self.get_type_display()
+                )
             if self.amend_of.account_id != self.account_id:
-                errors["account"] = _("Amend of related account doesn't match bill account.")
+                errors["account"] = _(
+                    "Amend of related account doesn't match bill account."
+                )
             if self.amend_of.is_open:
                 errors["amend_of"] = _("Related invoice is in open state.")
             if self.amend_of.type in self.AMEND_MAP.values():
@@ -262,10 +284,7 @@ class Bill(models.Model):
         number = zeros + str(number)
         return "{prefix}{year}{number}".format(prefix=prefix, year=year, number=number)
 
-    def get_number_without_series(self):
-        """Returns the numeric part of the bill number (without series)"""
-
-        # Generate the prefix again to strip it from the number
+    def get_series_code(self):
         cls = type(self)
         if cls is models.DEFERRED:
             cls = cls.__base__
@@ -273,7 +292,15 @@ class Bill(models.Model):
         if bill_type == self.BILL:
             raise TypeError("This method can not be used on BILL instances")
         bill_type = bill_type.replace("AMENDMENT", "AMENDMENT_")
-        prefix = getattr(settings, "BILLS_%s_NUMBER_PREFIX" % bill_type)
+        series = getattr(settings, "BILLS_%s_NUMBER_PREFIX" % bill_type)
+        # series = getattr(settings, f"BILLS_{bill_type}_SERIES_CODE")
+        return series
+
+    def get_number_without_series(self):
+        """Returns the numeric part of the bill number (without series)"""
+
+        # Generate the prefix again to strip it from the number
+        prefix = self.get_series_code()
         if self.is_open:
             prefix = "O{}".format(prefix)
 
@@ -301,7 +328,9 @@ class Bill(models.Model):
         total = self.compute_total()
         transaction = None
         if self.get_type() != self.PROFORMA:
-            transaction = self.transactions.create(bill=self, source=payment, amount=total)
+            transaction = self.transactions.create(
+                bill=self, source=payment, amount=total
+            )
         self.closed_on = timezone.now()
         self.is_open = False
         self.is_sent = False
@@ -373,7 +402,9 @@ class Bill(models.Model):
     @cached
     def compute_subtotals(self):
         subtotals = {}
-        lines = self.lines.annotate(totals=F("subtotal") + Sum(Coalesce("sublines__total", decimal.Decimal(0))))
+        lines = self.lines.annotate(
+            totals=F("subtotal") + Sum(Coalesce("sublines__total", decimal.Decimal(0)))
+        )
         for tax, total in lines.values_list("tax", "totals"):
             try:
                 subtotals[tax] += total
@@ -386,13 +417,16 @@ class Bill(models.Model):
 
     @cached
     def compute_base(self):
-        bases = self.lines.annotate(bases=F("subtotal") + Sum(Coalesce("sublines__total", decimal.Decimal(0))))
+        bases = self.lines.annotate(
+            bases=F("subtotal") + Sum(Coalesce("sublines__total", decimal.Decimal(0)))
+        )
         return round(bases.aggregate(Sum("bases"))["bases__sum"] or 0, 2)
 
     @cached
     def compute_tax(self):
         taxes = self.lines.annotate(
-            taxes=(F("subtotal") + Coalesce(Sum("sublines__total"), decimal.Decimal(0))) * (F("tax") / 100)
+            taxes=(F("subtotal") + Coalesce(Sum("sublines__total"), decimal.Decimal(0)))
+            * (F("tax") / 100)
         )
         return round(taxes.aggregate(Sum("taxes"))["taxes__sum"] or 0, 2)
 
@@ -406,7 +440,10 @@ class Bill(models.Model):
             return round(total, 2)
         else:
             totals = self.lines.annotate(
-                totals=(F("subtotal") + Sum(Coalesce("sublines__total", decimal.Decimal(0)))) * (1 + F("tax") / 100)
+                totals=(
+                    F("subtotal") + Sum(Coalesce("sublines__total", decimal.Decimal(0)))
+                )
+                * (1 + F("tax") / 100)
             )
             return round(totals.aggregate(Sum("totals"))["totals__sum"] or 0, 2)
 
@@ -444,11 +481,19 @@ class ProForma(Bill):
 class BillLine(models.Model):
     """Base model for bill item representation"""
 
-    bill = models.ForeignKey(Bill, verbose_name=_("bill"), related_name="lines", on_delete=models.CASCADE)
+    bill = models.ForeignKey(
+        Bill, verbose_name=_("bill"), related_name="lines", on_delete=models.CASCADE
+    )
     description = models.CharField(_("description"), max_length=256)
-    rate = models.DecimalField(_("rate"), blank=True, null=True, max_digits=12, decimal_places=2)
-    quantity = models.DecimalField(_("quantity"), blank=True, null=True, max_digits=12, decimal_places=2)
-    verbose_quantity = models.CharField(_("Verbose quantity"), max_length=16, blank=True)
+    rate = models.DecimalField(
+        _("rate"), blank=True, null=True, max_digits=12, decimal_places=2
+    )
+    quantity = models.DecimalField(
+        _("quantity"), blank=True, null=True, max_digits=12, decimal_places=2
+    )
+    verbose_quantity = models.CharField(
+        _("Verbose quantity"), max_length=16, blank=True
+    )
     subtotal = models.DecimalField(_("subtotal"), max_digits=12, decimal_places=2)
     tax = models.DecimalField(_("tax"), max_digits=4, decimal_places=2)
     start_on = models.DateField(_("start"))
@@ -462,7 +507,9 @@ class BillLine(models.Model):
         help_text=_("Informative link back to the order"),
     )
     order_billed_on = models.DateField(_("order billed"), null=True, blank=True)
-    order_billed_until = models.DateField(_("order billed until"), null=True, blank=True)
+    order_billed_until = models.DateField(
+        _("order billed until"), null=True, blank=True
+    )
     created_on = models.DateField(_("created"), auto_now_add=True)
     # Amendment
     amended_line = models.ForeignKey(
@@ -535,11 +582,15 @@ class BillSubline(models.Model):
     )
 
     # TODO: order info for undoing
-    line = models.ForeignKey(BillLine, verbose_name=_("bill line"), related_name="sublines", on_delete=models.CASCADE)
+    line = models.ForeignKey(
+        BillLine,
+        verbose_name=_("bill line"),
+        related_name="sublines",
+        on_delete=models.CASCADE,
+    )
     description = models.CharField(_("description"), max_length=256)
     total = models.DecimalField(max_digits=12, decimal_places=2)
     type = models.CharField(_("type"), max_length=16, choices=TYPES, default=OTHER)
 
     def __str__(self):
-        return "%s %i" % (self.description, self.total)
         return "%s %i" % (self.description, self.total)
