@@ -10,9 +10,6 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ("bills", "0003_alter_bill_account"),
-        ("bills", "0003_alter_bill_account"),
-        ("bills", "0003_alter_bill_account"),
-        ("bills", "0003_alter_bill_account"),
     ]
 
     operations = [

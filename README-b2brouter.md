@@ -3,6 +3,7 @@
 1. Install requirements/dependencies [`b2brouter-python`](https://github.com/ribaguifi/b2brouter-python/):
 
 ```bash
+pip install wheel
 pip install git+https://github.com/ribaguifi/b2brouter-python.git
 ```
 
