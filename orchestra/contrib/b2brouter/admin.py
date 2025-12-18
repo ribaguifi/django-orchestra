@@ -130,7 +130,7 @@ if Account in admin.site._registry:
 
 
 @transaction.atomic
-def sync_bills(modeladmin, request, queryset):
+def sync_push_bills(modeladmin, request, queryset):
     """Sync selected bills with external system"""
 
     for bill in queryset:
@@ -153,8 +153,8 @@ def sync_bills(modeladmin, request, queryset):
     )
 
 
-sync_bills.tool_description = _("Sync Bills")
-sync_bills.url_name = "sync_bills"
+sync_push_bills.tool_description = _("Sync Push Bills")
+sync_push_bills.url_name = "sync_push_bills"
 
 
 @transaction.atomic

@@ -18,6 +18,7 @@ from orchestra.admin import ExtendedModelAdmin
 from orchestra.admin.utils import admin_date, insertattr, admin_link, change_url
 from orchestra.contrib.accounts.actions import list_accounts
 from orchestra.contrib.accounts.admin import AccountAdminMixin, AccountAdmin
+from orchestra.contrib.b2brouter.admin import sync_push_bills
 from orchestra.forms.widgets import PaddingCheckboxSelectMultiple
 
 from . import settings, actions
@@ -345,11 +346,11 @@ class BillAdmin(BillAdminMixin, ExtendedModelAdmin):
         actions.manage_lines, actions.view_bill, actions.download_bills, actions.send_bills,
         actions.close_bills, actions.amend_bills, actions.close_send_download_bills,
     ]
-    from orchestra.contrib.b2brouter.admin import sync_bills, sync_pull_bills
+
     actions = [
         actions.manage_lines, actions.download_bills, actions.close_bills, actions.send_bills,
         actions.amend_bills, actions.bill_report, actions.service_report,
-        actions.close_send_download_bills, list_accounts, sync_bills, sync_pull_bills
+        actions.close_send_download_bills, list_accounts, sync_push_bills
     ]
     change_readonly_fields = ('account_link', 'type', 'is_open', 'amend_of_link')
     readonly_fields = (
