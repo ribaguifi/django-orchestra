@@ -50,8 +50,8 @@ def sync_remote_contact(bill_contact, update=False):
     billing_email = contact_info.email
     billing_phone = contact_info.phone or contact_info.phone2
 
-    body = {
-        "client": {
+    payload = {
+        "contact": {
             "language": bill_contact.account.language,
             "is_client": True,
             "is_provider": False,
@@ -77,16 +77,18 @@ def sync_remote_contact(bill_contact, update=False):
         .first()
     )
     if paymentsource:
-        body["client"]["bank_account_number"] = paymentsource.data.get("iban")
-        body["client"]["payment_method"] = PAYMENT_METHODS.get(paymentsource.method)
+        payload["contact"]["bank_account_number"] = paymentsource.data.get("iban")
+        payload["contact"]["payment_method"] = PAYMENT_METHODS.get(paymentsource.method)
 
     client = get_api_client()
     try:
         if update:
-            api_response = client.contacts.update(id=b2bcontact.remote_id, body=body)
+            api_response = client.contacts.update(
+                id=b2bcontact.remote_id, params=payload
+            )
         else:
             api_response = client.contacts.create(
-                account=settings.B2BROUTER_ACCOUNT_ID, body=body
+                account=settings.B2BROUTER_ACCOUNT_ID, params=payload
             )
             b2bcontact.remote_id = api_response.id
     except ApiErrorException as e:
@@ -179,11 +181,12 @@ def pull_from_remote_invoice(instance):
         message = e.body if hasattr(e, "body") else str(e)
         raise B2BSyncError(f"Failed to pull invoice {b2binvoice.remote_id}: {message}")
 
-    # TODO(@slamora): update the local Bill instance based on the response data
-    # For example:
-    # bill = b2binvoice.orchestra_bill
-    # bill.status = response.status
-    # bill.total_amount = response.total_amount
-    # bill.save()
-
     print(f"Pulled remote invoice data for Bill ID {instance.id}: {response}")
+
+    # TODO(@slamora): how to handle `date` (The date when the Invoice was issued)?
+    instance.number = f"{response.series_code}{response.number}"
+    instance.is_open = response.status == "new"
+    instance.is_sent = response.status == "sent"
+    instance.due_on = response.due_date
+    instance.comments = getattr(response, "extra_info", "")
+    instance.save()
