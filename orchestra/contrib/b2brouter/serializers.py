@@ -2,6 +2,38 @@ from orchestra.contrib.b2brouter import api
 from orchestra.contrib.b2brouter.models import B2BContact
 
 
+class BillLineSerializer(object):
+    def __init__(self, bill_line, position):
+        self.instance = bill_line
+        self.instance.position = position
+
+    @property
+    def data(self):
+        if not hasattr(self, "_data"):
+            self._data = self.to_representation()
+        return self._data
+
+    def to_representation(self):
+        instance = self.instance
+        return {
+            "position": instance.position,
+            "quantity": str(instance.quantity),
+            "price": str(instance.rate),
+            "description": instance.description,
+            # "taxes_attributes": str(instance.tax),
+            "invoicing_period_start": (
+                instance.order_billed_on.isoformat()
+                if instance.order_billed_on
+                else None
+            ),
+            "invoicing_period_end": (
+                instance.order_billed_until.isoformat()
+                if instance.order_billed_until
+                else None
+            ),
+        }
+
+
 # TODO serialize Bill to b2brouter invoice format
 class BillSerializer(object):
     # TODO(@slamora): complete series & vat_percent mapping
@@ -30,8 +62,8 @@ class BillSerializer(object):
             "number": instance.get_number_without_series(),
             "contact_id": self.get_contact_id(),
             # TODO(@slamora): is this the desired date?
-            "date": instance.created_on.isoformat(),
-            "due_date": instance.get_due_date(),
+            "date": instance.created_on.isoformat() if instance.created_on else None,
+            "due_date": instance.get_due_date().isoformat() if instance.get_due_date() else None,
             "payment_method": self.SEPA_DIRECT_DEBIT_PAYMENT_METHOD,
             "invoice_lines_attributes": self.get_lines_attributes(),
         }
@@ -57,15 +89,6 @@ class BillSerializer(object):
     def get_lines_attributes(self):
         lines = []
         for index, item in enumerate(self.instance.lines.all()):
-            line = {
-                "position": index + 1,
-                "quantity": str(item.quantity),
-                "price": str(item.rate),
-                "description": item.description,
-                # "taxes_attributes": str(item.tax),
-                "invoicing_period_start": item.order_billed_on.isoformat() if item.order_billed_on else None,
-                "invoicing_period_end": item.order_billed_until.isoformat() if item.order_billed_until else None,
-            }
+            line = BillLineSerializer(item, position=index + 1).data
             lines.append(line)
-        return lines
         return lines

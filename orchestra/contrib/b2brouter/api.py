@@ -119,14 +119,55 @@ def sync_remote_invoice(instance):
 
     client = get_api_client()
     if update:
-        response = client.invoices.update(id=remote_invoice.remote_id, body=payload)
+        # clean up current lines on update
+        response = client.invoices.retrieve(
+            id=remote_invoice.remote_id, params={"include": "detailed_lines"}
+        )
+        existing_lines = []
+        for line in response.lines or []:
+            existing_lines.append(
+                {
+                    "id": line.id,
+                    "_destroy": 1,
+                }
+            )
+
+        payload["invoice"]["invoice_lines_attributes"].extend(existing_lines)
+
+        response = client.invoices.update(id=remote_invoice.remote_id, params=payload)
+
     else:
         response = client.invoices.create(
-            account=settings.B2BROUTER_ACCOUNT_ID, body=payload
+            account=settings.B2BROUTER_ACCOUNT_ID, params=payload
         )
         remote_invoice.remote_id = response.id
 
     remote_invoice.save()
+
+    return remote_invoice.remote_id
+
+
+def _invoice_delete_current_lines(remote_id):
+    """Delete current invoice lines"""
+    client = get_api_client()
+    response = client.invoices.retrieve(
+        id=remote_id, params={"include": "detailed_lines"}
+    )
+    new_payload = {
+        "send_after_import": False,
+        "ack": False,
+        "invoice": {},
+    }
+    new_lines = []
+    for line in response.lines or []:
+        new_lines.append(
+            {
+                "id": line.id,
+                "_destroy": 1,
+            }
+        )
+    new_payload["invoice"]["invoice_lines_attributes"] = new_lines
+    response = client.invoices.update(id=remote_id, params=new_payload)
 
 
 def pull_from_remote_invoice(instance):
