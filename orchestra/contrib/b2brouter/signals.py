@@ -25,17 +25,3 @@ def bill_contact_saved(sender, instance, **kwargs):
     cmd = SyncCommand()
     cmd.init_api()
     cmd.sync_remote_contact(b2bcontact, update=update)
-
-
-# TODO(@slamora):
-# Bill type mapping
-# - Handle bill.number (to match remote system format if needed)
-# - Serialize line items
-# - Taxes handling
-# - Status changes??? Or it will be managed only remotely?
-
-
-@receiver(post_save, sender="bills.Bill")
-def bill_saved(sender, instance, **kwargs):
-    # TODO(@slamora): post_save Bill is triggered before lines are saved
-    sync_remote_invoice(instance)
