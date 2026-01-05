@@ -145,7 +145,7 @@ class Command(BaseCommand):
         billing_phone = contact_info.phone or contact_info.phone2
 
         body = {
-            "client": {
+            "contact": {
                 "language": contact.account.language,
                 "is_client": True,
                 "is_provider": False,
@@ -171,19 +171,19 @@ class Command(BaseCommand):
             .first()
         )
         if paymentsource:
-            body["client"]["bank_account_number"] = paymentsource.data.get("iban")
-            body["client"]["payment_method"] = self.PAYMENT_METHODS.get(
+            body["contact"]["bank_account_number"] = paymentsource.data.get("iban")
+            body["contact"]["payment_method"] = self.PAYMENT_METHODS.get(
                 paymentsource.method
             )
 
         try:
             if update:
-                api_response = self.api.put_contact(
-                    id=b2bcontact.remote_id, format="json", body=body
+                api_response = self.api.contacts.update(
+                    id=b2bcontact.remote_id, params=body
                 )
             else:
-                api_response = self.api.create_contact(
-                    account=settings.B2BROUTER_ACCOUNT_ID, format="json", body=body
+                api_response = self.api.contacts.create(
+                    account=settings.B2BROUTER_ACCOUNT_ID, params=body
                 )
                 b2bcontact.remote_id = api_response.id
         except ApiErrorException as e:
@@ -202,19 +202,17 @@ class Command(BaseCommand):
         limit = 25
         while True:
             try:
-                api_response = self.api.get_contacts(
+                api_response = self.api.contacts.list(
                     account=settings.B2BROUTER_ACCOUNT_ID,
-                    format="json",
-                    limit=limit,
-                    offset=offset,
+                    params={"limit": limit, "offset": offset},
                 )
-                response.extend(api_response.clients)
-                total_count = api_response.total_count
+                response.extend(api_response)
+                total_count = len(api_response)
                 offset += limit
                 if offset >= total_count:
                     break
             except ApiErrorException as e:
-                print("Exception when calling ContactsApi->get_contacts: %s\n" % e)
+                print("Exception when calling API Contacts->list: %s\n" % e)
                 raise
 
-        return {c.taxcode: c for c in response if c.taxcode}
+        return {c.tin: c for c in response if c.tin}
