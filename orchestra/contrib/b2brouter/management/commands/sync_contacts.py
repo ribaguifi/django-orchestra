@@ -215,4 +215,4 @@ class Command(BaseCommand):
                 print("Exception when calling API Contacts->list: %s\n" % e)
                 raise
 
-        return {c.tin: c for c in response if c.tin}
+        return {c.tin_value: c for c in response if c.tin_value}
