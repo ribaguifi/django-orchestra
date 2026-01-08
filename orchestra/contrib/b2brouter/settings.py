@@ -21,3 +21,9 @@ B2BROUTER_ACCOUNT_ID = Setting(
     # TODO(@slamora): seems that validation doesn't work
     validators=[Setting.validate_integer],
 )
+
+B2BROUTER_APP_URL = Setting(
+    "B2BROUTER_APP_URL",
+    "https://app-staging.b2brouter.net",
+    help_text="Base URL for B2B Router APP (front-end).",
+)

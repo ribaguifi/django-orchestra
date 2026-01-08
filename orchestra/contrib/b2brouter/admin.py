@@ -14,7 +14,7 @@ from orchestra.contrib.b2brouter.api import (
 from orchestra.contrib.b2brouter.exceptions import B2BSyncError
 from orchestra.contrib.b2brouter.management.commands.sync_contacts import Command
 from orchestra.contrib.b2brouter.models import B2BContact
-from orchestra.contrib.b2brouter.settings import B2BROUTER_API_URL
+from orchestra.contrib.b2brouter.settings import B2BROUTER_APP_URL
 from orchestra.contrib.bills.models import Bill, BillContact
 
 
@@ -116,7 +116,7 @@ def b2bcontact_link(obj):
             )
         return "-"
 
-    url = f"{B2BROUTER_API_URL}/contacts/{b2bcontact.remote_id}"
+    url = f"{B2BROUTER_APP_URL}/contacts/{b2bcontact.remote_id}"
     return format_html("<a href='{}' target='_blank'>{}</a>", url, b2bcontact.remote_id)
 
 
