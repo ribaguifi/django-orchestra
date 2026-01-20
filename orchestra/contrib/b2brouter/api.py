@@ -103,7 +103,8 @@ def sync_remote_contact(bill_contact, update=False):
     return b2bcontact.remote_id
 
 
-def sync_remote_invoice(instance):
+def sync_to_remote_invoice(instance):
+    """Sync Bill instance to remote B2BRouter as Invoice."""
     try:
         remote_invoice = instance.b2binvoice
         update = remote_invoice.remote_id is not None
@@ -172,7 +173,8 @@ def _invoice_delete_current_lines(remote_id):
     response = client.invoices.update(id=remote_id, params=new_payload)
 
 
-def pull_from_remote_invoice(instance):
+def sync_from_remote_invoice(instance):
+    """Pull remote Invoice data into local Bill instance."""
     b2binvoice = instance.b2binvoice
     client = get_api_client()
     try:
@@ -187,6 +189,8 @@ def pull_from_remote_invoice(instance):
     instance.number = f"{response.series_code}{response.number}"
     instance.is_open = response.status == "new"
     instance.is_sent = response.status == "sent"
+    instance.date = response.issue_date
     instance.due_on = response.due_date
+    instance.state = response.state
     instance.comments = getattr(response, "extra_info", "")
     instance.save()

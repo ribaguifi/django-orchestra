@@ -1,7 +1,7 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-from orchestra.contrib.b2brouter.api import sync_remote_invoice
+from orchestra.contrib.b2brouter.api import sync_to_remote_invoice
 from orchestra.contrib.b2brouter.management.commands.sync_contacts import (
     Command as SyncCommand,
 )

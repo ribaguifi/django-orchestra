@@ -8,8 +8,8 @@ from django.utils.translation import gettext as _
 
 from orchestra.contrib.accounts.models import Account
 from orchestra.contrib.b2brouter.api import (
-    pull_from_remote_invoice,
-    sync_remote_invoice,
+    sync_from_remote_invoice,
+    sync_to_remote_invoice,
 )
 from orchestra.contrib.b2brouter.exceptions import B2BSyncError
 from orchestra.contrib.b2brouter.management.commands.sync_contacts import Command
@@ -136,7 +136,7 @@ def sync_push_bills(modeladmin, request, queryset):
     for bill in queryset:
         modeladmin.log_change(request, bill, "Synchronized with external system")
         try:
-            sync_remote_invoice(bill)
+            sync_to_remote_invoice(bill)
         except B2BSyncError as e:
             messages.error(
                 request,
@@ -164,7 +164,7 @@ def sync_pull_bills(modeladmin, request, queryset):
     for bill in queryset:
         modeladmin.log_change(request, bill, "Pulled from external system")
         try:
-            pull_from_remote_invoice(bill)
+            sync_from_remote_invoice(bill)
         except B2BSyncError as e:
             messages.error(
                 request,

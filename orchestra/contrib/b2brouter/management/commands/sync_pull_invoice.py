@@ -1,13 +1,13 @@
 from django.core.management.base import BaseCommand, CommandError
 
-from orchestra.contrib.b2brouter.api import sync_to_remote_invoice
+from orchestra.contrib.b2brouter.api import sync_from_remote_invoice
 from orchestra.contrib.b2brouter.exceptions import B2BSyncError
 from orchestra.contrib.b2brouter.utils import get_invoice_by_identifier
 from orchestra.contrib.bills.models import Bill
 
 
 class Command(BaseCommand):
-    help = "Sync to remote (push) invoice to B2BRouter by invoice PK or number"
+    help = "Sync from remote (pull) invoice from B2BRouter by invoice PK or number"
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -27,10 +27,10 @@ class Command(BaseCommand):
 
         identifier_desc = f"PK {bill.pk} ({bill.number})"
         try:
-            self.stdout.write(f"Syncing invoice {identifier_desc}...")
-            sync_to_remote_invoice(bill)
+            self.stdout.write(f"Pulling invoice {identifier_desc}...")
+            sync_from_remote_invoice(bill)
             self.stdout.write(
-                self.style.SUCCESS(f"Successfully synced invoice {identifier_desc}")
+                self.style.SUCCESS(f"Successfully pulled invoice {identifier_desc}")
             )
         except B2BSyncError as e:
-            raise CommandError(f"Failed to sync invoice {identifier_desc}: {e}")
+            raise CommandError(f"Failed to pull invoice {identifier_desc}: {e}")
