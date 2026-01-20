@@ -81,6 +81,15 @@ class BillManager(models.Manager):
 
 
 class Bill(models.Model):
+    class InvoiceStates(models.TextChoices):
+        NEW = "new", _("New")
+        SENT = "sent", _("Sent")
+        ACCEPTED = "accepted", _("Accepted")
+        REGISTERED = "registered", _("Registered")
+        REFUSED = "refused", _("Refused")
+        CLOSED = "closed", _("Closed")
+        ERROR = "error", _("Error")
+
     OPEN = ""
     CREATED = "CREATED"
     PROCESSED = "PROCESSED"
@@ -139,6 +148,20 @@ class Bill(models.Model):
     closed_on = models.DateField(_("closed on"), blank=True, null=True, db_index=True)
     is_open = models.BooleanField(_("open"), default=True)
     is_sent = models.BooleanField(_("sent"), default=False)
+    state = models.CharField(
+        _("state"),
+        max_length=16,
+        choices=InvoiceStates.choices,
+        default=InvoiceStates.NEW,
+        help_text=_("State of the issued invoice in the remote system."),
+    )
+    date = models.DateField(
+        _("date"),
+        null=True,
+        blank=True,
+        db_index=True,
+        help_text=_("The date when the invoice was issued."),
+    )
     due_on = models.DateField(_("due on"), null=True, blank=True)
     updated_on = models.DateField(_("updated on"), auto_now=True)
     #    total = models.DecimalField(max_digits=12, decimal_places=2, null=True)
