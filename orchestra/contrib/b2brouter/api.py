@@ -1,3 +1,5 @@
+from datetime import date, datetime
+
 from b2brouter_client import ApiErrorException, B2BRouterClient
 
 from orchestra.contrib.b2brouter import settings
@@ -173,6 +175,21 @@ def _invoice_delete_current_lines(remote_id):
     response = client.invoices.update(id=remote_id, params=new_payload)
 
 
+def _normalize_date(value):
+    if not value:
+        return None
+    if isinstance(value, datetime):
+        return value.date()
+    if isinstance(value, date):
+        return value
+    if isinstance(value, str):
+        try:
+            return date.fromisoformat(value[:10])
+        except ValueError:
+            return None
+    return None
+
+
 def sync_from_remote_invoice(instance):
     """Pull remote Invoice data into local Bill instance."""
     b2binvoice = instance.b2binvoice
@@ -185,12 +202,23 @@ def sync_from_remote_invoice(instance):
 
     print(f"Pulled remote invoice data for Bill ID {instance.id}: {response}")
 
-    # TODO(@slamora): how to handle `date` (The date when the Invoice was issued)?
-    instance.number = f"{response.series_code}{response.number}"
-    instance.is_open = response.status == "new"
-    instance.is_sent = response.status == "sent"
-    instance.date = response.issue_date
-    instance.due_on = response.due_date
-    instance.state = response.state
+    issue_date = _normalize_date(getattr(response, "issue_date", None))
+    due_date = _normalize_date(getattr(response, "due_date", None))
+    remote_status = getattr(response, "status", None)
+    remote_state = getattr(response, "state", None)
+    is_open, is_sent = instance.flags_from_remote_status(
+        remote_status=remote_status,
+        remote_state=remote_state,
+    )
+
+    instance.series_code = response.series_code
+    instance.number = response.number
+    instance.is_open = is_open
+    instance.is_sent = is_sent
+    # Keep Bill.date as the legal issued date from B2B. If remote omits it,
+    # preserve local value and only initialize from created_on when still empty.
+    instance.date = issue_date or instance.date or instance.created_on
+    instance.due_on = due_date or instance.due_on
+    instance.state = remote_state
     instance.comments = getattr(response, "extra_info", "")
     instance.save()

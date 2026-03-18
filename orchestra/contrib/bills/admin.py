@@ -482,6 +482,7 @@ class BillAdmin(BillAdminMixin, ExtendedModelAdmin):
             {
                 "fields": [
                     "number",
+                    "series_code",
                     "type",
                     (),
                     "account_link",
@@ -539,6 +540,7 @@ class BillAdmin(BillAdminMixin, ExtendedModelAdmin):
     change_readonly_fields = ("account_link", "type", "is_open", "amend_of_link")
     readonly_fields = (
         "number",
+        "series_code",
         "display_total",
         "is_sent",
         "display_payment_state",

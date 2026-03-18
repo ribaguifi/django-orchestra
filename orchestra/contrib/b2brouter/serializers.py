@@ -106,10 +106,9 @@ class BillSerializer(object):
         return {
             "type": "IssuedInvoice",
             "series_code": self.get_series(),
-            "number": instance.get_number_without_series(),
+            "number": self.get_number(),
             "contact_id": self.get_contact_id(),
-            # TODO(@slamora): is this the desired date?
-            "date": instance.created_on.isoformat() if instance.created_on else None,
+            "date": self.get_issue_date(),
             "due_date": (
                 instance.get_due_date().isoformat() if instance.get_due_date() else None
             ),
@@ -128,7 +127,21 @@ class BillSerializer(object):
             return remote_id
 
     def get_series(self):
+        # Prefer materialized series_code field if available from B2B sync
+        if self.instance.series_code:
+            return self.instance.series_code
         return self.instance.get_series_code()
+
+    def get_number(self):
+        # If series_code is materialized, number already contains just the numeric part
+        if self.instance.series_code:
+            return self.instance.number
+        # Otherwise, extract the numeric part from the combined number
+        return self.instance.get_number_without_series()
+
+    def get_issue_date(self):
+        issue_date = self.instance.date or self.instance.created_on
+        return issue_date.isoformat() if issue_date else None
 
     def get_lines_attributes(self):
         lines = []

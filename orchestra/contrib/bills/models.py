@@ -90,6 +90,14 @@ class Bill(models.Model):
         CLOSED = "closed", _("Closed")
         ERROR = "error", _("Error")
 
+    REMOTE_SENT_LIKE_STATUSES = {
+        InvoiceStates.SENT,
+        InvoiceStates.ACCEPTED,
+        InvoiceStates.REGISTERED,
+        InvoiceStates.CLOSED,
+        InvoiceStates.REFUSED,
+    }
+
     OPEN = ""
     CREATED = "CREATED"
     PROCESSED = "PROCESSED"
@@ -129,6 +137,15 @@ class Bill(models.Model):
     }
 
     number = models.CharField(_("number"), max_length=16, unique=True, blank=True)
+    series_code = models.CharField(
+        _("series code"),
+        max_length=16,
+        blank=True,
+        null=True,
+        help_text=_(
+            "Invoice series code from B2B Router (e.g., 'S' for cuotas, 'F' for servicios)."
+        ),
+    )
     account = models.ForeignKey(
         "accounts.Account",
         verbose_name=_("account"),
@@ -292,8 +309,6 @@ class Bill(models.Model):
             raise TypeError("This method can not be used on BILL instances")
         bill_type = bill_type.replace("AMENDMENT", "AMENDMENT_")
         prefix = getattr(settings, "BILLS_%s_NUMBER_PREFIX" % bill_type)
-        if self.is_open:
-            prefix = "O{}".format(prefix)
         year = timezone.now().strftime("%Y")
         bills = cls.objects.filter(number__regex=r"^%s%s[0-9]+" % (prefix, year))
         last_number = bills.order_by("-number").values_list("number", flat=True).first()
@@ -322,15 +337,29 @@ class Bill(models.Model):
     def get_number_without_series(self):
         """Returns the numeric part of the bill number (without series)"""
 
-        # Generate the prefix again to strip it from the number
+        # Support both current format and legacy "O<series>" numbers.
         prefix = self.get_series_code()
-        if self.is_open:
-            prefix = "O{}".format(prefix)
-
-        # Strip the prefix from the number
+        legacy_prefix = f"O{prefix}"
         orig_number = self.number or self.get_number()
-        clean_number = orig_number.replace(prefix, "")
+        if orig_number.startswith(legacy_prefix):
+            clean_number = orig_number[len(legacy_prefix) :]
+        elif orig_number.startswith(prefix):
+            clean_number = orig_number[len(prefix) :]
+        else:
+            clean_number = orig_number
         return clean_number
+
+    @classmethod
+    def flags_from_remote_status(cls, remote_status, remote_state=None):
+        """Map remote invoice status/state to local legacy booleans."""
+
+        status = (remote_status or "").lower()
+        state = (remote_state or "").lower()
+        is_open = status == "new"
+        is_sent = status in cls.REMOTE_SENT_LIKE_STATUSES
+        if not is_sent and state in cls.InvoiceStates.values:
+            is_sent = state != cls.InvoiceStates.NEW
+        return is_open, is_sent
 
     def get_due_date(self, payment=None):
         now = timezone.now()
@@ -357,7 +386,7 @@ class Bill(models.Model):
         self.closed_on = timezone.now()
         self.is_open = False
         self.is_sent = False
-        self.number = self.get_number()
+        self.state = self.InvoiceStates.NEW
         self.html = self.render(payment=payment)
         self.save()
         return transaction
@@ -420,6 +449,9 @@ class Bill(models.Model):
             self.type = self.get_type()
         if not self.number:
             self.number = self.get_number()
+        # Preserve legacy invariant used across admin/actions.
+        if self.is_open and self.is_sent:
+            self.is_sent = False
         super(Bill, self).save(*args, **kwargs)
 
     @cached
