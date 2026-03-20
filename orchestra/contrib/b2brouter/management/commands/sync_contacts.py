@@ -5,7 +5,7 @@ from django.core.management.base import BaseCommand
 from b2brouter_client import ApiErrorException
 
 from orchestra.contrib.b2brouter import settings
-from orchestra.contrib.b2brouter.api import get_api_client
+from orchestra.contrib.b2brouter.api import fetch_remote_contacts, get_api_client
 from orchestra.contrib.b2brouter.exceptions import B2BSyncError
 from orchestra.contrib.b2brouter.models import B2BContact
 from orchestra.contrib.bills.models import BillContact
@@ -53,8 +53,10 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         self.set_options(**options)
-        self.init_api()
-        self.remote_contacts = self.fetch_remote_contacts()
+        self.api = get_api_client()
+
+        response = fetch_remote_contacts(self.api, limit=500)
+        self.remote_contacts = {c.tin_value: c for c in response if c.tin_value}
 
         qs = self.retrieve_local_contacts()
         qs = qs.select_related("b2bcontact")
@@ -119,9 +121,6 @@ class Command(BaseCommand):
         # TODO(@slamora): filter only active accounts???
         qs = BillContact.objects.filter(account__is_active=True)
         return qs
-
-    def init_api(self):
-        self.api = get_api_client()
 
     def sync_remote_contact(self, b2bcontact, update=False):
         contact = b2bcontact.orchestra_contact
@@ -195,24 +194,3 @@ class Command(BaseCommand):
             )
 
         b2bcontact.save()
-
-    def fetch_remote_contacts(self):
-        response = []
-        offset = 0
-        limit = 25
-        while True:
-            try:
-                api_response = self.api.contacts.list(
-                    account=settings.B2BROUTER_ACCOUNT_ID,
-                    params={"limit": limit, "offset": offset},
-                )
-                response.extend(api_response)
-                total_count = len(api_response)
-                offset += limit
-                if offset >= total_count:
-                    break
-            except ApiErrorException as e:
-                print("Exception when calling API Contacts->list: %s\n" % e)
-                raise
-
-        return {c.tin_value: c for c in response if c.tin_value}

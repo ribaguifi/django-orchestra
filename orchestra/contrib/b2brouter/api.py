@@ -1,3 +1,4 @@
+import logging
 from datetime import date, datetime
 
 from b2brouter_client import ApiErrorException, B2BRouterClient
@@ -7,6 +8,8 @@ from orchestra.contrib.b2brouter.exceptions import B2BSyncError
 from orchestra.contrib.b2brouter.models import B2BContact, B2BInvoice
 from orchestra.contrib.b2brouter.serializers import BillSerializer
 from orchestra.contrib.contacts.models import Contact
+
+logger = logging.getLogger(__name__)
 
 # Payment methods mapping Orchestra <-> B2BRouter
 PAYMENT_METHODS = {
@@ -20,6 +23,30 @@ def get_api_client():
         api_base=settings.B2BROUTER_API_URL,
     )
     return client
+
+
+def fetch_remote_contacts(api=None, limit=100):
+    if api is None:
+        api = get_api_client()
+
+    response = []
+    offset = 0
+    while True:
+        try:
+            api_response = api.contacts.list(
+                account=settings.B2BROUTER_ACCOUNT_ID,
+                params={"limit": limit, "offset": offset},
+            )
+            response.extend(api_response)
+            total_count = api_response.meta["total_count"]
+            offset += limit
+            if offset >= total_count:
+                break
+        except ApiErrorException as e:
+            logger.error("Exception when calling API Contacts->list: %s", e)
+            raise
+
+    return response
 
 
 def sync_remote_contact(bill_contact, update=False):
