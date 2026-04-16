@@ -1,27 +1,28 @@
+import logging
+
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-from orchestra.contrib.b2brouter.api import sync_to_remote_invoice
-from orchestra.contrib.b2brouter.management.commands.sync_contacts import (
-    Command as SyncCommand,
-)
-from orchestra.contrib.b2brouter.models import B2BContact
+from orchestra.contrib.b2brouter.api import sync_remote_contact, sync_to_remote_invoice
+from orchestra.contrib.b2brouter.exceptions import B2BSyncError
+
+logger = logging.getLogger(__name__)
 
 
 @receiver(post_save, sender="bills.BillContact")
 def bill_contact_saved(sender, instance, **kwargs):
-    created = kwargs.get("created", False)
-    if created:
-        b2bcontact = B2BContact(orchestra_contact=instance)
-        update = False
-    else:
-        try:
-            b2bcontact = instance.b2bcontact
-            update = b2bcontact.remote_id is not None
-        except B2BContact.DoesNotExist:
-            b2bcontact = B2BContact(orchestra_contact=instance)
-            update = False
-
-    cmd = SyncCommand()
-    cmd.init_api()
-    cmd.sync_remote_contact(b2bcontact, update=update)
+    """Sync contact changes to remote B2BRouter when BillContact is saved."""
+    try:
+        sync_remote_contact(instance)
+    except B2BSyncError as e:
+        logger.error(
+            "Failed to sync contact %s to remote: %s",
+            instance,
+            str(e),
+        )
+    except Exception as e:
+        logger.exception(
+            "Unexpected error syncing contact %s to remote: %s",
+            instance,
+            str(e),
+        )

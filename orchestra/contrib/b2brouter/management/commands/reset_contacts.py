@@ -17,7 +17,11 @@ class Command(BaseCommand):
             help="Skip confirmation prompt and assume yes.",
         )
 
+    def set_options(self, **options):
+        self.verbosity = options.get("verbosity", 1)
+
     def handle(self, *args, **options):
+        self.set_options(**options)
         qs = B2BContact.objects.all()
         count = qs.count()
 

@@ -9,10 +9,10 @@ from django.utils.translation import gettext as _
 from orchestra.contrib.accounts.models import Account
 from orchestra.contrib.b2brouter.api import (
     sync_from_remote_invoice,
+    sync_remote_contact,
     sync_to_remote_invoice,
 )
 from orchestra.contrib.b2brouter.exceptions import B2BSyncError
-from orchestra.contrib.b2brouter.management.commands.sync_contacts import Command
 from orchestra.contrib.b2brouter.models import B2BContact
 from orchestra.contrib.b2brouter.settings import B2BROUTER_APP_URL
 from orchestra.contrib.bills.models import Bill, BillContact
@@ -81,18 +81,20 @@ class B2BContactAdmin(admin.ModelAdmin):
         failed = 0
         updated = 0
         for b2bcontact in queryset:
-            cmd = Command()
-            cmd.init_api()
-
-            update = b2bcontact.remote_id is not None
             try:
-                cmd.sync_remote_contact(b2bcontact, update=update)
+                sync_remote_contact(
+                    b2bcontact.orchestra_contact,
+                    update=b2bcontact.remote_id is not None,
+                )
+                updated += 1
+            except B2BSyncError as e:
+                b2bcontact.message = str(e)
+                b2bcontact.save()
+                failed += 1
             except Exception as e:
                 b2bcontact.message = e.body if hasattr(e, "body") else str(e)
                 b2bcontact.save()
                 failed += 1
-            else:
-                updated += 1
 
         queryset.update(last_synced_at=timezone.now())
         self.message_user(

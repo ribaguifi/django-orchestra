@@ -106,7 +106,7 @@ class Command(BaseCommand):
                 failed_count += 1
                 message = str(e)
                 if self.verbosity >= 1:
-                    self.stdout.write(f"  Failed to sync contact {contact}: {message}")
+                    self.stderr.write(f"  Failed to sync contact {contact}: {message}")
 
         if self.verbosity >= 1:
             self.stdout.write(self.style.SUCCESS("Contacts sync completed."))
