@@ -219,15 +219,17 @@ def _normalize_date(value):
 
 def sync_from_remote_invoice(instance):
     """Pull remote Invoice data into local Bill instance."""
-    b2binvoice = instance.b2binvoice
+    try:
+        b2binvoice = instance.b2binvoice
+    except B2BInvoice.DoesNotExist:
+        bill_id = instance.number or instance.pk
+        raise B2BSyncError(f"Bill {bill_id} has no linked B2BInvoice.")
     client = get_api_client()
     try:
         response = client.invoices.retrieve(id=b2binvoice.remote_id)
     except ApiErrorException as e:
         message = e.body if hasattr(e, "body") else str(e)
         raise B2BSyncError(f"Failed to pull invoice {b2binvoice.remote_id}: {message}")
-
-    print(f"Pulled remote invoice data for Bill ID {instance.id}: {response}")
 
     issue_date = _normalize_date(getattr(response, "issue_date", None))
     due_date = _normalize_date(getattr(response, "due_date", None))
