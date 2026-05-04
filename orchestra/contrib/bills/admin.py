@@ -706,17 +706,3 @@ insertattr(AccountAdmin, "inlines", BillContactInline)
 insertattr(AccountAdmin, "list_display", has_bill_contact)
 insertattr(AccountAdmin, "list_filter", HasBillContactListFilter)
 insertattr(AccountAdmin, "list_select_related", "billcontact")
-
-
-def has_bill_contact(account):
-    return hasattr(account, "billcontact")
-
-
-has_bill_contact.boolean = True
-has_bill_contact.admin_order_field = "billcontact"
-
-
-insertattr(AccountAdmin, "inlines", BillContactInline)
-insertattr(AccountAdmin, "list_display", has_bill_contact)
-insertattr(AccountAdmin, "list_filter", HasBillContactListFilter)
-insertattr(AccountAdmin, "list_select_related", "billcontact")
