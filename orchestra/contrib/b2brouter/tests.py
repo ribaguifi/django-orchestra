@@ -288,6 +288,83 @@ class SyncContactsCommandTest(B2BContactTestMixin, TestCase):
         self.assertIn(self.contact, queryset)
         self.assertNotIn(friend_contact, queryset)
 
+    @mock.patch(
+        "orchestra.contrib.b2brouter.management.commands.sync_contacts.fetch_remote_contacts"
+    )
+    @mock.patch(
+        "orchestra.contrib.b2brouter.management.commands.sync_contacts.get_api_client"
+    )
+    def test_sync_contacts_skips_inconsistent_duplicate_vat(
+        self, mock_get_api, mock_fetch
+    ):
+        """Duplicated VAT with inconsistent billing data should be skipped and warned."""
+        account2 = self.create_account(username="dup_vat_inconsistent")
+        contact2 = self.create_bill_contact(
+            account=account2,
+            vat=self.contact.vat,
+            name="Duplicate VAT Contact",
+        )
+        contact2.address = "Different Address"
+        contact2.save(update_fields=["address"])
+
+        self.create_contact_with_billing_email(account=self.account)
+        self.create_contact_with_billing_email(account=account2)
+
+        mock_client = mock.MagicMock()
+        mock_get_api.return_value = mock_client
+        mock_fetch.return_value = ListWithMeta([])
+
+        out = StringIO()
+        err = StringIO()
+        call_command("sync_contacts", "--all", stdout=out, stderr=err)
+
+        mock_client.contacts.create.assert_not_called()
+        self.assertIn("inconsistent billing data", err.getvalue())
+
+        shared = B2BContact.objects.get(vat_key="ES:ES12345678A")
+        self.assertEqual(shared.status, B2BContact.Status.WARNING)
+        self.assertIn("Inconsistent billing data", shared.message)
+        self.assertEqual(shared.bill_contact_bindings.count(), 2)
+
+    @mock.patch(
+        "orchestra.contrib.b2brouter.management.commands.sync_contacts.fetch_remote_contacts"
+    )
+    @mock.patch(
+        "orchestra.contrib.b2brouter.management.commands.sync_contacts.get_api_client"
+    )
+    def test_sync_contacts_syncs_duplicate_vat_only_once_when_consistent(
+        self, mock_get_api, mock_fetch
+    ):
+        """Duplicated VAT with consistent data should trigger a single API create."""
+        account2 = self.create_account(username="dup_vat_consistent")
+        contact2 = self.create_bill_contact(
+            account=account2,
+            vat=self.contact.vat,
+            name="Duplicate VAT Contact",
+        )
+
+        self.create_contact_with_billing_email(account=self.account)
+        self.create_contact_with_billing_email(account=account2)
+
+        mock_client = mock.MagicMock()
+        mock_get_api.return_value = mock_client
+        mock_fetch.return_value = ListWithMeta([])
+
+        mock_response = mock.MagicMock()
+        mock_response.id = 999
+        mock_client.contacts.create.return_value = mock_response
+
+        out = StringIO()
+        call_command("sync_contacts", "--all", stdout=out)
+
+        mock_client.contacts.create.assert_called_once()
+        mock_client.contacts.update.assert_not_called()
+
+        shared = B2BContact.objects.get(vat_key="ES:ES12345678A")
+        self.assertEqual(shared.bill_contact_bindings.count(), 2)
+        self.assertEqual(self.contact.b2b_binding.b2b_contact_id, shared.id)
+        self.assertEqual(contact2.b2b_binding.b2b_contact_id, shared.id)
+
 
 class SyncRemoteContactApiTest(B2BContactTestMixin, TestCase):
     """Tests for sync_remote_contact API function."""
