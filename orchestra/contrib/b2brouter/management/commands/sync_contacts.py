@@ -1,15 +1,17 @@
 import re
 
 from django.core.management.base import BaseCommand
+from django.db.models import Q
 
-from b2brouter_client import ApiErrorException
-
-from orchestra.contrib.b2brouter import settings
-from orchestra.contrib.b2brouter.api import fetch_remote_contacts, get_api_client
+from orchestra.contrib.b2brouter.api import (
+    fetch_remote_contacts,
+    get_api_client,
+    sync_remote_contact,
+    vat_key_for_contact,
+)
 from orchestra.contrib.b2brouter.exceptions import B2BSyncError
-from orchestra.contrib.b2brouter.models import B2BContact
+from orchestra.contrib.b2brouter.models import B2BContact, B2BContactBinding
 from orchestra.contrib.bills.models import BillContact
-from orchestra.contrib.contacts.models import Contact
 
 
 def taxcode(contact):
@@ -35,11 +37,6 @@ def taxcode(contact):
 class Command(BaseCommand):
     help = "Sync contacts (push local info to remote)."
 
-    # Payment methods mapping Orchestra <-> B2BRouter
-    PAYMENT_METHODS = {
-        "SEPADirectDebit": 59,
-    }
-
     def add_arguments(self, parser):
         parser.add_argument(
             "--all",
@@ -58,40 +55,26 @@ class Command(BaseCommand):
         response = fetch_remote_contacts(self.api, limit=500)
         self.remote_contacts = {c.tin_value: c for c in response if c.tin_value}
 
-        qs = self.retrieve_local_contacts()
-        qs = qs.select_related("b2bcontact")
+        qs = self.retrieve_local_contacts().select_related("account")
 
         if not self.sync_all:
             qs = qs.filter(
-                b2bcontact__status__in=[
-                    B2BContact.Status.PENDING,
-                    B2BContact.Status.ERROR,
-                ]
-            ) | qs.filter(b2bcontact__isnull=True)
+                Q(
+                    b2b_binding__b2b_contact__status__in=[
+                        B2BContact.Status.PENDING,
+                        B2BContact.Status.ERROR,
+                    ]
+                )
+                | Q(b2b_binding__isnull=True)
+            ).distinct()
 
         updated_count = 0
         created_count = 0
         failed_count = 0
 
         for contact in qs:
-            update = False
-
-            try:
-                b2bcontact = contact.b2bcontact
-                b2bcontact.status = B2BContact.Status.SYNCED
-                b2bcontact.message = ""
-            except B2BContact.DoesNotExist:
-                b2bcontact = B2BContact(orchestra_contact=contact)
-
-            # Check if the contact is already synced
-            if b2bcontact.remote_id:
-                # remote_id = b2bcontact.remote_id
-                update = True
-            else:
-                contact_taxcode = taxcode(contact)
-                if contact_taxcode in self.remote_contacts:
-                    b2bcontact.remote_id = self.remote_contacts[contact_taxcode].id
-                    update = True
+            b2bcontact = self.get_or_create_canonical_contact(contact)
+            update = b2bcontact.remote_id is not None
 
             # Sync the contact
             try:
@@ -99,7 +82,7 @@ class Command(BaseCommand):
                     self.stdout.write(
                         f"Syncing contact {contact}...{b2bcontact.remote_id or ''}: {'update' if update else 'create'}"
                     )
-                self.sync_remote_contact(b2bcontact, update=update)
+                sync_remote_contact(contact, update=update, client=self.api)
                 updated_count += int(update)
                 created_count += int(not update)
             except B2BSyncError as e:
@@ -125,75 +108,21 @@ class Command(BaseCommand):
         )
         return qs
 
-    def sync_remote_contact(self, b2bcontact, update=False):
-        contact = b2bcontact.orchestra_contact
+    def get_or_create_canonical_contact(self, contact):
+        vat_key = vat_key_for_contact(contact)
+        b2bcontact, _ = B2BContact.objects.get_or_create(vat_key=vat_key)
 
-        try:
-            contact_info = contact.account.contacts.get(email_usages=["BILLING"])
-        except Contact.DoesNotExist:
-            b2bcontact.status = B2BContact.Status.ERROR
-            b2bcontact.message = (
-                f"No billing contact found for account '{contact.account}'."
-            )
-            raise B2BSyncError(b2bcontact.message)
-        except Contact.MultipleObjectsReturned:
-            contact_info = contact.account.contacts.filter(
-                email_usages=["BILLING"]
-            ).first()
-            b2bcontact.status = B2BContact.Status.WARNING
-            b2bcontact.message = f"Multiple billing contacts found; using the first one: {contact_info.email}"
+        contact_taxcode = taxcode(contact)
+        if not b2bcontact.remote_id and contact_taxcode in self.remote_contacts:
+            b2bcontact.remote_id = self.remote_contacts[contact_taxcode].id
+            b2bcontact.save(update_fields=["remote_id"])
 
-        billing_email = contact_info.email
-        billing_phone = contact_info.phone or contact_info.phone2
-
-        body = {
-            "contact": {
-                "language": contact.account.language,
-                "is_client": True,
-                "is_provider": False,
-                "tin_value": contact.vat,
-                "name": contact.get_name(),
-                "address": contact.address,
-                "city": contact.city,
-                "postalcode": contact.zipcode,
-                "country": contact.country,
-                "email": billing_email,
-                "phone": billing_phone,
-                "terms": "60",
-            }
-        }
-
-        # Include payment info if available
-        # TODO(@slamora): optimize query
-        paymentsource = (
-            contact.account.paymentsources.filter(
-                method__in=self.PAYMENT_METHODS.keys(), is_active=True
-            )
-            .order_by("-pk")
-            .first()
+        binding, _ = B2BContactBinding.objects.get_or_create(
+            bill_contact=contact,
+            defaults={"b2b_contact": b2bcontact},
         )
-        if paymentsource:
-            body["contact"]["bank_account_number"] = paymentsource.data.get("iban")
-            body["contact"]["payment_method"] = self.PAYMENT_METHODS.get(
-                paymentsource.method
-            )
+        if binding.b2b_contact_id != b2bcontact.id:
+            binding.b2b_contact = b2bcontact
+            binding.save(update_fields=["b2b_contact"])
 
-        try:
-            if update:
-                api_response = self.api.contacts.update(
-                    id=b2bcontact.remote_id, params=body
-                )
-            else:
-                api_response = self.api.contacts.create(
-                    account=settings.B2BROUTER_ACCOUNT_ID, params=body
-                )
-                b2bcontact.remote_id = api_response.id
-        except ApiErrorException as e:
-            message = e.body if hasattr(e, "body") else str(e)
-            b2bcontact.status = B2BContact.Status.ERROR
-            b2bcontact.message = message
-            raise B2BSyncError(
-                f"Failed to {'update' if update else 'create'} contact {contact}: {message}"
-            )
-
-        b2bcontact.save()
+        return b2bcontact

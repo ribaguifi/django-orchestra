@@ -1,7 +1,6 @@
 from django.contrib import admin, messages
 from django.db import transaction
 from django.db.models import Q
-from django.urls import reverse
 from django.utils import timezone
 from django.utils.html import format_html
 from django.utils.translation import gettext as _
@@ -13,31 +12,29 @@ from orchestra.contrib.b2brouter.api import (
     sync_to_remote_invoice,
 )
 from orchestra.contrib.b2brouter.exceptions import B2BSyncError
-from orchestra.contrib.b2brouter.models import B2BContact
+from orchestra.contrib.b2brouter.models import B2BContact, B2BContactBinding
 from orchestra.contrib.b2brouter.settings import B2BROUTER_APP_URL
-from orchestra.contrib.bills.models import Bill, BillContact
+from orchestra.contrib.bills.models import BillContact
 
 
 @admin.register(B2BContact)
 class B2BContactAdmin(admin.ModelAdmin):
     list_display = (
         "pk",
-        "orchestra_contact_link",
+        "vat_key",
+        "bill_contacts_count",
         "remote_id",
         "status",
         "last_synced_at",
         "message",
     )
-    search_fields = ("remote_id",)
+    search_fields = ("remote_id", "vat_key")
     list_filter = ("status",)
 
     actions = ["sync_push_to_remote"]
 
     def get_search_results(self, request, queryset, search_term):
-        """
-        Custom search implementation to handle OneToOneField relationships.
-        Allows searching by remote_id, contact name, and VAT number.
-        """
+        """Allow searching by remote id, VAT key and bound bill contact fields."""
         if not search_term:
             return queryset, False
 
@@ -50,40 +47,38 @@ class B2BContactAdmin(admin.ModelAdmin):
         for term in search_terms:
             term_query = (
                 Q(remote_id__icontains=term)
-                | Q(orchestra_contact__name__icontains=term)
-                | Q(orchestra_contact__vat__icontains=term)
-                | Q(orchestra_contact__account__username__icontains=term)
+                | Q(vat_key__icontains=term)
+                | Q(bill_contact_bindings__bill_contact__name__icontains=term)
+                | Q(bill_contact_bindings__bill_contact__vat__icontains=term)
+                | Q(
+                    bill_contact_bindings__bill_contact__account__username__icontains=term
+                )
             )
             search_query &= term_query
 
-        # Apply the search query
-        filtered_queryset = queryset.filter(search_query)
-
-        # Return the filtered queryset and indicate that search was used
+        filtered_queryset = queryset.filter(search_query).distinct()
         return filtered_queryset, True
 
-    def orchestra_contact_link(self, obj):
-        def bill_contact_representation(contact):
-            return contact.name or f"{contact.country}{contact.vat}"
+    def bill_contacts_count(self, obj):
+        return obj.bill_contact_bindings.count()
 
-        url = reverse(
-            "admin:accounts_account_change", args=[obj.orchestra_contact.account.pk]
-        )
-        contact = bill_contact_representation(obj.orchestra_contact)
-
-        return format_html('<a href="{}">{}</a>', url, contact)
-
-    orchestra_contact_link.allow_tags = True
-    orchestra_contact_link.short_description = "Bill Contact"
+    bill_contacts_count.short_description = "Bill contacts"
 
     @admin.action(description="Sync selected contacts to remote")
     def sync_push_to_remote(self, request, queryset):
         failed = 0
         updated = 0
         for b2bcontact in queryset:
+            binding = b2bcontact.bill_contact_bindings.select_related(
+                "bill_contact"
+            ).first()
+            if not binding:
+                failed += 1
+                continue
+
             try:
                 sync_remote_contact(
-                    b2bcontact.orchestra_contact,
+                    binding.bill_contact,
                     update=b2bcontact.remote_id is not None,
                 )
                 updated += 1
@@ -105,8 +100,13 @@ class B2BContactAdmin(admin.ModelAdmin):
 def b2bcontact_link(obj):
     """Custom column defined in your app."""
     try:
-        b2bcontact = obj.billcontact.b2bcontact
-    except (BillContact.DoesNotExist, B2BContact.DoesNotExist):
+        bill_contact = obj.billcontact
+    except BillContact.DoesNotExist:
+        return "-"
+
+    try:
+        b2bcontact = bill_contact.b2b_binding.b2b_contact
+    except B2BContactBinding.DoesNotExist:
         return "-"
 
     if not b2bcontact.remote_id:

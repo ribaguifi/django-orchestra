@@ -1,11 +1,12 @@
 import logging
+import re
 from datetime import date, datetime
 
 from b2brouter_client import ApiErrorException, B2BRouterClient
 
 from orchestra.contrib.b2brouter import settings
 from orchestra.contrib.b2brouter.exceptions import B2BSyncError
-from orchestra.contrib.b2brouter.models import B2BContact, B2BInvoice
+from orchestra.contrib.b2brouter.models import B2BContact, B2BContactBinding, B2BInvoice
 from orchestra.contrib.b2brouter.serializers import BillSerializer
 from orchestra.contrib.contacts.models import Contact
 
@@ -49,14 +50,26 @@ def fetch_remote_contacts(api=None, limit=100):
     return response
 
 
-def sync_remote_contact(bill_contact, update=False):
-    #    bill_contact = b2bcontact.orchestra_contact
-    try:
-        b2bcontact = bill_contact.b2bcontact
-        b2bcontact.status = B2BContact.Status.SYNCED
-        b2bcontact.message = ""
-    except B2BContact.DoesNotExist:
-        b2bcontact = B2BContact(orchestra_contact=bill_contact)
+def vat_key_for_contact(bill_contact):
+    normalized_vat = re.sub(r"[\s\-.]", "", bill_contact.vat.strip().upper())
+    country = (bill_contact.country or "").strip().upper()
+    return f"{country}:{normalized_vat}"
+
+
+def sync_remote_contact(bill_contact, update=False, client=None):
+    vat_key = vat_key_for_contact(bill_contact)
+    b2bcontact, _ = B2BContact.objects.get_or_create(vat_key=vat_key)
+
+    binding, _ = B2BContactBinding.objects.get_or_create(
+        bill_contact=bill_contact,
+        defaults={"b2b_contact": b2bcontact},
+    )
+    if binding.b2b_contact_id != b2bcontact.id:
+        binding.b2b_contact = b2bcontact
+        binding.save(update_fields=["b2b_contact"])
+
+    b2bcontact.status = B2BContact.Status.SYNCED
+    b2bcontact.message = ""
 
     # TODO(@slamora): parameter "update" deprecated?
     update = b2bcontact.remote_id is not None
@@ -68,6 +81,7 @@ def sync_remote_contact(bill_contact, update=False):
         b2bcontact.message = (
             f"No billing contact found for account '{bill_contact.account}'."
         )
+        b2bcontact.save(update_fields=["status", "message", "last_synced_at"])
         raise B2BSyncError(b2bcontact.message)
     except Contact.MultipleObjectsReturned:
         contact_info = bill_contact.account.contacts.filter(
@@ -109,7 +123,8 @@ def sync_remote_contact(bill_contact, update=False):
         payload["contact"]["bank_account_number"] = paymentsource.data.get("iban")
         payload["contact"]["payment_method"] = PAYMENT_METHODS.get(paymentsource.method)
 
-    client = get_api_client()
+    if client is None:
+        client = get_api_client()
     try:
         if update:
             api_response = client.contacts.update(
@@ -124,6 +139,7 @@ def sync_remote_contact(bill_contact, update=False):
         message = e.body if hasattr(e, "body") else str(e)
         b2bcontact.status = B2BContact.Status.ERROR
         b2bcontact.message = message
+        b2bcontact.save(update_fields=["status", "message", "last_synced_at"])
         raise B2BSyncError(
             f"Failed to {'update' if update else 'create'} contact {bill_contact}: {message}"
         )

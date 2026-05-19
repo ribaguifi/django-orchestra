@@ -1,5 +1,5 @@
 from orchestra.contrib.b2brouter import api
-from orchestra.contrib.b2brouter.models import B2BContact
+from orchestra.contrib.b2brouter.models import B2BContactBinding
 
 
 class BillLineSerializer(object):
@@ -117,14 +117,16 @@ class BillSerializer(object):
         }
 
     def get_contact_id(self):
-        # TODO: Implement contact ID retrieval logic
-        self.instance.buyer
         try:
-            return self.instance.buyer.b2bcontact.remote_id
-        except B2BContact.DoesNotExist:
-            # TODO(@slamora): Handle missing B2BContact --> create or error?
-            remote_id = api.sync_remote_contact(self.instance.buyer, update=False)
-            return remote_id
+            b2b_binding = self.instance.buyer.b2b_binding
+            if b2b_binding.b2b_contact.remote_id:
+                return b2b_binding.b2b_contact.remote_id
+        except B2BContactBinding.DoesNotExist:
+            pass
+
+        # TODO(@slamora): Handle missing B2BContact --> create or error?
+        remote_id = api.sync_remote_contact(self.instance.buyer, update=False)
+        return remote_id
 
     def get_series(self):
         # Prefer materialized series_code field if available from B2B sync

@@ -21,17 +21,28 @@ class SyncedModel(models.Model):
 
 
 class B2BContact(SyncedModel):
-    orchestra_contact = models.OneToOneField(
+    vat_key = models.CharField(max_length=64, unique=True)
+    remote_id = models.BigIntegerField(null=True, unique=True)
+
+    def __str__(self):
+        return f"Contact({self.vat_key} - {self.remote_id})"
+
+
+class B2BContactBinding(models.Model):
+    bill_contact = models.OneToOneField(
         BillContact,
         on_delete=models.CASCADE,
+        related_name="b2b_binding",
         primary_key=True,
+    )
+    b2b_contact = models.ForeignKey(
+        B2BContact,
+        on_delete=models.CASCADE,
+        related_name="bill_contact_bindings",
     )
 
     def __str__(self):
-        return f"Contact({self.orchestra_contact} - {self.remote_id})"
-
-    class Meta:
-        unique_together = (("orchestra_contact", "remote_id"),)
+        return f"Binding({self.bill_contact_id} -> {self.b2b_contact_id})"
 
 
 class B2BInvoice(SyncedModel):

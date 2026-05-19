@@ -16,7 +16,7 @@ from orchestra.contrib.b2brouter.management.commands.reset_contacts import (
 from orchestra.contrib.b2brouter.management.commands.sync_contacts import (
     Command as SyncContactsCommand,
 )
-from orchestra.contrib.b2brouter.models import B2BContact
+from orchestra.contrib.b2brouter.models import B2BContact, B2BContactBinding
 from orchestra.contrib.bills.models import BillContact
 from orchestra.contrib.contacts.models import Contact
 
@@ -76,11 +76,24 @@ class B2BContactTestMixin:
         if status is None:
             status = B2BContact.Status.PENDING
 
-        return B2BContact.objects.create(
-            orchestra_contact=bill_contact,
-            remote_id=remote_id,
-            status=status,
+        vat_key = f"{bill_contact.country}:{bill_contact.vat.replace('-', '').replace(' ', '').replace('.', '').upper()}"
+
+        b2b_contact, _ = B2BContact.objects.get_or_create(
+            vat_key=vat_key,
+            defaults={
+                "remote_id": remote_id,
+                "status": status,
+            },
         )
+        b2b_contact.remote_id = remote_id
+        b2b_contact.status = status
+        b2b_contact.save(update_fields=["remote_id", "status", "last_synced_at"])
+
+        B2BContactBinding.objects.update_or_create(
+            bill_contact=bill_contact,
+            defaults={"b2b_contact": b2b_contact},
+        )
+        return b2b_contact
 
 
 class ResetContactsCommandTest(B2BContactTestMixin, TestCase):
@@ -367,9 +380,36 @@ class SyncRemoteContactApiTest(B2BContactTestMixin, TestCase):
         sync_remote_contact(self.contact)
 
         # Check B2BContact was created/updated with SYNCED status
-        b2b_contact = self.contact.b2bcontact
+        b2b_contact = self.contact.b2b_binding.b2b_contact
         self.assertEqual(b2b_contact.status, B2BContact.Status.SYNCED)
         self.assertEqual(b2b_contact.remote_id, 999)
+
+    @mock.patch("orchestra.contrib.b2brouter.api.get_api_client")
+    def test_sync_remote_contact_shares_contact_for_same_vat(self, mock_api):
+        """BillContacts with same VAT should share a canonical B2BContact."""
+        same_vat_account = self.create_account(username="same_vat_account")
+        same_vat_contact = self.create_bill_contact(
+            account=same_vat_account,
+            vat=self.contact.vat,
+            name="Same VAT Company",
+        )
+        self.create_contact_with_billing_email(account=same_vat_account)
+
+        mock_client = mock.MagicMock()
+        mock_api.return_value = mock_client
+
+        mock_create_response = mock.MagicMock()
+        mock_create_response.id = 777
+        mock_client.contacts.create.return_value = mock_create_response
+
+        sync_remote_contact(self.contact)
+        sync_remote_contact(same_vat_contact)
+
+        self.assertEqual(B2BContact.objects.count(), 1)
+        shared = B2BContact.objects.get()
+        self.assertEqual(shared.bill_contact_bindings.count(), 2)
+        self.assertEqual(self.contact.b2b_binding.b2b_contact_id, shared.id)
+        self.assertEqual(same_vat_contact.b2b_binding.b2b_contact_id, shared.id)
 
 
 class AdminSyncActionTest(B2BContactTestMixin, TestCase):
