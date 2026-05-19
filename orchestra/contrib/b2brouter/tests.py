@@ -32,12 +32,13 @@ class ListWithMeta(list):
 class B2BContactTestMixin:
     """Mixin providing helper methods for B2BRouter contact tests."""
 
-    def create_account(self, username="test_account"):
+    def create_account(self, username="test_account", type="INDIVIDUAL"):
         """Create a test Account."""
         return Account.objects.create(
             username=username,
             email=f"{username}@example.com",
             full_name="Test Account Name",
+            type=type,
         )
 
     def create_bill_contact(self, account=None, vat="ES12345678A", name="Test Company"):
@@ -262,6 +263,17 @@ class SyncContactsCommandTest(B2BContactTestMixin, TestCase):
 
         # Verify update was called
         mock_client.contacts.update.assert_called()
+
+    def test_retrieve_local_contacts_excludes_friend_accounts(self):
+        """Test that FRIEND accounts are not returned for B2B sync."""
+        friend_account = self.create_account(username="friend_account", type="FRIEND")
+        friend_contact = self.create_bill_contact(account=friend_account)
+
+        command = SyncContactsCommand()
+        queryset = command.retrieve_local_contacts()
+
+        self.assertIn(self.contact, queryset)
+        self.assertNotIn(friend_contact, queryset)
 
 
 class SyncRemoteContactApiTest(B2BContactTestMixin, TestCase):

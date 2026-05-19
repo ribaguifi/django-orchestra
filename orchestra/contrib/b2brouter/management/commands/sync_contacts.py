@@ -118,8 +118,11 @@ class Command(BaseCommand):
             )
 
     def retrieve_local_contacts(self):
-        # TODO(@slamora): filter only active accounts???
-        qs = BillContact.objects.filter(account__is_active=True)
+        # Exclude FRIENDS because they are neither billed
+        # also Pangea uses this accounts for internal purposes
+        qs = BillContact.objects.filter(account__is_active=True).exclude(
+            account__type="FRIEND"
+        )
         return qs
 
     def sync_remote_contact(self, b2bcontact, update=False):
