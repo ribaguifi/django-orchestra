@@ -273,6 +273,7 @@ def sync_from_remote_invoice(instance):
     # preserve local value and only initialize from created_on when still empty.
     instance.date = issue_date or instance.date or instance.created_on
     instance.due_on = due_date or instance.due_on
+    instance.closed_on = issue_date if not is_open else None
     instance.state = remote_state
     instance.comments = getattr(response, "extra_info", "")
     instance.save()
