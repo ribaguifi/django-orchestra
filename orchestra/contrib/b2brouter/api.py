@@ -3,6 +3,7 @@ import re
 from datetime import date, datetime
 
 from b2brouter_client import ApiErrorException, B2BRouterClient
+from b2brouter_client.exceptions import ResourceNotFoundException
 
 from orchestra.contrib.b2brouter import settings
 from orchestra.contrib.b2brouter.exceptions import B2BSyncError
@@ -167,24 +168,32 @@ def sync_to_remote_invoice(instance):
 
     client = get_api_client()
     if update:
-        # clean up current lines on update
-        response = client.invoices.retrieve(
-            id=remote_invoice.remote_id, params={"include": "detailed_lines"}
-        )
-        existing_lines = []
-        for line in response.lines or []:
-            existing_lines.append(
-                {
-                    "id": line.id,
-                    "_destroy": 1,
-                }
+        try:
+            response = client.invoices.retrieve(
+                id=remote_invoice.remote_id, params={"include": "detailed_lines"}
+            )
+        except ResourceNotFoundException:
+            # Remote invoice was deleted; treat as a new creation
+            update = False
+            remote_invoice.remote_id = None
+        else:
+            # clean up current lines on update
+            existing_lines = []
+            for line in response.lines or []:
+                existing_lines.append(
+                    {
+                        "id": line.id,
+                        "_destroy": 1,
+                    }
+                )
+
+            payload["invoice"]["invoice_lines_attributes"].extend(existing_lines)
+            response = client.invoices.update(
+                id=remote_invoice.remote_id, params=payload
             )
 
-        payload["invoice"]["invoice_lines_attributes"].extend(existing_lines)
-
-        response = client.invoices.update(id=remote_invoice.remote_id, params=payload)
-
-    else:
+    # creation or update after detecting remote deletion
+    if not update:
         response = client.invoices.create(
             account=settings.B2BROUTER_ACCOUNT_ID, params=payload
         )
