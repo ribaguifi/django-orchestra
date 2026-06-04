@@ -88,6 +88,7 @@ class Bill(models.Model):
         REGISTERED = "registered", _("Registered")
         REFUSED = "refused", _("Refused")
         CLOSED = "closed", _("Closed")
+        PAID = "paid", _("Paid")
         ERROR = "error", _("Error")
 
     REMOTE_SENT_LIKE_STATUSES = {
@@ -96,6 +97,7 @@ class Bill(models.Model):
         InvoiceStates.REGISTERED,
         InvoiceStates.CLOSED,
         InvoiceStates.REFUSED,
+        InvoiceStates.PAID,
     }
 
     OPEN = ""
@@ -260,6 +262,8 @@ class Bill(models.Model):
             return self.PROCESSED
         elif executed:
             return self.EXECUTED
+        if self.state == self.InvoiceStates.PAID:
+            return self.PAID
         return self.BAD_DEBT
 
     def clean(self):
