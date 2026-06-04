@@ -1,0 +1,204 @@
+from django.contrib import admin, messages
+from django.db import transaction
+from django.db.models import Q
+from django.utils import timezone
+from django.utils.html import format_html
+from django.utils.translation import gettext as _
+
+from orchestra.contrib.accounts.models import Account
+from orchestra.contrib.b2brouter.api import (
+    sync_from_remote_invoice,
+    sync_remote_contact,
+    sync_to_remote_invoice,
+)
+from orchestra.contrib.b2brouter.exceptions import B2BSyncError
+from orchestra.contrib.b2brouter.models import B2BContact, B2BContactBinding
+from orchestra.contrib.b2brouter.settings import B2BROUTER_APP_URL
+from orchestra.contrib.bills.models import BillContact
+
+
+@admin.register(B2BContact)
+class B2BContactAdmin(admin.ModelAdmin):
+    list_display = (
+        "pk",
+        "vat_key",
+        "bill_contacts_count",
+        "remote_id",
+        "status",
+        "last_synced_at",
+        "message",
+    )
+    search_fields = ("remote_id", "vat_key")
+    list_filter = ("status",)
+
+    actions = ["sync_push_to_remote"]
+
+    def get_search_results(self, request, queryset, search_term):
+        """Allow searching by remote id, VAT key and bound bill contact fields."""
+        if not search_term:
+            return queryset, False
+
+        # Split search term into individual words for more flexible searching
+        search_terms = search_term.strip().split()
+
+        # Build the query for multiple fields
+        search_query = Q()
+
+        for term in search_terms:
+            term_query = (
+                Q(remote_id__icontains=term)
+                | Q(vat_key__icontains=term)
+                | Q(bill_contact_bindings__bill_contact__name__icontains=term)
+                | Q(bill_contact_bindings__bill_contact__vat__icontains=term)
+                | Q(
+                    bill_contact_bindings__bill_contact__account__username__icontains=term
+                )
+            )
+            search_query &= term_query
+
+        filtered_queryset = queryset.filter(search_query).distinct()
+        return filtered_queryset, True
+
+    def bill_contacts_count(self, obj):
+        return obj.bill_contact_bindings.count()
+
+    bill_contacts_count.short_description = "Bill contacts"
+
+    @admin.action(description="Sync selected contacts to remote")
+    def sync_push_to_remote(self, request, queryset):
+        failed = 0
+        updated = 0
+        for b2bcontact in queryset:
+            binding = b2bcontact.bill_contact_bindings.select_related(
+                "bill_contact"
+            ).first()
+            if not binding:
+                failed += 1
+                continue
+
+            try:
+                sync_remote_contact(
+                    binding.bill_contact,
+                    update=b2bcontact.remote_id is not None,
+                )
+                updated += 1
+            except B2BSyncError as e:
+                b2bcontact.message = str(e)
+                b2bcontact.save()
+                failed += 1
+            except Exception as e:
+                b2bcontact.message = e.body if hasattr(e, "body") else str(e)
+                b2bcontact.save()
+                failed += 1
+
+        queryset.update(last_synced_at=timezone.now())
+        self.message_user(
+            request, f"Synced {updated} contacts to remote. Failed: {failed}."
+        )
+
+
+def b2bcontact_link(obj):
+    """Custom column defined in your app."""
+    try:
+        bill_contact = obj.billcontact
+    except BillContact.DoesNotExist:
+        return "-"
+
+    try:
+        b2bcontact = bill_contact.b2b_binding.b2b_contact
+    except B2BContactBinding.DoesNotExist:
+        return "-"
+
+    if not b2bcontact.remote_id:
+        if b2bcontact.message:
+            return format_html(
+                "<span class='error' style='cursor:help' title='{}'>sync {}</span>",
+                b2bcontact.message,
+                b2bcontact.status,
+            )
+        return "-"
+
+    url = f"{B2BROUTER_APP_URL}/contacts/{b2bcontact.remote_id}"
+    return format_html("<a href='{}' target='_blank'>{}</a>", url, b2bcontact.remote_id)
+
+
+b2bcontact_link.short_description = "B2B contact ID"
+
+# monkey patch Account admin to add B2B contact link
+if Account in admin.site._registry:
+    account_admin = admin.site._registry[Account]
+    account_admin.list_display = list(account_admin.list_display) + [b2bcontact_link]
+    setattr(account_admin.__class__, "b2bcontact_link", staticmethod(b2bcontact_link))
+
+
+@transaction.atomic
+def sync_push_bills(modeladmin, request, queryset):
+    """Sync selected bills with external system"""
+
+    for bill in queryset:
+        modeladmin.log_change(request, bill, "Synchronized with external system")
+        try:
+            sync_to_remote_invoice(bill)
+        except B2BSyncError as e:
+            messages.error(
+                request,
+                _("Failed to sync bill %(bill)s: %(error)s")
+                % {
+                    "bill": bill.number,
+                    "error": str(e),
+                },
+            )
+            continue
+
+    messages.success(
+        request, _("Selected bills have been synchronized with the external system.")
+    )
+
+
+sync_push_bills.tool_description = _("Sync Push Bills")
+sync_push_bills.url_name = "sync_push_bills"
+
+
+@transaction.atomic
+def sync_pull_bills(modeladmin, request, queryset):
+    """Pull selected bills from external system"""
+
+    for bill in queryset:
+        modeladmin.log_change(request, bill, "Pulled from external system")
+        try:
+            sync_from_remote_invoice(bill)
+        except B2BSyncError as e:
+            messages.error(
+                request,
+                _("Failed to pull bill %(bill)s: %(error)s")
+                % {
+                    "bill": bill.number,
+                    "error": str(e),
+                },
+            )
+            continue
+
+    messages.success(
+        request, _("Selected bills have been pulled from the external system.")
+    )
+
+
+# TODO(@slamora): FIX monkey patching Bill admin to add sync_bills action
+# if Bill in admin.site._registry:
+#     bill_admin = admin.site._registry[Bill]
+#     # Get current actions, handling both list and tuple cases
+#     if hasattr(bill_admin, "actions") and bill_admin.actions:
+#         if isinstance(bill_admin.actions, (list, tuple)):
+#             current_actions = list(bill_admin.actions)
+#         else:
+#             current_actions = []
+#     else:
+#         current_actions = []
+
+#     # Add the sync_bills action
+#     current_actions.append(sync_bills)
+#     bill_admin.actions = current_actions
+
+#     # Clear the cached actions to force re-evaluation
+#     if hasattr(bill_admin, "_actions"):
+#         bill_admin._actions = None
