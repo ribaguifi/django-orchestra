@@ -129,17 +129,10 @@ class BillSerializer(object):
         return remote_id
 
     def get_series(self):
-        # Prefer materialized series_code field if available from B2B sync
-        if self.instance.series_code:
-            return self.instance.series_code
-        return self.instance.get_series_code()
+        return self.instance.series_code
 
     def get_number(self):
-        # If series_code is materialized, number already contains just the numeric part
-        if self.instance.series_code:
-            return self.instance.number
-        # Otherwise, extract the numeric part from the combined number
-        return self.instance.get_number_without_series()
+        return self.instance.number
 
     def get_issue_date(self):
         issue_date = self.instance.date or self.instance.created_on
