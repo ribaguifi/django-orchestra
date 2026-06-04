@@ -80,7 +80,8 @@ def sync_remote_contact(bill_contact, update=False, client=None):
     except Contact.DoesNotExist:
         b2bcontact.status = B2BContact.Status.ERROR
         b2bcontact.message = (
-            f"No billing contact found for account '{bill_contact.account}'."
+            f"Missing email contact with usage 'BILLING' for account '{bill_contact.account}'."
+            "Please add one or select an existing contact and sync again."
         )
         b2bcontact.save(update_fields=["status", "message", "last_synced_at"])
         raise B2BSyncError(b2bcontact.message)
